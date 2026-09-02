@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
-import { AppShell } from "../../../components/AppShell";
+import React, { useState } from "react";
+import { AppShell, ViewTab } from "../../../components/shell/AppShell";
 import { ShieldCheck, ExternalLink, CheckCircle, Lock, Cpu, Database } from "lucide-react";
 import { useRiskEngineState } from "../../../hooks/useRiskEngineState";
 
 export default function ProofPage({ params }: { params: { positionId: string } }) {
   const positionId = params.positionId || "demo-pos-1";
+  const [activeView, setActiveView] = useState<ViewTab>("PROOF");
+
   const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct, protectionGapPct } = useRiskEngineState();
 
   const mockProofData = {
@@ -24,12 +26,6 @@ export default function ProofPage({ params }: { params: { positionId: string } }
     collateralToken: "0x68B1D87F95878fE05B998F19b66F4baba5De11d4 (tUSDC)",
     blockNumber: 1284925,
     timestamp: "2026-09-02 08:45:12 UTC",
-    txHashes: {
-      execution: "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
-      settlement: "0x7c41e89b21a3099c6e5412f109b8823194a2871c",
-      reactivity: "0x3f19e4210a5b871c290119e87d4021bb819c4102",
-      redemption: "0x9d82a10e47b81c2049182371b8e901a8820f124c",
-    },
     policy: {
       maxProtectionPercent: "50%",
       maxBudgetUSD: "$100.00",
@@ -48,6 +44,8 @@ export default function ProofPage({ params }: { params: { positionId: string } }
       riskScore={riskScore}
       coveragePct={currentHedgeCoveragePct}
       protectionGapPct={protectionGapPct}
+      activeView={activeView}
+      setActiveView={setActiveView}
     >
       <div className="space-y-8 max-w-5xl mx-auto font-mono">
         {/* Header */}

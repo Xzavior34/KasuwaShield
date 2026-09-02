@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
-import { AppShell } from "../../components/AppShell";
+import React, { useState } from "react";
+import { AppShell, ViewTab } from "../../components/shell/AppShell";
 import { Play, RotateCcw, AlertCircle, TrendingDown, CheckCircle2 } from "lucide-react";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
 
 export default function ReplayPage() {
+  const [activeView, setActiveView] = useState<ViewTab>("ALL");
   const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct, protectionGapPct } = useRiskEngineState();
 
   const mockHistoricalEvents = [
@@ -49,6 +50,8 @@ export default function ReplayPage() {
       riskScore={riskScore}
       coveragePct={currentHedgeCoveragePct}
       protectionGapPct={protectionGapPct}
+      activeView={activeView}
+      setActiveView={setActiveView}
     >
       <div className="space-y-8 max-w-5xl mx-auto font-mono">
         {/* Simulation Banner */}
