@@ -131,19 +131,19 @@ export default function TerminalDashboard() {
       activeAsset={activeAsset}
       onSelectAsset={setActiveAsset}
     >
-      <div className="space-y-5 font-mono">
+      <div className="space-y-4 sm:space-y-5 font-mono">
         {/* Top Bento Row: Animated SVG Chart & SVG Dial */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* SVG Area Chart */}
-          <div className="lg:col-span-8 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+          <div className="lg:col-span-8 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-2 gap-1">
               <div>
-                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Deterministic Risk Engine</h2>
-                <p className="text-[11px] text-slate-400">
+                <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Deterministic Risk Engine</h2>
+                <p className="text-[10px] sm:text-[11px] text-slate-400">
                   {activeAsset} Spot Price vs Strike Threshold Evaluation
                 </p>
               </div>
-              <div className="flex items-center space-x-4 text-xs">
+              <div className="flex items-center space-x-3 text-xs">
                 <span>
                   Spot:{" "}
                   <strong className={isBreached ? "text-rose-400" : "text-emerald-400"}>
@@ -156,7 +156,7 @@ export default function TerminalDashboard() {
               </div>
             </div>
 
-            <div className="bg-[#060911] border border-slate-800 rounded-lg h-44 relative overflow-hidden">
+            <div className="bg-[#060911] border border-slate-800 rounded-lg h-36 sm:h-44 relative overflow-hidden">
               <svg width="100%" height="100%" viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="svgAreaGreen" x1="0" y1="0" x2="0" y2="1">
@@ -204,19 +204,19 @@ export default function TerminalDashboard() {
                 />
               </svg>
 
-              <div className="absolute bottom-2 left-3 flex items-center space-x-3 text-[10px] text-slate-500">
+              <div className="absolute bottom-1.5 left-2.5 flex items-center space-x-2 sm:space-x-3 text-[9px] sm:text-[10px] text-slate-500">
                 <span className="flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Spot Price</span>
+                  <span>Spot</span>
                 </span>
-                <span>--- Strike Line</span>
-                <span className="text-cyan-400">⚡ 15m Auto-Roll Window</span>
+                <span>--- Strike</span>
+                <span className="text-cyan-400">⚡ 15m Auto-Roll</span>
               </div>
             </div>
           </div>
 
           {/* SVG Arc Dial */}
-          <div className="lg:col-span-4 bg-[#0b101d] border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+          <div className="lg:col-span-4 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 flex flex-col justify-between">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider">Hedge Coverage</h3>
               <span
@@ -231,7 +231,7 @@ export default function TerminalDashboard() {
             </div>
 
             <div className="text-center py-2 relative">
-              <svg viewBox="0 0 120 80" className="w-40 mx-auto block">
+              <svg viewBox="0 0 120 80" className="w-32 sm:w-40 mx-auto block">
                 <path d="M 15 70 A 50 50 0 0 1 105 70" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" />
                 <path
                   d="M 15 70 A 50 50 0 0 1 105 70"
@@ -243,35 +243,35 @@ export default function TerminalDashboard() {
                   className="transition-all duration-700"
                 />
               </svg>
-              <div className="-mt-6">
-                <div className="text-3xl font-extrabold text-white">{coverageTarget.toFixed(1)}%</div>
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest block">HEDGE RATIO</span>
+              <div className="-mt-5 sm:-mt-6">
+                <div className="text-2xl sm:text-3xl font-extrabold text-white">{coverageTarget.toFixed(1)}%</div>
+                <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest block">HEDGE RATIO</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Target</span>
-                <strong className="text-white">{coverageTarget}%</strong>
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center text-xs">
+              <div className="bg-slate-900 p-1.5 sm:p-2 rounded border border-slate-800">
+                <span className="text-[9px] sm:text-[10px] text-slate-400 block">Target</span>
+                <strong className="text-white text-xs">{coverageTarget}%</strong>
               </div>
-              <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Current</span>
-                <strong className="text-emerald-400">{coverageTarget.toFixed(1)}%</strong>
+              <div className="bg-slate-900 p-1.5 sm:p-2 rounded border border-slate-800">
+                <span className="text-[9px] sm:text-[10px] text-slate-400 block">Current</span>
+                <strong className="text-emerald-400 text-xs">{coverageTarget.toFixed(1)}%</strong>
               </div>
-              <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Gap</span>
-                <strong className="text-emerald-400">0.0%</strong>
+              <div className="bg-slate-900 p-1.5 sm:p-2 rounded border border-slate-800">
+                <span className="text-[9px] sm:text-[10px] text-slate-400 block">Gap</span>
+                <strong className="text-emerald-400 text-xs">0.0%</strong>
               </div>
             </div>
           </div>
         </div>
 
         {/* Middle Bento Row: Interactive Sliders + DreamDEX CLOB Micro-Book */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* Sliders */}
-          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-4">
+          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Live Policy Configuration Sandbox</h3>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Policy Configuration Sandbox</h3>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
                 REACTIVE PARAMS
               </span>
@@ -290,7 +290,7 @@ export default function TerminalDashboard() {
                   step="1000"
                   value={exposure}
                   onChange={(e) => setExposure(parseInt(e.target.value))}
-                  className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                 />
               </div>
 
@@ -306,38 +306,38 @@ export default function TerminalDashboard() {
                   step="5"
                   value={coverageTarget}
                   onChange={(e) => setCoverageTarget(parseInt(e.target.value))}
-                  className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block uppercase">Required Contracts</span>
-                  <strong className="text-sm text-cyan-300">{contractsRequired.toLocaleString()} PUTs</strong>
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-1">
+                <div className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800">
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">Required Contracts</span>
+                  <strong className="text-xs sm:text-sm text-cyan-300">{contractsRequired.toLocaleString()} PUTs</strong>
                 </div>
-                <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block uppercase">Est. Cost / 15m Roll</span>
-                  <strong className="text-sm text-amber-300">${estimatedCost} USD</strong>
+                <div className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800">
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">Est. Cost / 15m Roll</span>
+                  <strong className="text-xs sm:text-sm text-amber-300">${estimatedCost} USD</strong>
                 </div>
               </div>
             </div>
           </div>
 
           {/* DreamDEX CLOB Orderbook Depth */}
-          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
+          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <div>
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">DreamDEX CLOB Order Book Depth</h3>
-                <p className="text-[10px] text-slate-400">15-Min Binary Event Contracts (Settles @ $1.00 / $0.00)</p>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">DreamDEX CLOB Order Book</h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-400">15-Min Binary Event Contracts ($1.00 / $0.00)</p>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-300 border border-purple-500/30">
-                LIVE CLOB DEPTH
+                LIVE DEPTH
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
               {/* Bids */}
-              <div className="bg-[#060911] p-2.5 rounded border border-slate-800 space-y-1.5">
+              <div className="bg-[#060911] p-2 sm:p-2.5 rounded border border-slate-800 space-y-1.5">
                 <span className="text-[10px] font-bold text-emerald-400 block uppercase">Bids (YES / Above Strike)</span>
                 <div className="space-y-1 text-[11px]">
                   <div className="flex justify-between bg-emerald-500/10 px-1.5 py-0.5 rounded">
@@ -356,7 +356,7 @@ export default function TerminalDashboard() {
               </div>
 
               {/* Asks */}
-              <div className="bg-[#060911] p-2.5 rounded border border-slate-800 space-y-1.5">
+              <div className="bg-[#060911] p-2 sm:p-2.5 rounded border border-slate-800 space-y-1.5">
                 <span className="text-[10px] font-bold text-rose-400 block uppercase">Asks (NO / Downside Hedge)</span>
                 <div className="space-y-1 text-[11px]">
                   <div className="flex justify-between bg-rose-500/15 px-1.5 py-0.5 rounded border-l-2 border-rose-400">
@@ -375,53 +375,52 @@ export default function TerminalDashboard() {
               </div>
             </div>
 
-            <div className="flex justify-between text-[11px] text-slate-400 pt-1">
-              <span>Spread: <strong className="text-emerald-400">$0.01 (0.28 / 0.72 implied)</strong></span>
+            <div className="flex justify-between text-[10px] sm:text-[11px] text-slate-400 pt-1">
+              <span>Spread: <strong className="text-emerald-400">$0.01</strong></span>
               <span>Venue: <strong className="text-white">DreamDEX Somnia L1</strong></span>
             </div>
           </div>
         </div>
 
         {/* 5-Stage Pipeline */}
-        <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
+        <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Autonomous Execution Pipeline</h3>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              EIP-7702 DELEGATED
+              EIP-7702
             </span>
           </div>
-          <div className="grid grid-cols-5 gap-2 text-center text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
             {["EVENT", "RISK", "DECISION", "EXECUTION", "PROOF"].map((s, i) => (
-              <div key={s} className="bg-slate-900 p-2.5 rounded border border-slate-800 relative">
-                <span className="text-[10px] text-slate-500 block">0{i + 1} STAGE</span>
-                <strong className="text-white text-xs block my-0.5">{s}</strong>
-                <span className="text-[10px] text-emerald-400 font-bold">● READY</span>
-                {i < 4 && <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-slate-600 text-xs">→</div>}
+              <div key={s} className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800">
+                <span className="text-[9px] text-slate-500 block">0{i + 1} STAGE</span>
+                <strong className="text-white text-[11px] sm:text-xs block my-0.5">{s}</strong>
+                <span className="text-[9px] text-emerald-400 font-bold">● READY</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Bottom Bento Row: Live Contracts + Streaming Telemetry */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* Contracts */}
-          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
+          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider">Deployed Contracts & Verification</h3>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                ● ON-CHAIN VERIFIED
+                ● ON-CHAIN
               </span>
             </div>
             <div className="space-y-2 text-xs">
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">KasuwaPolicy.sol</span>
-                  <span className="text-cyan-300 font-mono text-[11px]">0x43a18f29...82910a</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaPolicy.sol</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x43a18f29...82910a</span>
                 </div>
                 <a
                   href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a"
                   target="_blank"
-                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[11px]"
+                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
                   <span>Explorer</span>
                   <ExternalLink className="w-3 h-3" />
@@ -430,13 +429,13 @@ export default function TerminalDashboard() {
 
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">KasuwaExecutor.sol (EIP-7702)</span>
-                  <span className="text-cyan-300 font-mono text-[11px]">0x8a92f03d...98f39b1a</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaExecutor.sol (EIP-7702)</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x8a92f03d...98f39b1a</span>
                 </div>
                 <a
                   href="https://shannon-explorer.somnia.network/address/0x8a92f03d12a4b89c72e411b932c0211598f39b1a"
                   target="_blank"
-                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[11px]"
+                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
                   <span>Explorer</span>
                   <ExternalLink className="w-3 h-3" />
@@ -445,13 +444,13 @@ export default function TerminalDashboard() {
 
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">tUSDC Collateral Token</span>
-                  <span className="text-cyan-300 font-mono text-[11px]">0x68B1D87F...De11d4</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">tUSDC Collateral Token</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x68B1D87F...De11d4</span>
                 </div>
                 <a
                   href="https://shannon-explorer.somnia.network/address/0x68B1D87F95878fE05B998F19b66F4baba5De11d4"
                   target="_blank"
-                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[11px]"
+                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
                   <span>Explorer</span>
                   <ExternalLink className="w-3 h-3" />
@@ -461,18 +460,18 @@ export default function TerminalDashboard() {
           </div>
 
           {/* Telemetry Stream */}
-          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
+          <div className="lg:col-span-6 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <div className="flex items-center space-x-2">
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">Agent Telemetry Stream</h3>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               </div>
-              <span className="text-[10px] text-emerald-400 font-bold">● STREAMING LIVE</span>
+              <span className="text-[10px] text-emerald-400 font-bold">● LIVE</span>
             </div>
 
-            <div className="bg-[#060911] border border-slate-800 rounded-lg p-2.5 h-36 overflow-y-auto space-y-1 text-[11px] text-emerald-400 font-mono">
+            <div className="bg-[#060911] border border-slate-800 rounded-lg p-2.5 h-32 sm:h-36 overflow-y-auto space-y-1 text-[10px] sm:text-[11px] text-emerald-400 font-mono">
               {telemetryLogs.map((log, idx) => (
-                <div key={idx} className="leading-relaxed opacity-90">
+                <div key={idx} className="leading-relaxed opacity-90 truncate">
                   {log}
                 </div>
               ))}
