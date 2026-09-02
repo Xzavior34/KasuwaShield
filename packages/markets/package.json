@@ -8,7 +8,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@kasuwa-shield/shared": "workspace:*",
+    "@kasuwa-shield/shared": "*",
     "@somnia-chain/markets-sdk": "^0.22.0",
     "viem": "^2.21.0"
   }

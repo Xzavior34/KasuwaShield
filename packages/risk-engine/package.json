@@ -8,6 +8,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@kasuwa-shield/shared": "workspace:*"
+    "@kasuwa-shield/shared": "*"
   }
 }
