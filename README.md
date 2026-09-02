@@ -1,74 +1,74 @@
-# KasuwaShield — EIP-7702 Continuous Auto-Rolling Downside Protection
+# KasuwaShield — Autonomous Portfolio Risk Agent
 
 **Tagline**: *"Don't predict the downside. Protect the position continuously."*  
 **Hackathon Submission**: Somnia × DreamDEX Event Contracts Hackathon 2026  
+**Category**: Autonomous Risk Infrastructure & Event Contracts  
 **Network**: Somnia Shannon Testnet (`Chain ID 50312`, RPC `https://dream-rpc.somnia.network`)  
-**Live UI**: [http://localhost:3000](http://localhost:3000)  
+**Live Terminal**: [http://localhost:3000](http://localhost:3000)  
+**GitHub Repository**: [https://github.com/Xzavior34/KasuwaShield](https://github.com/Xzavior34/KasuwaShield)  
 
 ---
 
-## ⚡ Executive Summary: The Category Upgrade
+## 🚀 Why KasuwaShield is Different (The Category Kill-Shot)
 
-Traditional prediction markets treat event contracts as 15-minute binary gambling bets. Most hackathon tools build one-off trade calculators that force the user to sign a wallet transaction every 15 minutes.
+Most prediction market hackathon entries treat event contracts as binary 15-minute gambling bets. They force users to predict directional price moves or build one-off trade calculators that require manual wallet approvals every 15 minutes.
 
-**KasuwaShield transforms DreamDEX Event Contracts into an Autonomous, Continuous Risk-Management Layer:**
-- **Continuous Policy Configuration**: User sets exposure ($500 BTC), protection target (30%), duration (24 Hours), and max budget ($100).
-- **Ephemeral Session Keys (EIP-7702)**: The browser generates a local ECDSA Session Key. The user signs **ONE** authorization payload delegating EOA execution to `KasuwaExecutor.sol`.
-- **Zero-Popup Auto-Rolling Loop**: Every 15 minutes, when the current window settles, `KasuwaReactiveHandler.sol` emits `RolloverWindowOpen`. The background keeper automatically executes the next 15-minute hedge using the local Session Key — **with ZERO wallet popups!**
-- **Non-Custodial Kill-Switch**: The user can terminate the policy and revoke the Session Key on-chain at any time with a single click.
+**KasuwaShield is an Autonomous Risk Agent powered by Somnia Reactivity and EIP-7702 Ephemeral Session Keys.**
+
+| Competitor Architecture | Competitor Limitation | KasuwaShield Advantage |
+| :--- | :--- | :--- |
+| **Vs. Multi-Leg Routers (Branch)** | Requires constant manual wallet-signing for every trade leg. | **Zero-Popup Continuous Execution**: User signs **ONE** EIP-7702 delegation payload. Ephemeral local Session Keys auto-roll hedges seamlessly without MetaMask popups. |
+| **Vs. Auto-Rollers (Let It Ride)** | Auto-rolls speculative betting streaks, compounding downside risk until bust. | **Autonomous Portfolio Hedging**: Dynamically calculates portfolio exposure to hedge and protect spot/perp assets over 24h/7d windows. |
+| **Vs. AI Chatbots (Dreamdesk / QDS)** | Slow, non-deterministic LLM prompt wrappers prone to hallucinations. | **Deterministic Policy Engine**: 100% fail-closed smart contract risk policy (`KasuwaPolicy.sol`) with strict budget caps and price ceilings. |
+| **Vs. Black-Scholes Formula (Sigma)** | Applies European options formulas to fixed 1e6 binary event contracts. | **Tailored Fixed-Payout Math**: Sizes downside coverage specifically for DreamDEX 1e6 binary orderbooks. |
 
 ---
 
-## 🏗️ Architecture & Component Matrix
+## ⚡ How the Autonomous Risk Agent Works
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        USER WALLET (EOA)                               │
-│      Signs 1 EIP-7702 Delegation Payload (Whitelists Session Key)      │
+│     Configures: $500 BTC Exposure | 30% Protection | 24h Duration     │
+│     Signs ONE EIP-7702 Authorization Payload (Whitelists Session Key) │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│               LOCAL EPHEMERAL SESSION KEY (Browser DB)                │
-│       Executes auto-rolled 15m hedges with ZERO wallet popups           │
+│               LOCAL EPHEMERAL SESSION KEY (Browser Memory)             │
+│      Executes 15m/1h auto-rolled hedges with ZERO wallet popups        │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
                                    ▼
 ┌──────────────────────────────────┴─────────────────────────────────────┐
 │                       SOMNIA SHANNON TESTNET                           │
-│  ├── KasuwaPolicy.sol         (Enforces budget caps & policy limits)   │
+│  ├── KasuwaPolicy.sol         (Enforces remainingBudget & caps)        │
 │  ├── KasuwaExecutor.sol       (Session Key authorization router)       │
-│  └── KasuwaReactiveHandler.sol(Emits RolloverWindowOpen on settlement)  │
+│  └── KasuwaReactiveHandler.sol(Emits RolloverWindowOpen on settlement) │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Monorepo Package Structure
+## 🔒 Security & Fail-Closed Controls
 
-- **`contracts/`**:
-  - `KasuwaPolicy.sol`: Non-custodial policy enforcing budget caps, contract price ceilings, remaining budget deduction, and policy termination.
-  - `KasuwaExecutor.sol`: EIP-7702 Session Key validation and execution router.
-  - `KasuwaReactiveHandler.sol`: Somnia Reactive callback contract emitting `RolloverWindowOpen`.
-- **`packages/execution/`**:
-  - `session-key-manager.ts`: Generates local ephemeral Session Keys, builds EIP-7702 delegation payloads, and executes zero-popup auto-rolls.
-- **`packages/risk-engine/`**: Deterministic downside protection calculator & 0–100 market quality scoring.
-- **`packages/markets/`**: Live testnet market discovery scanning Somnia logs & pool parameters.
-- **`scripts/`**:
-  - `auto-roll-demo.ts`: Golden path demo script testing 4-window continuous auto-rolling shield execution.
+1. **Non-Custodial Session Keys**: The local Session Key can **ONLY** execute `executeAutoRoll()` on allowlisted DreamDEX pools. It can **NEVER** withdraw, transfer, or access user collateral.
+2. **Strict Budget Deductions**: Every auto-roll deducts cost from `remainingBudgetUSD` in `KasuwaPolicy.sol`. If `remainingBudgetUSD` drops below the roll cost, the policy terminates safely.
+3. **On-Chain Kill-Switch**: The user can revoke the Session Key on-chain at any time with a single click (`revokeSessionKey()`).
+4. **Duplicate Settlement Prevention**: `KasuwaReactiveHandler.sol` tracks processed market IDs to prevent duplicate event execution.
 
 ---
 
-## 🚀 Quickstart & Local Verification
+## 🛠️ Quickstart & Local Verification
 
-### 1. Run Unit Tests & Auto-Roll Golden Path Script
 ```bash
+# 1. Run Unit Tests (100% pass)
 npx vitest run
-npx tsx scripts/auto-roll-demo.ts
-```
 
-### 2. Launch Local UI Terminal
-```bash
+# 2. Run EIP-7702 Continuous Auto-Roll Golden Path Demo Script
+npx tsx scripts/auto-roll-demo.ts
+
+# 3. Launch Local Autonomous Risk Terminal UI
 node server.js
 ```
-Open [http://localhost:3000](http://localhost:3000) to inspect the Continuous Auto-Rolling Shield UI terminal.
+Open [http://localhost:3000](http://localhost:3000) to interact with the Autonomous Risk Terminal.

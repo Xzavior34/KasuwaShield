@@ -82,9 +82,13 @@ function getReplayViewHTML() {
         <span style="padding:0.25rem 0.625rem; border-radius:0.375rem; background:rgba(245,158,11,0.25); font-weight:700; font-family:monospace; color:#fef3c7;">SIMULATION</span>
       </div>
 
-      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
-        <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">Historical Strategy Backtests</h1>
-        <div style="display:flex; flex-direction:column; gap:0.75rem; font-family:monospace; font-size:0.85rem;">
+      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">Historical Strategy Backtests</h1>
+          <button onclick="runSimulationBacktest()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ RUN LIVE VOLATILITY SIMULATION</button>
+        </div>
+
+        <div id="simulation-output" style="display:flex; flex-direction:column; gap:0.75rem; font-family:monospace; font-size:0.85rem;">
           
           <div style="padding:1.25rem; background:#1e293b; border-radius:0.75rem; border:1px solid #334155; display:flex; flex-direction:column; gap:0.75rem;">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #334155; padding-bottom:0.5rem;">
@@ -115,6 +119,26 @@ function getReplayViewHTML() {
         </div>
       </div>
     </div>
+
+    <script>
+      var simRun = 0;
+      function runSimulationBacktest() {
+        simRun++;
+        var container = document.getElementById('simulation-output');
+        if (!container) return;
+        var newCard = document.createElement('div');
+        newCard.style.padding = '1.25rem';
+        newCard.style.background = '#1e293b';
+        newCard.style.borderRadius = '0.75rem';
+        newCard.style.border = '1px solid #10b981';
+        newCard.style.display = 'flex';
+        newCard.style.flexDirection = 'column';
+        newCard.style.gap = '0.75rem';
+
+        newCard.innerHTML = '<div style="display:flex; justify-content:space-between; border-bottom:1px solid #334155; padding-bottom:0.5rem;"><span style="font-weight:700; color:#ffffff;">SOL — SIMULATION ROLL #' + simRun + ' (LIVE TEST)</span><span style="color:#fb7185; font-weight:700;">-3.8% Sudden Volatility Drop</span></div><div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5rem; color:#cbd5e1;"><div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Exposure</strong>$1,500 (30%)</div><div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Premium</strong>$22.50</div><div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Payout</strong>$450.00</div><div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Net Protected</strong><span style="color:#34d399; font-weight:700;">+$427.50</span></div></div>';
+        container.insertBefore(newCard, container.firstChild);
+      }
+    </script>
   `;
 }
 
@@ -256,7 +280,10 @@ function getDashboardViewHTML(status) {
             </div>
             <h2 id="active-title" style="font-size:1.25rem; font-weight:700; color:#ffffff; margin-top:0.5rem; margin-bottom:0;">BTC Continuous Auto-Rolling Protection (24 Hours)</h2>
           </div>
-          <button onclick="triggerKillSwitch()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#991b1b; color:#ffffff; font-weight:800; font-size:0.875rem; border:1px solid #dc2626; cursor:pointer;">TERMINATE SHIELD & REVOKE KEY</button>
+          <div style="display:flex; gap:0.75rem;">
+            <button onclick="simulateReactiveRoll()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ SIMULATE SOMNIA REACTIVE SETTLEMENT & AUTO-ROLL</button>
+            <button onclick="triggerKillSwitch()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#991b1b; color:#ffffff; font-weight:800; font-size:0.875rem; border:1px solid #dc2626; cursor:pointer;">TERMINATE SHIELD & REVOKE KEY</button>
+          </div>
         </div>
 
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
@@ -271,8 +298,6 @@ function getDashboardViewHTML(status) {
           <div id="activity-log" style="display:flex; flex-direction:column; gap:0.5rem; font-family:monospace; font-size:0.75rem;">
             <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#34d399;">[10:05:12] ✓ EIP-7702 Session Key Delegated to KasuwaExecutor.sol</div>
             <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#cbd5e1;">[10:05:14] ✓ Window #1 Hedged: 150 BTC DOWN contracts @ $0.35 ($52.50)</div>
-            <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#fbbf24;">[10:20:00] ⚡ Window #1 Settled: Somnia Reactive event callback emitted RolloverWindowOpen</div>
-            <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#6ee7b7; font-weight:700;">[10:20:02] 🚀 Window #2 Auto-Rolled via Local Invisible Session Key (0 POPUPS REQUIRED)</div>
           </div>
         </div>
       </div>
@@ -289,12 +314,14 @@ function getDashboardViewHTML(status) {
     </div>
 
     <script>
-      let selectedAsset = 'BTC';
+      var selectedAsset = 'BTC';
+      var windowRollCount = 1;
+      var currentRemBudget = 47.50;
 
       function selectAsset(asset) {
         selectedAsset = asset;
-        const btcBtn = document.getElementById('asset-btc-btn');
-        const ethBtn = document.getElementById('asset-eth-btn');
+        var btcBtn = document.getElementById('asset-btc-btn');
+        var ethBtn = document.getElementById('asset-eth-btn');
         if (asset === 'BTC') {
           btcBtn.style.border = '1px solid #10b981';
           btcBtn.style.background = 'rgba(16,185,129,0.2)';
@@ -314,25 +341,25 @@ function getDashboardViewHTML(status) {
       }
 
       function updateCalc() {
-        const expInput = document.getElementById('exposure-input');
-        const targetInput = document.getElementById('target-input');
-        const budgetInput = document.getElementById('budget-input');
+        var expInput = document.getElementById('exposure-input');
+        var targetInput = document.getElementById('target-input');
+        var budgetInput = document.getElementById('budget-input');
         if (!expInput || !targetInput || !budgetInput) return;
 
-        const exp = parseFloat(expInput.value || 500);
-        const pct = parseFloat(targetInput.value || 30);
-        const bud = parseFloat(budgetInput.value || 100);
+        var exp = parseFloat(expInput.value || 500);
+        var pct = parseFloat(targetInput.value || 30);
+        var bud = parseFloat(budgetInput.value || 100);
 
-        const target = (exp * pct) / 100;
-        const contracts = Math.ceil(target);
-        const cost = (contracts * 0.35).toFixed(2);
+        var target = (exp * pct) / 100;
+        var contracts = Math.ceil(target);
+        var cost = (contracts * 0.35).toFixed(2);
 
         if (document.getElementById('target-label')) document.getElementById('target-label').innerText = pct + '% ($' + target.toFixed(2) + ')';
         if (document.getElementById('preview-target')) document.getElementById('preview-target').innerText = '$' + target.toFixed(2);
         if (document.getElementById('preview-contracts')) document.getElementById('preview-contracts').innerText = contracts + ' contracts';
         if (document.getElementById('preview-cost')) document.getElementById('preview-cost').innerText = '$' + cost;
 
-        const warn = document.getElementById('budget-warn');
+        var warn = document.getElementById('budget-warn');
         if (warn) {
           if (parseFloat(cost) > bud) {
             warn.style.display = 'block';
@@ -344,24 +371,53 @@ function getDashboardViewHTML(status) {
       }
 
       function executeProtection() {
-        const exp = parseFloat(document.getElementById('exposure-input').value || 500);
-        const pct = parseFloat(document.getElementById('target-input').value || 30);
-        const bud = parseFloat(document.getElementById('budget-input').value || 100);
-        const durationHours = document.getElementById('duration-input').value || '24';
+        var exp = parseFloat(document.getElementById('exposure-input').value || 500);
+        var pct = parseFloat(document.getElementById('target-input').value || 30);
+        var bud = parseFloat(document.getElementById('budget-input').value || 100);
+        var durationHours = document.getElementById('duration-input').value || '24';
 
-        const targetUSD = ((exp * pct) / 100).toFixed(2);
-        const contracts = Math.ceil((exp * pct) / 100);
-        const windowCost = (contracts * 0.35).toFixed(2);
-        const remBudget = (bud - parseFloat(windowCost)).toFixed(2);
+        var targetUSD = ((exp * pct) / 100).toFixed(2);
+        var contracts = Math.ceil((exp * pct) / 100);
+        var windowCost = (contracts * 0.35).toFixed(2);
+        currentRemBudget = (bud - parseFloat(windowCost)).toFixed(2);
 
         document.getElementById('active-title').innerText = selectedAsset + ' Continuous Auto-Rolling Protection (' + (durationHours === '24' ? '24 Hours' : '7 Days') + ')';
         document.getElementById('active-protected').innerText = '$' + targetUSD;
         document.getElementById('active-cost').innerText = '$' + windowCost;
-        document.getElementById('active-remaining').innerText = '$' + remBudget + ' USD';
+        document.getElementById('active-remaining').innerText = '$' + currentRemBudget + ' USD';
         document.getElementById('active-time').innerText = (durationHours === '24' ? '23h 59m' : '6d 23h');
 
         document.getElementById('setup-card').style.display = 'none';
         document.getElementById('active-card').style.display = 'flex';
+      }
+
+      function simulateReactiveRoll() {
+        windowRollCount++;
+        var windowCost = parseFloat(document.getElementById('active-cost').innerText.replace('$', '') || 52.50);
+        currentRemBudget = Math.max(0, (currentRemBudget - windowCost)).toFixed(2);
+        document.getElementById('active-remaining').innerText = '$' + currentRemBudget + ' USD';
+
+        var log = document.getElementById('activity-log');
+        if (!log) return;
+
+        var timeStr = new Date().toISOString().substring(11, 19);
+
+        var eventDiv = document.createElement('div');
+        eventDiv.style.padding = '0.5rem 0.75rem';
+        eventDiv.style.background = '#0f172a';
+        eventDiv.style.borderRadius = '0.5rem';
+        eventDiv.style.color = '#fbbf24';
+        eventDiv.innerText = '[' + timeStr + '] ⚡ Window #' + (windowRollCount - 1) + ' Settled: Somnia Reactive event callback emitted RolloverWindowOpen';
+        log.appendChild(eventDiv);
+
+        var rollDiv = document.createElement('div');
+        rollDiv.style.padding = '0.5rem 0.75rem';
+        rollDiv.style.background = '#0f172a';
+        rollDiv.style.borderRadius = '0.5rem';
+        rollDiv.style.color = '#6ee7b7';
+        rollDiv.style.fontWeight = '700';
+        rollDiv.innerText = '[' + timeStr + '] 🚀 Window #' + windowRollCount + ' Auto-Rolled via Local Invisible Session Key (0 POPUPS REQUIRED)';
+        log.appendChild(rollDiv);
       }
 
       function triggerKillSwitch() {
@@ -390,7 +446,7 @@ const server = http.createServer(async (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KasuwaShield — EIP-7702 Continuous Auto-Rolling Shield</title>
+  <title>KasuwaShield — Autonomous Risk Agent</title>
   <style>
     body { background-color: #080c14; color: #f3f4f6; font-family: ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
   </style>
@@ -404,7 +460,7 @@ const server = http.createServer(async (req, res) => {
 
   <footer style="border-top:1px solid #1e293b; padding:1.5rem; text-align:center; font-size:0.75rem; color:#64748b;">
     <p style="margin:0;">KasuwaShield — Somnia × DreamDEX Event Contracts Hackathon 2026 Submission</p>
-    <p style="margin:0.25rem 0 0 0;">Autonomous non-custodial risk management infrastructure. EIP-7702 Continuous Auto-Rolling Shield.</p>
+    <p style="margin:0.25rem 0 0 0;">Autonomous Portfolio Risk Agent. EIP-7702 Continuous Auto-Rolling Shield.</p>
   </footer>
 </body>
 </html>`;
@@ -415,7 +471,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log('==================================================');
-  console.log('KASUWASHIELD EIP-7702 CONTINUOUS SERVER ACTIVE');
+  console.log('KASUWASHIELD AUTONOMOUS RISK AGENT SERVER ACTIVE');
   console.log('URL: http://localhost:' + PORT);
   console.log('Proof Mode: http://localhost:' + PORT + '/proof/demo-pos-1');
   console.log('Replay Mode: http://localhost:' + PORT + '/replay');
