@@ -51,111 +51,247 @@ async function getLiveTestnetStatus() {
   };
 }
 
-function getHeaderHTML(activeRoute) {
+function getHeaderHTML(activeRoute, status) {
   const dashColor = activeRoute === '/' ? '#10b981' : '#94a3b8';
   const proofColor = activeRoute.startsWith('/proof') ? '#10b981' : '#94a3b8';
   const replayColor = activeRoute.startsWith('/replay') ? '#10b981' : '#94a3b8';
 
   return `
-    <header style="border-bottom:1px solid #1e293b; background:rgba(6,9,17,0.95); position:sticky; top:0; z-index:50;">
+    <header style="border-bottom:1px solid #1e293b; background:rgba(6,9,17,0.95); position:sticky; top:0; z-index:50; font-family:monospace;">
       <div style="max-width:96rem; margin:0 auto; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:0.75rem;">
           <div style="width:2.25rem; height:2.25rem; border-radius:0.5rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; justify-content:center; font-size:1.25rem;">🛡️</div>
           <div>
-            <a href="/" style="font-weight:800; font-size:1.125rem; color:#ffffff; text-decoration:none; font-family:monospace;">KASUWA<span style="color:#10b981;">SHIELD</span></a>
-            <span style="font-size:0.65rem; color:#94a3b8; font-family:monospace; display:block;">INSTITUTIONAL QUANT DOWNSIDE PROTECTION</span>
+            <a href="/" style="font-weight:800; font-size:1.125rem; color:#ffffff; text-decoration:none;">KASUWA<span style="color:#10b981;">SHIELD</span></a>
+            <span style="font-size:0.65rem; color:#94a3b8; display:block;">INSTITUTIONAL QUANT DOWNSIDE PROTECTION</span>
           </div>
         </div>
-        <div style="display:flex; align-items:center; gap:1.5rem; font-size:0.875rem; font-weight:600; font-family:monospace;">
+
+        <nav style="display:flex; align-items:center; gap:1.5rem; font-size:0.875rem; font-weight:600;">
           <a href="/" style="color:${dashColor}; text-decoration:none;">Dashboard</a>
           <a href="/proof/demo-pos-1" style="color:${proofColor}; text-decoration:none;">On-Chain Proof</a>
           <a href="/replay" style="color:${replayColor}; text-decoration:none;">Replay Mode</a>
           <span style="padding:0.25rem 0.75rem; border-radius:0.375rem; background:#1e293b; border:1px solid #334155; color:#cbd5e1; font-size:0.75rem;">Somnia Shannon (50312)</span>
+        </nav>
+
+        <div>
+          <button onclick="triggerStressSimulation()" style="padding:0.5rem 1rem; border-radius:0.5rem; background:#dc2626; color:#ffffff; font-weight:800; font-size:0.75rem; border:1px solid #f87171; cursor:pointer;">⚠️ [ SIMULATE MARKET STRESS ]</button>
+        </div>
+      </div>
+
+      <!-- High-Density Hero Status Strip -->
+      <div style="border-top:1px solid #1e293b; background:#090d19; padding:0.625rem 1.5rem;">
+        <div style="max-width:96rem; margin:0 auto; display:grid; grid-template-columns:repeat(8, 1fr); gap:0.75rem; font-size:0.75rem;">
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Portfolio Value</span>
+            <span style="font-weight:700; color:#ffffff; font-size:0.875rem;">$25,000</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Protected Value</span>
+            <span style="font-weight:700; color:#34d399; font-size:0.875rem;">$20,000</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Protection Coverage</span>
+            <span id="strip-coverage" style="font-weight:700; color:#6ee7b7; font-size:0.875rem;">80.0%</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Protection Gap</span>
+            <span id="strip-gap" style="font-weight:700; color:#34d399; font-size:0.875rem;">0.0%</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Current Risk</span>
+            <span id="strip-risk" style="font-weight:700; color:#34d399; font-size:0.875rem;">34 / 100</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Hedge Status</span>
+            <span id="strip-status" style="padding:0.125rem 0.375rem; border-radius:0.25rem; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#34d399; font-weight:700; font-size:0.65rem;">● PROTECTED</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">User Interventions</span>
+            <span style="font-weight:700; color:#34d399; font-size:0.875rem;">0 ACTIONS</span>
+          </div>
+          <div style="background:rgba(15,23,42,0.8); padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;">
+            <span style="color:#94a3b8; display:block; font-size:0.65rem; text-transform:uppercase;">Event → Execution</span>
+            <span style="font-weight:700; color:#cbd5e1; font-size:0.75rem;">133ms <span style="color:#f59e0b; font-size:0.6rem;">(DEMO)</span></span>
+          </div>
         </div>
       </div>
     </header>
   `;
 }
 
-function getReplayViewHTML() {
+function getDashboardViewHTML(status) {
   return `
-    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
-      <div style="padding:1rem; border-radius:0.75rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fcd34d; font-size:0.875rem; display:flex; align-items:center; justify-content:space-between;">
-        <p style="margin:0;"><strong>HISTORICAL REPLAY MODE:</strong> Simulated backtest results over historical volatility windows.</p>
-        <span style="padding:0.25rem 0.625rem; border-radius:0.375rem; background:rgba(245,158,11,0.25); font-weight:700; color:#fef3c7;">DYNAMIC BACKTEST ENGINE</span>
-      </div>
-
-      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">Dynamic Strategy Backtest Engine</h1>
-          <button onclick="runDynamicBacktest()" style="padding:0.625rem 1.25rem; border-radius:0.5rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ RUN DYNAMIC VOLATILITY BACKTEST</button>
+    <div style="display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
+      
+      <!-- Summary Restored Banner (Hidden initially) -->
+      <div id="restored-card" style="display:none; background:#0b101d; border:2px solid #10b981; border-radius:0.75rem; padding:1.5rem; flex-direction:column; gap:1rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(16,185,129,0.3); padding-bottom:0.75rem;">
+          <div>
+            <h2 style="font-size:1.25rem; font-weight:900; color:#ffffff; margin:0;">✓ PROTECTION RESTORED</h2>
+            <p style="font-size:0.75rem; color:#34d399; margin:0.25rem 0 0 0;">Autonomous EIP-7702 Auto-Roll Executed Successfully • 0 User Signatures Required</p>
+          </div>
+          <button onclick="document.getElementById('restored-card').style.display='none'" style="background:none; border:none; color:#94a3b8; font-size:1.25rem; cursor:pointer;">✕</button>
         </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; background:#0f172a; padding:1rem; border-radius:0.5rem; border:1px solid #334155;">
-          <div>
-            <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Simulated Portfolio Exposure ($)</label>
-            <input id="replay-exposure" type="number" value="25000" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
-          </div>
-          <div>
-            <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Protection Coverage Target (%)</label>
-            <input id="replay-target-pct" type="number" value="80" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
-          </div>
-          <div>
-            <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Contract Ask Price ($)</label>
-            <input id="replay-price" type="number" value="0.35" step="0.05" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
-          </div>
-        </div>
-
-        <div id="simulation-output" style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem;">
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.75rem; text-align:center;">
+          <div style="background:#0f172a; padding:0.75rem; border-radius:0.5rem; border:1px solid #1e293b;"><span style="font-size:0.65rem; color:#94a3b8; display:block;">COVERAGE RESTORED</span><strong style="font-size:1.25rem; color:#34d399;">80.0%</strong></div>
+          <div style="background:#0f172a; padding:0.75rem; border-radius:0.5rem; border:1px solid #1e293b;"><span style="font-size:0.65rem; color:#94a3b8; display:block;">RISK SCORE</span><strong style="font-size:1.25rem; color:#6ee7b7;">32 / 100</strong></div>
+          <div style="background:#0f172a; padding:0.75rem; border-radius:0.5rem; border:1px solid #1e293b;"><span style="font-size:0.65rem; color:#94a3b8; display:block;">USER ACTIONS</span><strong style="font-size:1.25rem; color:#34d399;">0 ACTIONS</strong></div>
+          <div style="background:#0f172a; padding:0.75rem; border-radius:0.5rem; border:1px solid #334155;"><span style="font-size:0.65rem; color:#94a3b8; display:block;">HEDGE POSITION</span><strong style="font-size:1.25rem; color:#67e8f9;">ACTIVE</strong></div>
         </div>
       </div>
+
+      <!-- Bento Row 1: Spot vs Strike Chart & Hedge Dial -->
+      <div style="display:grid; grid-template-columns:8fr 4fr; gap:1.5rem;">
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:1rem;">
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.75rem;">
+            <div>
+              <h2 style="font-size:0.875rem; font-weight:800; color:#ffffff; margin:0;">DETERMINISTIC RISK ENGINE</h2>
+              <p style="font-size:0.75rem; color:#94a3b8; margin:0.25rem 0 0 0;">Continuous spot price vs strike threshold evaluation</p>
+            </div>
+            <div style="display:flex; gap:1rem; font-size:0.75rem;">
+              <span>BTC Spot: <strong id="chart-btc" style="color:#34d399;">$64,800</strong></span>
+              <span>Threshold: <strong style="color:#fb7185;">$64,000</strong></span>
+            </div>
+          </div>
+          <!-- Chart Visual Box -->
+          <div style="background:#060911; border:1px solid #1e293b; border-radius:0.5rem; padding:1.5rem; height:180px; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+            <div style="border-bottom:1px dashed #ef4444; width:100%; position:absolute; top:65%; left:0;"></div>
+            <div style="position:absolute; right:1rem; top:60%; color:#ef4444; font-size:0.65rem;">HEDGE THRESHOLD STRIKE ($64,000)</div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; height:100%; z-index:2;">
+              <div style="width:10%; height:80%; background:rgba(16,185,129,0.3); border-top:2px solid #10b981;"></div>
+              <div style="width:10%; height:78%; background:rgba(16,185,129,0.3); border-top:2px solid #10b981;"></div>
+              <div style="width:10%; height:75%; background:rgba(16,185,129,0.3); border-top:2px solid #10b981;"></div>
+              <div style="width:10%; height:72%; background:rgba(16,185,129,0.3); border-top:2px solid #10b981;"></div>
+              <div id="chart-bar-5" style="width:10%; height:70%; background:rgba(16,185,129,0.3); border-top:2px solid #10b981;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between;">
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.5rem;">
+            <h3 style="font-size:0.75rem; font-weight:800; color:#ffffff; margin:0;">HEDGE COVERAGE RATIO</h3>
+            <span id="dial-badge" style="font-size:0.65rem; padding:0.125rem 0.375rem; border-radius:0.25rem; background:rgba(16,185,129,0.1); color:#34d399; border:1px solid rgba(16,185,129,0.3);">● Protection Sufficient</span>
+          </div>
+
+          <div style="text-align:center; padding:1rem 0;">
+            <div id="dial-val" style="font-size:2.25rem; font-weight:900; color:#ffffff;">80.0%</div>
+            <div style="font-size:0.65rem; color:#94a3b8; text-transform:uppercase;">HEDGE COVERAGE</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.5rem; text-align:center; background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b; font-size:0.75rem;">
+            <div><span style="color:#94a3b8; font-size:0.65rem; display:block;">Target</span><strong>80%</strong></div>
+            <div><span style="color:#94a3b8; font-size:0.65rem; display:block;">Current</span><strong id="dial-cur" style="color:#34d399;">80.0%</strong></div>
+            <div><span style="color:#94a3b8; font-size:0.65rem; display:block;">Gap</span><strong id="dial-gap" style="color:#34d399;">0.0%</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento Row 2: Risk Formulas & 5-Stage Execution Pipeline -->
+      <div style="display:grid; grid-template-columns:5fr 7fr; gap:1.5rem;">
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:1rem;">
+          <h3 style="font-size:0.75rem; font-weight:800; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">RISK CALCULATION FORMULAS</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.75rem;">
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#94a3b8; display:block; font-size:0.65rem;">Exposure</span>$25,000</div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#94a3b8; display:block; font-size:0.65rem;">Downside Threshold</span>-8.0% ($2,000)</div>
+          </div>
+          <div style="background:#060911; padding:0.75rem; border-radius:0.375rem; border:1px solid #1e293b; font-size:0.75rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;"><span style="color:#94a3b8;">Formula: Risk Delta (ΔR)</span><span style="color:#34d399;">ΔP - (Threshold × Exposure)</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#cbd5e1;">Calculated Risk Delta:</span><strong id="math-delta" style="color:#34d399;">-$2,000.00 (SAFE)</strong></div>
+          </div>
+        </div>
+
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:1rem;">
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.5rem;">
+            <h3 style="font-size:0.75rem; font-weight:800; color:#ffffff; margin:0;">AUTONOMOUS EXECUTION PIPELINE</h3>
+            <span style="font-size:0.65rem; color:#67e8f9; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.3); padding:0.125rem 0.375rem; border-radius:0.25rem;">EIP-7702 AUTOMATED</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0.5rem; font-size:0.75rem;">
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#64748b; font-size:0.65rem;">01 STAGE</span><strong style="display:block; color:#fff;">EVENT</strong><span style="color:#34d399; font-size:0.65rem;">● RECEIVED</span></div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#64748b; font-size:0.65rem;">02 STAGE</span><strong style="display:block; color:#fff;">RISK</strong><span id="pipe-risk" style="color:#34d399; font-size:0.65rem;">● EVALUATED</span></div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#64748b; font-size:0.65rem;">03 STAGE</span><strong style="display:block; color:#fff;">DECISION</strong><span style="color:#34d399; font-size:0.65rem;">● APPROVED</span></div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#64748b; font-size:0.65rem;">04 STAGE</span><strong style="display:block; color:#fff;">EXECUTION</strong><span style="color:#34d399; font-size:0.65rem;">● SUBMITTED</span></div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#64748b; font-size:0.65rem;">05 STAGE</span><strong style="display:block; color:#fff;">PROOF</strong><span style="color:#34d399; font-size:0.65rem;">● CONFIRMED</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento Row 3: EIP-7702 Delegated Execution & Security Boundaries -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <h3 style="font-size:0.75rem; font-weight:800; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">EIP-7702 DELEGATED EXECUTION ARCHITECTURE</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.75rem;">
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#94a3b8; font-size:0.65rem; display:block;">Account (EOA)</span><span style="color:#fff;">0x71C9...9A2B (DEMO)</span></div>
+            <div style="background:#0f172a; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b;"><span style="color:#94a3b8; font-size:0.65rem; display:block;">Delegated Executor</span><span style="color:#67e8f9;">0x8F31...4C1C (Kasuwa)</span></div>
+          </div>
+          <div style="background:#060911; padding:0.5rem; border-radius:0.375rem; border:1px solid #1e293b; font-size:0.75rem; display:flex; justify-content:space-between;">
+            <span>SESSION AUTHORIZATION: <strong style="color:#34d399;">ACTIVE SESSION AUTHORIZATION</strong></span>
+            <span style="color:#f59e0b; font-size:0.65rem;">SIMULATED DELEGATION</span>
+          </div>
+        </div>
+
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <h3 style="font-size:0.75rem; font-weight:800; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">EXECUTION PERMISSIONS & BOUNDARIES</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.75rem;">
+            <div style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); padding:0.5rem; border-radius:0.375rem;">
+              <span style="color:#34d399; font-weight:700; display:block; font-size:0.65rem;">✓ ALLOWED ACTIONS</span>
+              <div style="color:#cbd5e1; font-size:0.65rem; margin-top:0.25rem;">• Execute approved hedges<br/>• Maintain policy limits<br/>• Auto-roll eligible contracts</div>
+            </div>
+            <div style="background:rgba(244,63,94,0.05); border:1px solid rgba(244,63,94,0.2); padding:0.5rem; border-radius:0.375rem;">
+              <span style="color:#fb7185; font-weight:700; display:block; font-size:0.65rem;">✕ PROHIBITED ACTIONS</span>
+              <div style="color:#cbd5e1; font-size:0.65rem; margin-top:0.25rem;">• Withdraw user funds<br/>• Change portfolio ownership<br/>• Exceed max notional</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <script>
-      var historicalWindows = [
-        { asset: 'BTC', drop: '-2.4% Drop in 15m', time: '2026-08-28 14:15 UTC', defaultExp: 25000, defaultPct: 80, price: 0.35 },
-        { asset: 'ETH', drop: '-4.1% Drop in 1h', time: '2026-08-25 09:30 UTC', defaultExp: 10000, defaultPct: 80, price: 0.40 }
-      ];
+      function triggerStressSimulation() {
+        var card = document.getElementById('restored-card');
+        var btc = document.getElementById('chart-btc');
+        var dialVal = document.getElementById('dial-val');
+        var dialCur = document.getElementById('dial-cur');
+        var dialGap = document.getElementById('dial-gap');
+        var stripGap = document.getElementById('strip-gap');
+        var stripRisk = document.getElementById('strip-risk');
+        var stripCov = document.getElementById('strip-coverage');
+        var stripStat = document.getElementById('strip-status');
+        var mathDelta = document.getElementById('math-delta');
 
-      function computeBacktestRow(w) {
-        var expInput = document.getElementById('replay-exposure');
-        var pctInput = document.getElementById('replay-target-pct');
-        var priceInput = document.getElementById('replay-price');
+        // Step 1: Volatility Drop
+        btc.innerText = '$62,800';
+        dialVal.innerText = '58.0%';
+        dialCur.innerText = '58.0%';
+        dialGap.innerText = '22.0%';
+        stripGap.innerText = '22.0%';
+        stripRisk.innerText = '98 / 100';
+        stripCov.innerText = '58.0%';
+        stripStat.innerText = '⚠ THRESHOLD BREACHED';
+        stripStat.style.borderColor = '#f43f5e';
+        stripStat.style.color = '#f43f5e';
+        mathDelta.innerText = '+$1,000.00 (BREACH)';
+        mathDelta.style.color = '#f43f5e';
 
-        var exp = expInput ? parseFloat(expInput.value || w.defaultExp) : w.defaultExp;
-        var pct = pctInput ? parseFloat(pctInput.value || w.defaultPct) : w.defaultPct;
-        var price = priceInput ? parseFloat(priceInput.value || w.price) : w.price;
+        // Step 2: Auto-Roll Restore (3.5s later)
+        setTimeout(function() {
+          btc.innerText = '$64,800';
+          dialVal.innerText = '80.0%';
+          dialCur.innerText = '80.0%';
+          dialGap.innerText = '0.0%';
+          stripGap.innerText = '0.0%';
+          stripRisk.innerText = '32 / 100';
+          stripCov.innerText = '80.0%';
+          stripStat.innerText = '● PROTECTED';
+          stripStat.style.borderColor = 'rgba(16,185,129,0.4)';
+          stripStat.style.color = '#34d399';
+          mathDelta.innerText = '-$2,000.00 (SAFE)';
+          mathDelta.style.color = '#34d399';
 
-        var targetProtectedUSD = (exp * pct) / 100;
-        var contracts = Math.ceil(targetProtectedUSD);
-        var premiumUSD = (contracts * price).toFixed(2);
-        var payoutUSD = (contracts * 1.00).toFixed(2);
-        var netProtectedUSD = (parseFloat(payoutUSD) - parseFloat(premiumUSD)).toFixed(2);
-
-        return '<div style="padding:1.25rem; background:#0f172a; border-radius:0.5rem; border:1px solid #334155; display:flex; flex-direction:column; gap:0.75rem;">' +
-          '<div style="display:flex; justify-content:space-between; border-bottom:1px solid #334155; padding-bottom:0.5rem;">' +
-            '<span style="font-weight:700; color:#ffffff;">' + w.asset + ' — ' + w.time + '</span>' +
-            '<span style="color:#fb7185; font-weight:700;">' + w.drop + '</span>' +
-          '</div>' +
-          '<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5rem; color:#cbd5e1;">' +
-            '<div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Exposure</strong>$' + exp.toLocaleString() + ' (' + pct + '%)</div>' +
-            '<div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Premium Paid</strong>$' + premiumUSD + '</div>' +
-            '<div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Redemption Payout</strong>$' + payoutUSD + '</div>' +
-            '<div><strong style="color:#94a3b8; display:block; font-size:0.75rem;">Net Protected PnL</strong><span style="color:#34d399; font-weight:700;">+$' + netProtectedUSD + '</span></div>' +
-          '</div>' +
-        '</div>';
+          if (card) card.style.display = 'flex';
+        }, 3500);
       }
-
-      function recalculateReplay() {
-        var container = document.getElementById('simulation-output');
-        if (!container) return;
-        var html = '';
-        for (var i = 0; i < historicalWindows.length; i++) {
-          html += computeBacktestRow(historicalWindows[i]);
-        }
-        container.innerHTML = html;
-      }
-      recalculateReplay();
     </script>
   `;
 }
@@ -178,7 +314,6 @@ function getProofViewHTML(status) {
             <div style="display:flex; justify-content:space-between;"><span>Asset & Exposure:</span><strong style="color:#ffffff;">BTC ($25,000)</strong></div>
             <div style="display:flex; justify-content:space-between;"><span>Target Protection:</span><strong style="color:#34d399;">$20,000.00 (80%)</strong></div>
             <div style="display:flex; justify-content:space-between;"><span>Protection Duration:</span><span>24 Hours Continuous</span></div>
-            <div style="display:flex; justify-content:space-between;"><span>Total Budget Allocated:</span><span>$100.00 USD</span></div>
             <div style="display:flex; justify-content:space-between;"><span>Delegated Execution:</span><strong style="color:#34d399;">EIP-7702 (0 Popups Required)</strong></div>
             <div style="display:flex; justify-content:space-between;"><span>Block Height:</span><span>#${status.latestBlock}</span></div>
           </div>
@@ -194,43 +329,16 @@ function getProofViewHTML(status) {
           </div>
         </div>
       </div>
-
-      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
-        <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">Verifiable Somnia Explorer Hashes</h3>
-        <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.75rem;">
-          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">Live Shannon Testnet Block #${status.latestBlock}</span><span style="color:#ffffff;">https://shannon-explorer.somnia.network/block/${status.latestBlock}</span></div>
-            <a href="https://shannon-explorer.somnia.network/block/${status.latestBlock}" target="_blank" style="color:#34d399;">Block Explorer ↗</a>
-          </div>
-          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">DreamDEX Collateral Token (tUSDC) Contract</span><span style="color:#ffffff;">${status.collateralToken}</span></div>
-            <a href="https://shannon-explorer.somnia.network/address/${status.collateralToken}" target="_blank" style="color:#34d399;">Token Contract ↗</a>
-          </div>
-          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">KasuwaShield Risk Policy Contract</span><span style="color:#ffffff;">0x43a18f29d10e42819873a90a218291b87a82910a</span></div>
-            <a href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a" target="_blank" style="color:#34d399;">Policy Contract ↗</a>
-          </div>
-        </div>
-      </div>
     </div>
   `;
 }
 
-function getDashboardViewHTML(status) {
+function getReplayViewHTML() {
   return `
-    <div style="display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
-      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem;">
-        <div style="max-width:48rem;">
-          <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-size:0.75rem; font-weight:600; margin-bottom:1rem;">
-            <span>EIP-7702 DELEGATED EXECUTION — BLOCK #${status.latestBlock}</span>
-          </div>
-          <h1 style="font-size:1.75rem; font-weight:800; color:#ffffff; margin-bottom:0.75rem;">
-            Don't predict the downside. <span style="color:#10b981;">Protect the position continuously.</span>
-          </h1>
-          <p style="color:#94a3b8; font-size:0.875rem; line-height:1.5; margin:0;">
-            KasuwaShield turns DreamDEX Event Contracts into an autonomous portfolio protection layer using EIP-7702 Delegated Execution & Somnia Reactivity.
-          </p>
-        </div>
+    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
+      <div style="padding:1rem; border-radius:0.75rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fcd34d; font-size:0.875rem; display:flex; align-items:center; justify-content:space-between;">
+        <p style="margin:0;"><strong>HISTORICAL REPLAY MODE:</strong> Simulated backtest results over historical volatility windows.</p>
+        <span style="padding:0.25rem 0.625rem; border-radius:0.375rem; background:rgba(245,158,11,0.25); font-weight:700; color:#fef3c7;">DYNAMIC BACKTEST ENGINE</span>
       </div>
     </div>
   `;
@@ -260,7 +368,7 @@ const server = http.createServer(async (req, res) => {
   </style>
 </head>
 <body>
-  ${getHeaderHTML(url)}
+  ${getHeaderHTML(url, status)}
 
   <main style="max-width:96rem; margin:0 auto; padding:2rem 1.5rem; width:100%; box-sizing:border-box; flex:1;">
     ${bodyHTML}
