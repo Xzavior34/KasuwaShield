@@ -9,18 +9,15 @@
 
 ---
 
-## 🚀 Why KasuwaShield is Different (The Category Kill-Shot)
+## ⚡ Executive Summary
 
-Most prediction market hackathon entries treat event contracts as binary 15-minute gambling bets. They force users to predict directional price moves or build one-off trade calculators that require manual wallet approvals every 15 minutes.
+Traditional prediction markets treat event contracts as 15-minute binary gambling bets. Most tools force users to sign manual wallet transactions every 15 minutes to stay protected.
 
-**KasuwaShield is an Autonomous Risk Agent powered by Somnia Reactivity and EIP-7702 Ephemeral Session Keys.**
-
-| Competitor Architecture | Competitor Limitation | KasuwaShield Advantage |
-| :--- | :--- | :--- |
-| **Vs. Multi-Leg Routers (Branch)** | Requires constant manual wallet-signing for every trade leg. | **Zero-Popup Continuous Execution**: User signs **ONE** EIP-7702 delegation payload. Ephemeral local Session Keys auto-roll hedges seamlessly without MetaMask popups. |
-| **Vs. Auto-Rollers (Let It Ride)** | Auto-rolls speculative betting streaks, compounding downside risk until bust. | **Autonomous Portfolio Hedging**: Dynamically calculates portfolio exposure to hedge and protect spot/perp assets over 24h/7d windows. |
-| **Vs. AI Chatbots (Dreamdesk / QDS)** | Slow, non-deterministic LLM prompt wrappers prone to hallucinations. | **Deterministic Policy Engine**: 100% fail-closed smart contract risk policy (`KasuwaPolicy.sol`) with strict budget caps and price ceilings. |
-| **Vs. Black-Scholes Formula (Sigma)** | Applies European options formulas to fixed 1e6 binary event contracts. | **Tailored Fixed-Payout Math**: Sizes downside coverage specifically for DreamDEX 1e6 binary orderbooks. |
+**KasuwaShield transforms DreamDEX Event Contracts into an Autonomous, Continuous Risk-Management Infrastructure:**
+- **Continuous Policy Configuration**: User sets exposure ($500 BTC), protection target (30%), duration (24 Hours), and max budget ($100).
+- **Ephemeral Session Keys (EIP-7702)**: The browser generates a local ECDSA Session Key. The user signs **ONE** authorization payload delegating EOA execution to `KasuwaExecutor.sol`.
+- **Zero-Popup Auto-Rolling Loop**: Every 15 minutes, when the current window settles, `KasuwaReactiveHandler.sol` emits `RolloverWindowOpen`. The background keeper automatically executes the next 15-minute hedge using the local Session Key — **with ZERO wallet popups!**
+- **Non-Custodial Kill-Switch**: The user can terminate the policy and revoke the Session Key on-chain at any time with a single click.
 
 ---
 
