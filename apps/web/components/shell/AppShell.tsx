@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Shield, Zap, Activity, Radio, AlertTriangle, PlayCircle, Layers, Cpu, Database } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Shield, Activity, Cpu, Database, RotateCcw, AlertTriangle, Layers, Radio } from "lucide-react";
 import { SystemState } from "../../hooks/useRiskEngineState";
-
-export type ViewTab = "ALL" | "RISK" | "EXECUTION" | "PROOF";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -14,8 +14,6 @@ interface AppShellProps {
   riskScore: number;
   coveragePct: number;
   protectionGapPct: number;
-  activeView: ViewTab;
-  setActiveView: (view: ViewTab) => void;
 }
 
 export function AppShell({
@@ -26,9 +24,9 @@ export function AppShell({
   riskScore,
   coveragePct,
   protectionGapPct,
-  activeView,
-  setActiveView,
 }: AppShellProps) {
+  const pathname = usePathname();
+
   const getStatusBadge = () => {
     switch (systemState) {
       case "VOLATILITY_RISING":
@@ -54,8 +52,8 @@ export function AppShell({
       <header className="border-b border-slate-800/80 bg-[#0a0f1d]/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-[96rem] mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand */}
-          <div className="flex items-center space-x-3">
-            <div className="h-9 w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shadow-sm shadow-emerald-500/10">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="h-9 w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shadow-sm shadow-emerald-500/10 group-hover:border-emerald-500/60 transition-all">
               🛡️
             </div>
             <div>
@@ -71,57 +69,69 @@ export function AppShell({
                 AUTONOMOUS PORTFOLIO DOWNSIDE PROTECTION INFRASTRUCTURE
               </p>
             </div>
-          </div>
+          </Link>
 
-          {/* Navigation View Tabs */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs font-mono">
-            <button
-              onClick={() => setActiveView("ALL")}
+          {/* Real URL Navigation View Tabs */}
+          <nav className="hidden lg:flex items-center space-x-1.5 bg-slate-900/90 p-1.5 rounded-lg border border-slate-800 text-xs font-mono">
+            <Link
+              href="/"
               className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                activeView === "ALL"
-                  ? "bg-emerald-500 text-slate-950 shadow"
-                  : "text-slate-400 hover:text-white"
+                pathname === "/"
+                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>FULL TERMINAL</span>
-            </button>
+              <span>OVERVIEW</span>
+            </Link>
 
-            <button
-              onClick={() => setActiveView("RISK")}
+            <Link
+              href="/risk"
               className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                activeView === "RISK"
-                  ? "bg-emerald-500 text-slate-950 shadow"
-                  : "text-slate-400 hover:text-white"
+                pathname === "/risk"
+                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
               }`}
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>QUANT RISK ENGINE</span>
-            </button>
+              <span>QUANT RISK</span>
+            </Link>
 
-            <button
-              onClick={() => setActiveView("EXECUTION")}
+            <Link
+              href="/execution"
               className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                activeView === "EXECUTION"
-                  ? "bg-cyan-500 text-slate-950 shadow"
-                  : "text-slate-400 hover:text-white"
+                pathname === "/execution"
+                  ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-950/50"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
               }`}
             >
               <Cpu className="w-3.5 h-3.5" />
               <span>EIP-7702 PIPELINE</span>
-            </button>
+            </Link>
 
-            <button
-              onClick={() => setActiveView("PROOF")}
+            <Link
+              href="/proof"
               className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                activeView === "PROOF"
-                  ? "bg-emerald-500 text-slate-950 shadow"
-                  : "text-slate-400 hover:text-white"
+                pathname?.startsWith("/proof")
+                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
               }`}
             >
               <Database className="w-3.5 h-3.5" />
               <span>REACTIVITY & PROOF</span>
-            </button>
+            </Link>
+
+            <Link
+              href="/replay"
+              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                pathname === "/replay"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-950/50"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+              }`}
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>REPLAY</span>
+            </Link>
           </nav>
 
           {/* Network & Action Trigger */}

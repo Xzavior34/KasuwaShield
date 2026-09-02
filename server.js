@@ -52,9 +52,23 @@ async function getLiveTestnetStatus() {
 }
 
 function getHeaderHTML(activeRoute, status) {
-  const dashColor = activeRoute === '/' ? '#10b981' : '#94a3b8';
-  const proofColor = activeRoute.startsWith('/proof') ? '#10b981' : '#94a3b8';
-  const replayColor = activeRoute.startsWith('/replay') ? '#10b981' : '#94a3b8';
+  const isOverview = activeRoute === '/';
+  const isRisk = activeRoute === '/risk';
+  const isExec = activeRoute === '/execution';
+  const isProof = activeRoute.startsWith('/proof');
+  const isReplay = activeRoute === '/replay';
+
+  const tabStyle = (active) => `
+    padding:0.375rem 0.75rem;
+    border-radius:0.375rem;
+    font-weight:700;
+    font-size:0.75rem;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:0.375rem;
+    ${active ? 'background:#10b981; color:#022c22;' : 'color:#94a3b8; background:transparent;'}
+  `;
 
   return `
     <header style="border-bottom:1px solid #1e293b; background:rgba(6,9,17,0.95); position:sticky; top:0; z-index:50; font-family:monospace;">
@@ -67,11 +81,12 @@ function getHeaderHTML(activeRoute, status) {
           </div>
         </div>
 
-        <nav style="display:flex; align-items:center; gap:1.5rem; font-size:0.875rem; font-weight:600;">
-          <a href="/" style="color:${dashColor}; text-decoration:none;">Dashboard</a>
-          <a href="/proof/demo-pos-1" style="color:${proofColor}; text-decoration:none;">On-Chain Proof</a>
-          <a href="/replay" style="color:${replayColor}; text-decoration:none;">Replay Mode</a>
-          <span style="padding:0.25rem 0.75rem; border-radius:0.375rem; background:#1e293b; border:1px solid #334155; color:#cbd5e1; font-size:0.75rem;">Somnia Shannon (50312)</span>
+        <nav style="display:flex; align-items:center; gap:0.5rem; background:#0f172a; padding:0.25rem; border-radius:0.5rem; border:1px solid #1e293b;">
+          <a href="/" style="${tabStyle(isOverview)}">OVERVIEW</a>
+          <a href="/risk" style="${tabStyle(isRisk)}">QUANT RISK</a>
+          <a href="/execution" style="${tabStyle(isExec)}">EIP-7702 PIPELINE</a>
+          <a href="/proof" style="${tabStyle(isProof)}">REACTIVITY & PROOF</a>
+          <a href="/replay" style="${tabStyle(isReplay)}">REPLAY</a>
         </nav>
 
         <div>
@@ -120,7 +135,7 @@ function getHeaderHTML(activeRoute, status) {
   `;
 }
 
-function getDashboardViewHTML(status) {
+function getDashboardViewHTML(status, subRoute = '/') {
   return `
     <div style="display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
       
@@ -235,7 +250,7 @@ function getDashboardViewHTML(status) {
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.75rem;">
             <div style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); padding:0.5rem; border-radius:0.375rem;">
               <span style="color:#34d399; font-weight:700; display:block; font-size:0.65rem;">✓ ALLOWED ACTIONS</span>
-              <div style="color:#cbd5e1; font-size:0.65rem; margin-top:0.25rem;">• Execute approved hedges<br/>• Maintain policy limits<br/>• Auto-roll eligible contracts</div>
+              <div style="color:#cbd5e1; font-size:0.65rem; margin-top:0.25rem;">• Execute approved hedges<br/>• Maintain policy limits<br/>• Auto-roll eligible positions</div>
             </div>
             <div style="background:rgba(244,63,94,0.05); border:1px solid rgba(244,63,94,0.2); padding:0.5rem; border-radius:0.375rem;">
               <span style="color:#fb7185; font-weight:700; display:block; font-size:0.65rem;">✕ PROHIBITED ACTIONS</span>
@@ -353,8 +368,10 @@ const server = http.createServer(async (req, res) => {
     bodyHTML = getProofViewHTML(status);
   } else if (url.startsWith('/replay')) {
     bodyHTML = getReplayViewHTML();
+  } else if (url.startsWith('/risk') || url.startsWith('/execution')) {
+    bodyHTML = getDashboardViewHTML(status, url);
   } else {
-    bodyHTML = getDashboardViewHTML(status);
+    bodyHTML = getDashboardViewHTML(status, '/');
   }
 
   const fullHTML = `<!DOCTYPE html>
@@ -389,6 +406,8 @@ server.listen(PORT, () => {
   console.log('==================================================');
   console.log('KASUWASHIELD INSTITUTIONAL QUANT TERMINAL SERVER ACTIVE');
   console.log('URL: http://localhost:' + PORT);
+  console.log('Quant Risk Route: http://localhost:' + PORT + '/risk');
+  console.log('Execution Pipeline Route: http://localhost:' + PORT + '/execution');
   console.log('Proof Mode: http://localhost:' + PORT + '/proof/demo-pos-1');
   console.log('Replay Mode: http://localhost:' + PORT + '/replay');
   console.log('==================================================');
