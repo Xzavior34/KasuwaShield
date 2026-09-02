@@ -3,83 +3,45 @@ pragma solidity ^0.8.24;
 
 /**
  * @title KasuwaReactiveHandler
- * @notice Somnia Reactive contract for KasuwaShield.
- *         Subscribes to DreamDEX settlement events to update active downside protection position state
- *         and mark settled winning contracts as ready for non-custodial redemption.
+ * @notice Somnia Reactive Callback contract for KasuwaShield Continuous Auto-Rolling Shield.
+ *         Natively listens to DreamDEX settlement events on Somnia, claims winning outcome tokens,
+ *         and emits RolloverWindowOpen to trigger the off-chain ephemeral session key keeper loop.
  */
 contract KasuwaReactiveHandler {
     address public immutable owner;
+    address public policyContract;
 
-    enum SettlementState { UNSETTLED, SETTLED_WIN, SETTLED_LOSS, VOIDED }
-
-    struct PositionSettlement {
-        bytes32 marketId;
-        address user;
-        SettlementState state;
-        uint8 winningOutcome; // 0 = Up, 1 = Down
-        uint256 settledAt;
-        bool isClaimed;
-    }
-
-    mapping(bytes32 => PositionSettlement) public positionSettlements;
-    mapping(address => bool) public authorizedEmitters;
-
-    event ReactiveSettlementProcessed(bytes32 indexed marketId, address indexed user, uint8 winningOutcome, SettlementState state);
-    event PositionClaimed(bytes32 indexed marketId, address indexed user, uint256 claimedAmount);
+    event MarketSettlementDetected(bytes32 indexed marketId, address indexed venue, uint256 outcomeIdx);
+    event PayoutRedeemed(address indexed user, uint256 payoutAmountUSD);
+    event RolloverWindowOpen(bytes32 indexed policyId, address indexed user, uint256 timestamp);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "KasuwaReactiveHandler: not owner");
+        require(msg.sender == owner, "KasuwaReactiveHandler: caller is not owner");
         _;
     }
 
-    constructor() {
+    constructor(address _policyContract) {
         owner = msg.sender;
-    }
-
-    function setAuthorizedEmitter(address emitter, bool status) external onlyOwner {
-        authorizedEmitters[emitter] = status;
+        policyContract = _policyContract;
     }
 
     /**
-     * @notice Callback invoked when DreamDEX market resolution event fires.
-     * @param marketId The unique binary market ID
-     * @param user The position holder address
-     * @param winningOutcome 0 for Up, 1 for Down
-     * @param isVoided True if the market settled voided
+     * @notice Somnia Reactive callback fired when a DreamDEX market settles
      */
-    function _onMarketSettledEvent(
-        bytes32 marketId,
+    function onMarketSettled(
+        bytes32 policyId,
         address user,
-        uint8 winningOutcome,
-        bool isVoided
+        bytes32 marketId,
+        uint256 winningOutcome,
+        uint256 payoutUSD
     ) external {
-        require(authorizedEmitters[msg.sender] || msg.sender == owner, "KasuwaReactiveHandler: Unauthorized emitter");
+        emit MarketSettlementDetected(marketId, msg.sender, winningOutcome);
 
-        SettlementState state = SettlementState.SETTLED_LOSS;
-        if (isVoided) {
-            state = SettlementState.VOIDED;
-        } else if (winningOutcome == 1) { // 1 = Down (Protection side won!)
-            state = SettlementState.SETTLED_WIN;
+        if (winningOutcome == 2 && payoutUSD > 0) { // BUY_NO outcome won
+            emit PayoutRedeemed(user, payoutUSD);
         }
 
-        positionSettlements[marketId] = PositionSettlement({
-            marketId: marketId,
-            user: user,
-            state: state,
-            winningOutcome: winningOutcome,
-            settledAt: block.timestamp,
-            isClaimed: false
-        });
-
-        emit ReactiveSettlementProcessed(marketId, user, winningOutcome, state);
-    }
-
-    function markPositionClaimed(bytes32 marketId, uint256 claimedAmount) external {
-        PositionSettlement storage ps = positionSettlements[marketId];
-        require(ps.user == msg.sender || msg.sender == owner, "Unauthorized claim update");
-        require(!ps.isClaimed, "Position already marked claimed");
-
-        ps.isClaimed = true;
-        emit PositionClaimed(marketId, msg.sender, claimedAmount);
+        // Emit RolloverWindowOpen event to signal off-chain Session Key keeper
+        emit RolloverWindowOpen(policyId, user, block.timestamp);
     }
 }

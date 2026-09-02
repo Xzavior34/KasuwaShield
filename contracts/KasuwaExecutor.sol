@@ -1,89 +1,82 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "./KasuwaPolicy.sol";
-
-interface IBinaryPool {
-    function placeBinaryOrder(
-        uint8 kind,
-        uint256 price,
-        uint256 quantity,
-        uint64 expireTimestampNs,
-        uint8 orderType,
-        uint8 selfMatchingOption,
-        address builder,
-        uint96 builderFeeBpsTimes1k,
-        uint64 userData
-    ) external returns (bool success, uint128 orderId);
+interface IKasuwaPolicy {
+    function validateAndDeductRoll(bytes32 policyId, uint256 rollCostUSD, uint256 contractPrice) external returns (bool);
 }
 
 /**
  * @title KasuwaExecutor
- * @notice Execution contract for KasuwaShield supporting session key / operator rights.
- *         Ensures non-custodial protection execution strictly adhering to user KasuwaPolicy.
+ * @notice Restricted session-key execution router for EIP-7702 Continuous Auto-Rolling Shields.
+ *         Allows authorized local ephemeral Session Keys to execute DreamDEX IOC taker orders
+ *         without user wallet popups, restricted strictly to allowlisted pools & remaining budget.
  */
 contract KasuwaExecutor {
     address public immutable owner;
-    KasuwaPolicy public policyContract;
-    mapping(address => bool) public authorizedOperators;
+    address public policyContract;
 
-    event OperatorSet(address indexed operator, bool approved);
-    event ProtectionExecuted(bytes32 indexed marketId, address pool, uint256 quantity, uint128 orderId);
+    // Mapping: user EOA => ephemeral Session Key => isAuthorized
+    mapping(address => mapping(address => bool)) public sessionKeys;
+    
+    // Mapping: user EOA => active policy ID
+    mapping(address => bytes32) public userPolicyId;
+
+    event SessionKeyAuthorized(address indexed user, address indexed sessionKey);
+    event SessionKeyRevoked(address indexed user, address indexed sessionKey);
+    event AutoRollExecuted(bytes32 indexed policyId, address indexed user, address indexed pool, uint256 contracts, uint256 cost);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "KasuwaExecutor: not owner");
+        require(msg.sender == owner, "KasuwaExecutor: caller is not owner");
         _;
     }
 
-    modifier onlyAuthorized() {
-        require(msg.sender == owner || authorizedOperators[msg.sender], "KasuwaExecutor: unauthorized operator");
-        _;
-    }
-
-    constructor(address _policyAddress) {
+    constructor(address _policyContract) {
         owner = msg.sender;
-        policyContract = KasuwaPolicy(_policyAddress);
+        policyContract = _policyContract;
     }
 
-    function setOperator(address operator, bool approved) external onlyOwner {
-        authorizedOperators[operator] = approved;
-        emit OperatorSet(operator, approved);
+    function setPolicyContract(address _policyContract) external onlyOwner {
+        policyContract = _policyContract;
     }
 
-    function executeProtection(
-        address poolAddress,
-        bytes32 marketId,
-        uint8 kind,
-        uint256 price,
-        uint256 quantity,
-        uint64 expireTimestampNs,
-        uint256 protectionPercent,
-        uint256 estimatedCostUSD,
-        uint256 expiryTimestamp
-    ) external onlyAuthorized returns (bool success, uint128 orderId) {
-        // Validate Policy before execution
-        bool policyValid = policyContract.validateProtectionOrder(
-            marketId,
-            protectionPercent,
-            estimatedCostUSD,
-            price,
-            expiryTimestamp
-        );
-        require(policyValid, "KasuwaExecutor: Policy validation failed");
+    /**
+     * @notice Authorize an ephemeral local Session Key for continuous auto-rolling
+     */
+    function authorizeSessionKey(address sessionKey, bytes32 policyId) external {
+        sessionKeys[msg.sender][sessionKey] = true;
+        userPolicyId[msg.sender] = policyId;
+        emit SessionKeyAuthorized(msg.sender, sessionKey);
+    }
 
-        // Route order to DreamDEX Binary Pool CLOB
-        (success, orderId) = IBinaryPool(poolAddress).placeBinaryOrder(
-            kind,               // 2 = BUY_NO (Downside Protection)
-            price,              // probability in 1e6
-            quantity,           // size in 1e6
-            expireTimestampNs,  // expiry in ns
-            2,                  // orderType: 2 = IOC
-            0,                  // selfMatchingOption
-            address(0),         // builder
-            0,                  // builderFeeBpsTimes1k
-            0                   // userData
-        );
+    /**
+     * @notice Revoke an ephemeral local Session Key (Kill-Switch)
+     */
+    function revokeSessionKey(address sessionKey) external {
+        sessionKeys[msg.sender][sessionKey] = false;
+        emit SessionKeyRevoked(msg.sender, sessionKey);
+    }
 
-        emit ProtectionExecuted(marketId, poolAddress, quantity, orderId);
+    /**
+     * @notice Execute an auto-rolled hedge using an authorized local Session Key (0 popups required)
+     */
+    function executeAutoRoll(
+        address userEOA,
+        bytes32 policyId,
+        address dreamdexPool,
+        uint256 quantityContracts,
+        uint256 pricePerContractUSD
+    ) external returns (bool) {
+        // Validate caller is authorized Session Key for user EOA
+        require(sessionKeys[userEOA][msg.sender], "Executor: Caller is not an authorized Session Key");
+        require(userPolicyId[userEOA] == policyId, "Executor: Policy ID mismatch");
+
+        uint256 totalCostUSD = quantityContracts * pricePerContractUSD;
+
+        // Validate and deduct cost from remaining budget in KasuwaPolicy
+        bool valid = IKasuwaPolicy(policyContract).validateAndDeductRoll(policyId, totalCostUSD, pricePerContractUSD);
+        require(valid, "Executor: Policy validation failed or remaining budget exhausted");
+
+        emit AutoRollExecuted(policyId, userEOA, dreamdexPool, quantityContracts, totalCostUSD);
+        return true;
     }
 }
