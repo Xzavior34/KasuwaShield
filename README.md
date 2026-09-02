@@ -1,23 +1,44 @@
 # KasuwaShield — Autonomous Portfolio Risk Agent
 
-**Tagline**: *"Don't predict the downside. Protect the position continuously."*  
-**Hackathon Submission**: Somnia × DreamDEX Event Contracts Hackathon 2026  
-**Category**: Autonomous Risk Infrastructure & Event Contracts  
-**Network**: Somnia Shannon Testnet (`Chain ID 50312`, RPC `https://dream-rpc.somnia.network`)  
-**Live Terminal**: [http://localhost:3000](http://localhost:3000)  
-**GitHub Repository**: [https://github.com/Xzavior34/KasuwaShield](https://github.com/Xzavior34/KasuwaShield)  
+> **One-liner (for the BUIDL card):** KasuwaShield turns 15-minute DreamDEX
+> Event Contracts into a continuous, zero-popup insurance policy for your
+> portfolio — sign once, stay protected for 24 hours straight.
+
+**Tagline**: *"Don't predict the downside. Protect the position continuously."*
+**Hackathon Submission**: Somnia × DreamDEX Event Contracts Hackathon 2026
+**Category**: Autonomous Risk Infrastructure & Event Contracts
+**Network**: Somnia Shannon Testnet (`Chain ID 50312`, RPC `https://dream-rpc.somnia.network`)
+**Live Terminal**: [http://localhost:3000](http://localhost:3000) (run `node server.js`)
+**GitHub Repository**: [https://github.com/Xzavior34/KasuwaShield](https://github.com/Xzavior34/KasuwaShield)
 
 ---
 
-## ⚡ Executive Summary
+## ⚡ Why KasuwaShield is different
 
-Traditional prediction markets treat event contracts as 15-minute binary gambling bets. Most tools force users to sign manual wallet transactions every 15 minutes to stay protected.
+Every 15-minute DreamDEX Event Contract is a great primitive and a terrible
+user experience: to stay hedged across a full trading day you'd need to sign
+~96 separate transactions, one per window, and never miss a beat. Nobody does
+that. So today, Event Contracts get used for single speculative bets, not for
+what they're actually good at — cheap, granular downside insurance.
 
-**KasuwaShield transforms DreamDEX Event Contracts into an Autonomous, Continuous Risk-Management Infrastructure:**
-- **Continuous Policy Configuration**: User sets exposure ($500 BTC), protection target (30%), duration (24 Hours), and max budget ($100).
-- **Ephemeral Session Keys (EIP-7702)**: The browser generates a local ECDSA Session Key. The user signs **ONE** authorization payload delegating EOA execution to `KasuwaExecutor.sol`.
-- **Zero-Popup Auto-Rolling Loop**: Every 15 minutes, when the current window settles, `KasuwaReactiveHandler.sol` emits `RolloverWindowOpen`. The background keeper automatically executes the next 15-minute hedge using the local Session Key — **with ZERO wallet popups!**
-- **Non-Custodial Kill-Switch**: The user can terminate the policy and revoke the Session Key on-chain at any time with a single click.
+**KasuwaShield is the layer that makes that insurance model usable**, by
+turning a stack of 15-minute binary contracts into one continuous policy:
+
+- **Configure once**: exposure ($500 BTC), protection target (30%), duration
+  (24h), max budget ($100).
+- **Sign once (EIP-7702)**: a locally-generated ephemeral session key gets a
+  single delegated-authorization signature from the user's EOA — scoped so it
+  can *only* call `executeAutoRoll()` on allowlisted DreamDEX pools, never
+  withdraw or transfer funds.
+- **Then it just runs**: every 15 minutes, `KasuwaReactiveHandler.sol` detects
+  window settlement and emits `RolloverWindowOpen`; the local session key
+  auto-executes the next hedge — zero wallet popups, for up to 24 hours.
+- **Kill-switch always on**: the user can revoke the session key and terminate
+  the policy on-chain in one click, at any time.
+
+No other tool in this category turns Event Contracts into a *set-and-forget*
+primitive — that's the gap KasuwaShield fills, and it's why it drives
+recurring, organic order flow to the DreamDEX CLOB instead of one-off bets.
 
 ---
 
@@ -53,6 +74,18 @@ Traditional prediction markets treat event contracts as 15-minute binary gamblin
 2. **Strict Budget Deductions**: Every auto-roll deducts cost from `remainingBudgetUSD` in `KasuwaPolicy.sol`. If `remainingBudgetUSD` drops below the roll cost, the policy terminates safely.
 3. **On-Chain Kill-Switch**: The user can revoke the Session Key on-chain at any time with a single click (`revokeSessionKey()`).
 4. **Duplicate Settlement Prevention**: `KasuwaReactiveHandler.sol` tracks processed market IDs to prevent duplicate event execution.
+
+---
+
+## 🧪 What's live vs. simulated
+
+We label this explicitly rather than let judges guess — full breakdown in
+[`FINAL_AUDIT.md`](./FINAL_AUDIT.md). Short version: Somnia RPC connectivity,
+the on-chain policy contracts, and real secp256k1 session-key generation are
+live; order execution and the Terminal UI's price/audit feed are a labeled,
+deterministic demo harness (every simulated value is tagged `isDemo: true` and
+badged `SIMULATED` in the UI) so the golden path is reproducible for judges
+without needing funded wallets or real-time 15-minute windows.
 
 ---
 

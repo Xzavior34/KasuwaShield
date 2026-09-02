@@ -1,20 +1,16 @@
+import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 import { EphemeralSessionKey, AutoRollEventLog } from "../../shared/src/index.js";
 
-// Generate local ephemeral ECDSA session keypair
+// Generate a local ephemeral secp256k1/ECDSA session keypair (real key material,
+// derived with viem — never sent to a server, never leaves the browser).
 export function generateEphemeralSessionKey(
   userEOA: `0x${string}`,
   policyId: string,
   budgetUSD: number,
   durationHours: number = 24
 ): EphemeralSessionKey {
-  // Generate deterministic/random local hex key
-  const randomHex = Array.from({ length: 32 }, () =>
-    Math.floor(Math.random() * 256).toString(16).padStart(2, "0")
-  ).join("");
-  
-  const privateKey = `0x${randomHex}` as `0x${string}`;
-  // Derive session address from private key hash for local testing
-  const address = `0x${randomHex.substring(0, 40)}` as `0x${string}`;
+  const privateKey = generatePrivateKey();
+  const address = privateKeyToAddress(privateKey);
   const now = Math.floor(Date.now() / 1000);
 
   return {
@@ -44,7 +40,11 @@ export function buildEIP7702DelegationPayload(
   };
 }
 
-// Execute auto-roll transaction using invisible Session Key (0 popups required)
+// Execute an auto-roll using the invisible local Session Key (0 wallet popups).
+// NOTE: this harness enforces the same budget/cap math as KasuwaPolicy.sol and
+// generates a placeholder tx hash for local/offline demo runs — swap in a real
+// `walletClient.sendTransaction` call (signed by `sessionKey.privateKey`) to
+// broadcast against KasuwaExecutor.sol on Somnia Shannon.
 export async function executeSessionKeyAutoRoll(
   sessionKey: EphemeralSessionKey,
   poolAddress: `0x${string}`,
@@ -67,7 +67,7 @@ export async function executeSessionKeyAutoRoll(
     (sessionKey.remainingBudgetUSD - costUSD).toFixed(2)
   );
 
-  // Generate transaction hash for the session key roll
+  // Placeholder transaction hash for the local demo harness (see NOTE above).
   const txHex = Array.from({ length: 32 }, () =>
     Math.floor(Math.random() * 256).toString(16).padStart(2, "0")
   ).join("");
