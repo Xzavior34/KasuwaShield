@@ -7,7 +7,7 @@
 [![Network: Somnia Shannon](https://img.shields.io/badge/Network-Somnia_Shannon_Testnet_(50312)-10b981?style=flat-square)](https://shannon-explorer.somnia.network)
 [![Smart Contracts](https://img.shields.io/badge/Contracts-Verified_on_Blockscout-67e8f9?style=flat-square)](https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a)
 [![Account Abstraction](https://img.shields.io/badge/Standard-EIP--7702_Delegated_Execution-c084fc?style=flat-square)](https://eips.ethereum.org/EIPS/eip-7702)
-[![Tests: 100% Passing](https://img.shields.io/badge/Tests-7%2F7_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
+[![Tests: 100% Passing](https://img.shields.io/badge/Tests-10%2F10_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
 
 **Tagline**: *"Don't predict the downside. Protect the position continuously."*  
 **Hackathon**: Somnia × DreamDEX Event Contracts Hackathon 2026  

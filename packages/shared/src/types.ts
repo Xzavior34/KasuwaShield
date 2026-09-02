@@ -15,7 +15,40 @@ export interface RiskPolicy {
   maxContractPrice: number;
   maxSlippagePercent: number;
   durationSeconds: number;
+  allowedAssets?: string[];
+  allowedContractType?: "DOWN" | "PUT" | "BOTH";
+  minLiquidityUSD?: number;
+  emergencyStop?: boolean;
   enabled: boolean;
+}
+
+export type HedgeLifecycleState =
+  | "UNPROTECTED"
+  | "RISK_DETECTED"
+  | "HEDGE_CALCULATED"
+  | "HEDGE_PENDING"
+  | "HEDGE_ACTIVE"
+  | "MONITORING"
+  | "ROLLOVER_REQUIRED"
+  | "REHEDGE_PENDING"
+  | "SETTLEMENT_PENDING"
+  | "SETTLED_PROFIT"
+  | "SETTLED_LOSS"
+  | "EXECUTION_FAILED"
+  | "RECOVERY_REQUIRED";
+
+export interface HedgeStateTransition {
+  timestamp: string;
+  fromState: HedgeLifecycleState;
+  toState: HedgeLifecycleState;
+  reason: string;
+  marketId: string;
+  asset: string;
+  hedgeRatioPct: number;
+  targetProtectionUSD: number;
+  executionStatus: "SUCCESS" | "PENDING" | "FAILED" | "RETRYING";
+  txHash?: string;
+  blockNumber?: number;
 }
 
 export interface ProtectionRecommendation {
