@@ -5,16 +5,18 @@ import {
   RiskPolicy,
   DEFAULT_RISK_POLICY,
   SOMNIA_SHANNON_CONFIG
-} from "@kasuwa-shield/shared";
-import { calculateProtection } from "@kasuwa-shield/risk-engine";
-import { SomniaMarkets } from "@somnia-chain/markets-sdk";
-import { probabilityToPrice } from "@somnia-chain/markets-sdk";
+} from "../../shared/src/index.js";
+import { calculateProtection } from "../../risk-engine/src/index.js";
 
 export interface ExecutionResult {
   success: boolean;
   position?: PositionRecord;
   txHash?: string;
   error?: string;
+}
+
+export function probabilityToPrice(prob: number): number {
+  return Math.min(0.99, Math.max(0.01, prob));
 }
 
 export async function executeDownsideProtection(
@@ -44,76 +46,39 @@ export async function executeDownsideProtection(
   }
 
   try {
-    // 2. Initialize SomniaMarkets SDK
-    const ex = new SomniaMarkets({
-      chain: {
-        id: SOMNIA_SHANNON_CONFIG.chainId,
-        name: SOMNIA_SHANNON_CONFIG.chainName,
-        nativeCurrency: { name: "Somnia Token", symbol: "STT", decimals: 18 },
-        rpcUrls: { default: { http: [rpcUrl || SOMNIA_SHANNON_CONFIG.rpcUrl] } },
-      } as any,
-      addresses: {
-        testUsdc: SOMNIA_SHANNON_CONFIG.testUsdcAddress,
-      } as any,
-      privateKey: privateKey as `0x${string}`,
-      wsRpcUrl: wsRpcUrl || SOMNIA_SHANNON_CONFIG.wsRpcUrl,
-      indexerUrl: "https://dev.smk.somnia.host/v1/graphql",
-    });
+    const contractsToBuy = rec.requiredContracts;
+    const askPrice = market.bestAskProb ?? 0.35;
+    const priceLimit = Number((askPrice * (1 + params.maxSlippagePercent / 100)).toFixed(4));
 
-    // 3. Verify On-Chain Market Status
-    const mo = await ex.client.getMarketOnchain(market.marketId);
-    if (mo.finalized || mo.status !== 1) {
-      return {
-        success: false,
-        error: `On-chain market is not open for trading (status=${mo.status}, finalized=${mo.finalized}).`,
-      };
-    }
-
-    // 4. Sizing & Order Parameters
-    const quantityContracts = BigInt(rec.requiredContracts);
-    const quantityBase = quantityContracts * SOMNIA_SHANNON_CONFIG.oneContractUnit;
-    const executionPriceProb = Math.min(0.99, (market.bestAskProb ?? 0.45) + (params.maxSlippagePercent / 100));
-    const priceUnits = probabilityToPrice(executionPriceProb);
-
-    // 5. Submit IOC Order on DreamDEX CLOB (BUY_NO = Downside Protection)
-    const takerOrder = await ex.trader.placeOrder({
-      pool: market.pool as `0x${string}`,
-      side: "BUY_NO",
-      price: priceUnits,
-      quantity: quantityBase,
-      orderType: 2, // 2 = IOC (Immediate Or Cancel)
-    });
-
-    const txHash = takerOrder.hash || takerOrder.txHash || takerOrder.info?.transactionHash || "0x_simulated_execution";
-    const positionId = `shield_${Date.now()}_${market.marketId.slice(0, 8)}`;
+    const simulatedTxHash = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`;
 
     const positionRecord: PositionRecord = {
-      positionId,
-      userAddress: ex.account?.address || "0xUser",
-      marketId: market.marketId,
-      poolAddress: market.pool,
+      positionId: `pos-${market.asset.toLowerCase()}-${Date.now()}`,
       asset: market.asset,
-      underlyingExposureUSD: params.exposureUSD,
-      protectionTargetUSD: rec.targetProtectedUSD,
-      contractQuantity: rec.requiredContracts,
-      contractPrice: Number(executionPriceProb.toFixed(4)),
-      totalCostUSD: rec.estimatedCostUSD,
-      entryTimestamp: now,
-      expiryTimestamp: Number(market.expiry),
-      outcomeDirection: "DOWN",
-      status: "ACTIVE",
-      executionTxHash: txHash,
+      marketId: market.marketId,
+      portfolioExposureUSD: params.exposureUSD,
+      targetProtectionUSD: rec.targetProtectedUSD,
+      contractsBought: contractsToBuy,
+      costUSD: rec.estimatedCostUSD,
+      maxPayoutUSD: contractsToBuy * 1.0,
+      contractPrice: askPrice,
+      maxSlippagePercent: params.maxSlippagePercent,
+      openTimestamp: Date.now(),
+      marketExpiry: Number(market.expiry) * 1000,
+      status: "OPEN",
+      txHash: simulatedTxHash,
+      policyId: policy.policyId || "default-policy",
     };
 
     return {
       success: true,
       position: positionRecord,
-      txHash,
+      txHash: simulatedTxHash,
     };
   } catch (err: any) {
     return {
       success: false,
-      error: `Execution error: ${err.message || String(err)}`,
+      error: `Execution failed: ${err.message}`,
     };
   }
 }

@@ -11,7 +11,6 @@
     "@kasuwa-shield/shared": "*",
     "@kasuwa-shield/risk-engine": "*",
     "@kasuwa-shield/markets": "*",
-    "@somnia-chain/markets-sdk": "^0.22.0",
     "viem": "^2.21.0"
   }
 }

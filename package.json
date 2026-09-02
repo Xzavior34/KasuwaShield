@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm --prefix apps/web install && npm --prefix apps/web run build",
     "test": "tsx scripts/run-tests.ts",
     "typecheck": "tsc --noEmit",
     "discover": "tsx scripts/discover-markets.ts",
@@ -22,7 +22,6 @@
     "tsx": "^4.19.0"
   },
   "dependencies": {
-    "@somnia-chain/markets-sdk": "^0.22.0",
     "viem": "^2.21.0",
     "dotenv": "^16.4.5"
   }
