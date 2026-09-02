@@ -181,16 +181,16 @@ function getProofViewHTML(status) {
         <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">Verifiable Somnia Explorer Hashes</h3>
         <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.75rem; font-family:monospace;">
           <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">EIP-7702 Delegation Tx (Session Key Grant)</span><span style="color:#ffffff;">0x8a92f03d12a4b89c72e411b932c0211598f39b1a</span></div>
-            <a href="https://shannon-explorer.somnia.network/tx/0x8a92f03d12a4b89c72e411b932c0211598f39b1a" target="_blank" style="color:#34d399;">Explorer ↗</a>
+            <div><span style="color:#94a3b8; display:block;">Live Shannon Testnet Block #${status.latestBlock}</span><span style="color:#ffffff;">https://shannon-explorer.somnia.network/block/${status.latestBlock}</span></div>
+            <a href="https://shannon-explorer.somnia.network/block/${status.latestBlock}" target="_blank" style="color:#34d399;">Block Explorer ↗</a>
           </div>
           <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">Auto-Roll #1 Tx (Zero Popup Execution)</span><span style="color:#ffffff;">0x7c41e89b21a3099c6e5412f109b8823194a2871c</span></div>
-            <a href="https://shannon-explorer.somnia.network/tx/0x7c41e89b21a3099c6e5412f109b8823194a2871c" target="_blank" style="color:#34d399;">Explorer ↗</a>
+            <div><span style="color:#94a3b8; display:block;">DreamDEX Collateral Token (tUSDC) Contract</span><span style="color:#ffffff;">${status.collateralToken}</span></div>
+            <a href="https://shannon-explorer.somnia.network/address/${status.collateralToken}" target="_blank" style="color:#34d399;">Token Contract ↗</a>
           </div>
           <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
-            <div><span style="color:#94a3b8; display:block;">Somnia Reactive RolloverWindowOpen Event</span><span style="color:#ffffff;">0x3f19e4210a5b871c290119e87d4021bb819c4102</span></div>
-            <a href="https://shannon-explorer.somnia.network/tx/0x3f19e4210a5b871c290119e87d4021bb819c4102" target="_blank" style="color:#34d399;">Explorer ↗</a>
+            <div><span style="color:#94a3b8; display:block;">KasuwaShield Risk Policy Contract</span><span style="color:#ffffff;">0x43a18f29d10e42819873a90a218291b87a82910a</span></div>
+            <a href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a" target="_blank" style="color:#34d399;">Policy Contract ↗</a>
           </div>
         </div>
       </div>
