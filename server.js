@@ -198,8 +198,8 @@ function getDashboardViewHTML(status) {
             <div>
               <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Underlying Asset</label>
               <div style="display:flex; gap:0.75rem;">
-                <button style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #10b981; background:rgba(16,185,129,0.2); color:#6ee7b7; font-size:0.875rem; font-weight:600;">BTC</button>
-                <button style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #1e293b; background:#1e293b; color:#94a3b8; font-size:0.875rem;">ETH</button>
+                <button id="asset-btc-btn" onclick="selectAsset('BTC')" style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #10b981; background:rgba(16,185,129,0.2); color:#6ee7b7; font-size:0.875rem; font-weight:600; cursor:pointer;">BTC</button>
+                <button id="asset-eth-btn" onclick="selectAsset('ETH')" style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #1e293b; background:#1e293b; color:#94a3b8; font-size:0.875rem; cursor:pointer;">ETH</button>
               </div>
             </div>
             <div>
@@ -213,7 +213,7 @@ function getDashboardViewHTML(status) {
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
               <div>
                 <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Continuous Duration</label>
-                <select style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; padding:0.625rem 1rem; color:#ffffff; font-family:monospace; font-size:0.875rem; box-sizing:border-box;">
+                <select id="duration-input" style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; padding:0.625rem 1rem; color:#ffffff; font-family:monospace; font-size:0.875rem; box-sizing:border-box;" onchange="updateCalc()">
                   <option value="24">24 Hours Continuous</option>
                   <option value="168">7 Days Continuous</option>
                 </select>
@@ -254,21 +254,21 @@ function getDashboardViewHTML(status) {
               <span style="padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#34d399; font-size:0.75rem; font-weight:700;">AUTONOMOUS SHIELD ACTIVE</span>
               <span style="padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.4); color:#60a5fa; font-size:0.75rem; font-family:monospace;">🔑 SESSION KEY: ACTIVE (0 POPUPS REQUIRED)</span>
             </div>
-            <h2 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin-top:0.5rem; margin-bottom:0;">BTC Continuous Auto-Rolling Protection (24 Hours)</h2>
+            <h2 id="active-title" style="font-size:1.25rem; font-weight:700; color:#ffffff; margin-top:0.5rem; margin-bottom:0;">BTC Continuous Auto-Rolling Protection (24 Hours)</h2>
           </div>
           <button onclick="triggerKillSwitch()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#991b1b; color:#ffffff; font-weight:800; font-size:0.875rem; border:1px solid #dc2626; cursor:pointer;">TERMINATE SHIELD & REVOKE KEY</button>
         </div>
 
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Protected Exposure</span><span style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#34d399;">$150.00</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Window Cost</span><span style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#cbd5e1;">$52.50</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Remaining Budget</span><span style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#6ee7b7;">$47.50 USD</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Policy Time</span><span style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#fbbf24;">23h 48m</span></div>
+          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Protected Exposure</span><span id="active-protected" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#34d399;">$150.00</span></div>
+          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Window Cost</span><span id="active-cost" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#cbd5e1;">$52.50</span></div>
+          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Remaining Budget</span><span id="active-remaining" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#6ee7b7;">$47.50 USD</span></div>
+          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Policy Time</span><span id="active-time" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#fbbf24;">23h 59m</span></div>
         </div>
 
         <div style="background:#1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
           <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; margin:0;">⚡ Live Auto-Rolling Activity Feed (Somnia Reactivity + Session Key Keeper)</h3>
-          <div style="display:flex; flex-direction:column; gap:0.5rem; font-family:monospace; font-size:0.75rem;">
+          <div id="activity-log" style="display:flex; flex-direction:column; gap:0.5rem; font-family:monospace; font-size:0.75rem;">
             <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#34d399;">[10:05:12] ✓ EIP-7702 Session Key Delegated to KasuwaExecutor.sol</div>
             <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#cbd5e1;">[10:05:14] ✓ Window #1 Hedged: 150 BTC DOWN contracts @ $0.35 ($52.50)</div>
             <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#fbbf24;">[10:20:00] ⚡ Window #1 Settled: Somnia Reactive event callback emitted RolloverWindowOpen</div>
@@ -289,6 +289,30 @@ function getDashboardViewHTML(status) {
     </div>
 
     <script>
+      let selectedAsset = 'BTC';
+
+      function selectAsset(asset) {
+        selectedAsset = asset;
+        const btcBtn = document.getElementById('asset-btc-btn');
+        const ethBtn = document.getElementById('asset-eth-btn');
+        if (asset === 'BTC') {
+          btcBtn.style.border = '1px solid #10b981';
+          btcBtn.style.background = 'rgba(16,185,129,0.2)';
+          btcBtn.style.color = '#6ee7b7';
+          ethBtn.style.border = '1px solid #1e293b';
+          ethBtn.style.background = '#1e293b';
+          ethBtn.style.color = '#94a3b8';
+        } else {
+          ethBtn.style.border = '1px solid #10b981';
+          ethBtn.style.background = 'rgba(16,185,129,0.2)';
+          ethBtn.style.color = '#6ee7b7';
+          btcBtn.style.border = '1px solid #1e293b';
+          btcBtn.style.background = '#1e293b';
+          btcBtn.style.color = '#94a3b8';
+        }
+        updateCalc();
+      }
+
       function updateCalc() {
         const expInput = document.getElementById('exposure-input');
         const targetInput = document.getElementById('target-input');
@@ -320,6 +344,22 @@ function getDashboardViewHTML(status) {
       }
 
       function executeProtection() {
+        const exp = parseFloat(document.getElementById('exposure-input').value || 500);
+        const pct = parseFloat(document.getElementById('target-input').value || 30);
+        const bud = parseFloat(document.getElementById('budget-input').value || 100);
+        const durationHours = document.getElementById('duration-input').value || '24';
+
+        const targetUSD = ((exp * pct) / 100).toFixed(2);
+        const contracts = Math.ceil((exp * pct) / 100);
+        const windowCost = (contracts * 0.35).toFixed(2);
+        const remBudget = (bud - parseFloat(windowCost)).toFixed(2);
+
+        document.getElementById('active-title').innerText = selectedAsset + ' Continuous Auto-Rolling Protection (' + (durationHours === '24' ? '24 Hours' : '7 Days') + ')';
+        document.getElementById('active-protected').innerText = '$' + targetUSD;
+        document.getElementById('active-cost').innerText = '$' + windowCost;
+        document.getElementById('active-remaining').innerText = '$' + remBudget + ' USD';
+        document.getElementById('active-time').innerText = (durationHours === '24' ? '23h 59m' : '6d 23h');
+
         document.getElementById('setup-card').style.display = 'none';
         document.getElementById('active-card').style.display = 'flex';
       }
