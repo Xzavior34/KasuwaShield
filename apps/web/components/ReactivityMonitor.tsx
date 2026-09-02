@@ -13,9 +13,10 @@ interface ReactivityMonitorProps {
     validatorConfirmationMs: number;
     totalLatencyMs: number;
   };
+  isRpcFallback?: boolean;
 }
 
-export function ReactivityMonitor({ reactivityLogs, latencyMetrics }: ReactivityMonitorProps) {
+export function ReactivityMonitor({ reactivityLogs, latencyMetrics, isRpcFallback = false }: ReactivityMonitorProps) {
   return (
     <div className="bg-[#0b101d] rounded-xl p-5 border border-slate-800 space-y-4 shadow-xl font-mono">
       {/* Header */}
@@ -28,18 +29,25 @@ export function ReactivityMonitor({ reactivityLogs, latencyMetrics }: Reactivity
             </h3>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Native Somnia Reactivity Log Stream • Sub-Second Execution Benchmark
+            Native Somnia Reactivity Event Stream • Event-Driven Automation Benchmark
           </p>
         </div>
-        <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-          TOTAL LATENCY: {latencyMetrics.totalLatencyMs}ms
-        </span>
+        <div className="flex items-center space-x-2">
+          {isRpcFallback && (
+            <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+              RPC FALLBACK: DEMO TELEMETRY ACTIVE
+            </span>
+          )}
+          <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
+            TOTAL LATENCY: {latencyMetrics.totalLatencyMs}ms (DEMO)
+          </span>
+        </div>
       </div>
 
       {/* Latency Benchmark Bar */}
       <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <span className="text-[10px] text-slate-400 uppercase font-bold block">
-          SUB-SECOND LATENCY PIPELINE BENCHMARK (~133ms TOTAL)
+          EVENT-DRIVEN AUTOMATION LATENCY BENCHMARK (~133ms DEMO TOTAL)
         </span>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">

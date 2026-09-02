@@ -32,7 +32,7 @@ export function DelegatedExecutionPanel({ delegationMeta }: DelegatedExecutionPa
             </h3>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            EIP-7702 Type-4 Account Delegation • Separate Session Authorization Layer
+            EIP-7702 Type-4 Account Delegation • 0 Popups Required After 1st Authorization
           </p>
         </div>
         <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
@@ -83,8 +83,8 @@ export function DelegatedExecutionPanel({ delegationMeta }: DelegatedExecutionPa
         </div>
 
         <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
-          <span className="text-slate-400 text-[11px] uppercase block">Wallet Popups Required</span>
-          <span className="text-emerald-400 font-bold">{delegationMeta.popupRequired}</span>
+          <span className="text-slate-400 text-[11px] uppercase block">Wallet Signature Friction</span>
+          <span className="text-emerald-400 font-bold">0 POPUPS REQUIRED AFTER 1ST AUTHORIZATION</span>
         </div>
       </div>
 
