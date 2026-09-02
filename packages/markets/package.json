@@ -1,0 +1,15 @@
+{
+  "name": "@kasuwa-shield/markets",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@kasuwa-shield/shared": "workspace:*",
+    "@somnia-chain/markets-sdk": "^0.22.0",
+    "viem": "^2.21.0"
+  }
+}

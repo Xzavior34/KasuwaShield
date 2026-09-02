@@ -1,0 +1,29 @@
+{
+  "name": "kasuwa-shield",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Programmable Downside Protection using DreamDEX Event Contracts on Somnia Network",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "discover": "tsx scripts/discover-markets.ts",
+    "inspect": "tsx scripts/inspect-market.ts",
+    "preflight": "tsx scripts/demo-preflight.ts",
+    "smoke": "tsx scripts/testnet-smoke.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "tsx": "^4.19.0"
+  },
+  "dependencies": {
+    "@somnia-chain/markets-sdk": "^0.22.0",
+    "viem": "^2.21.0",
+    "dotenv": "^16.4.5"
+  }
+}
