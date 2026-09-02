@@ -11,6 +11,7 @@ interface AppShellProps {
   onTriggerStressTest: () => void;
   riskScore: number;
   coveragePct: number;
+  protectionGapPct: number;
 }
 
 export function AppShell({
@@ -20,6 +21,7 @@ export function AppShell({
   onTriggerStressTest,
   riskScore,
   coveragePct,
+  protectionGapPct,
 }: AppShellProps) {
   const getStatusBadge = () => {
     switch (systemState) {
@@ -30,7 +32,7 @@ export function AppShell({
       case "RISK_EVALUATING":
         return { label: "THRESHOLD BREACHED", color: "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse" };
       case "EXECUTING":
-        return { label: "AUTONOMOUS AUTO-ROLL", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40 animate-pulse" };
+        return { label: "EIP-7702 AUTO-ROLL", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40 animate-pulse" };
       case "PROTECTED":
       case "NORMAL":
       default:
@@ -121,6 +123,13 @@ export function AppShell({
             </div>
 
             <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
+              <span className="text-[10px] text-slate-400 uppercase block">Protection Gap</span>
+              <span className={`text-sm font-bold ${protectionGapPct > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                {protectionGapPct.toFixed(1)}%
+              </span>
+            </div>
+
+            <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
               <span className="text-[10px] text-slate-400 uppercase block">Current Risk</span>
               <span className={`text-sm font-bold ${riskScore > 60 ? "text-rose-400" : "text-emerald-400"}`}>
                 {riskScore} / 100
@@ -135,18 +144,13 @@ export function AppShell({
             </div>
 
             <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase block">Automation</span>
-              <span className="text-sm font-bold text-cyan-400">● ENABLED</span>
-            </div>
-
-            <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase block">User Intervention</span>
+              <span className="text-[10px] text-slate-400 uppercase block">User Interventions</span>
               <span className="text-sm font-bold text-emerald-400">0 ACTIONS</span>
             </div>
 
             <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
               <span className="text-[10px] text-slate-400 uppercase block">Event → Execution</span>
-              <span className="text-xs font-bold text-slate-300">133ms <span className="text-[9px] text-amber-400">(DEMO LATENCY)</span></span>
+              <span className="text-xs font-bold text-slate-300">133ms <span className="text-[9px] text-amber-400">(DEMO)</span></span>
             </div>
           </div>
         </div>
@@ -163,7 +167,7 @@ export function AppShell({
           <span>KasuwaShield — Somnia × DreamDEX Event Contracts Hackathon 2026</span>
         </div>
         <div className="mt-2 sm:mt-0 text-[11px] text-slate-400">
-          <span>Programmable Downside Protection Infrastructure • EIP-7702 Ephemeral Session Keys</span>
+          <span>Programmable Downside Protection Infrastructure • EIP-7702 Delegated Execution</span>
         </div>
       </footer>
     </div>

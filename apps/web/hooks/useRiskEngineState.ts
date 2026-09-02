@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 export type SystemState =
   | "IDLE"
@@ -28,7 +28,7 @@ export interface ReactivityEvent {
   id: string;
   timestamp: string;
   eventType: string;
-  blockNumber: number;
+  blockNumber: string;
   source: string;
   status: "RECEIVED" | "EVALUATED" | "DISPATCHED" | "CONFIRMED";
   isDemo?: boolean;
@@ -55,6 +55,7 @@ export interface ProtectionLadderItem {
   expiryTime: string;
   status: "EXPIRED" | "ROLLED" | "ACTIVE" | "QUEUED";
   executionTime: string;
+  isDemo?: boolean;
 }
 
 const INITIAL_PRICE_POINTS: PricePoint[] = [
@@ -73,6 +74,7 @@ export function useRiskEngineState() {
   const [systemState, setSystemState] = useState<SystemState>("NORMAL");
   const [isSimulationRunning, setIsSimulationRunning] = useState<boolean>(false);
   const [simulationProgress, setSimulationProgress] = useState<number>(0);
+  const [showFinalSummaryCard, setShowFinalSummaryCard] = useState<boolean>(false);
 
   // Portfolio metrics
   const portfolioExposureUSD = 25000;
@@ -83,61 +85,69 @@ export function useRiskEngineState() {
   const [riskScore, setRiskScore] = useState<number>(34);
   const [userInteractionsCount, setUserInteractionsCount] = useState<number>(0);
 
+  // Calculated Protection Gap
+  const protectionGapPct = Math.max(0, targetHedgeCoveragePct - currentHedgeCoveragePct);
+
   // Dynamic price data for Recharts
   const [priceHistory, setPriceHistory] = useState<PricePoint[]>(INITIAL_PRICE_POINTS);
   const [currentBtcPrice, setCurrentBtcPrice] = useState<number>(64800);
   const [currentEthPrice, setCurrentEthPrice] = useState<number>(3440);
 
-  // Latencies (ms)
+  // Latencies (explicitly labeled DEMO LATENCY)
   const latencyMetrics = {
     eventDetectionMs: 12,
     riskEvaluationMs: 18,
     handlerDispatchMs: 41,
     validatorConfirmationMs: 62,
     totalLatencyMs: 133,
+    isDemo: true,
   };
 
-  // Somnia Reactivity Stream
+  // Somnia Reactivity Stream (Strictly Labeled DEMO EVENT)
   const [reactivityLogs, setReactivityLogs] = useState<ReactivityEvent[]>([
     {
       id: "ev-1",
       timestamp: "14:52:10.124",
       eventType: "SOMNIA_BLOCK_FINALIZED",
-      blockNumber: 1284920,
+      blockNumber: "DEMO #1284920",
       source: "Somnia.sol",
       status: "CONFIRMED",
+      isDemo: true,
     },
     {
       id: "ev-2",
       timestamp: "14:53:01.481",
       eventType: "DREAMDEX_POOL_TICK_UPDATED",
-      blockNumber: 1284921,
+      blockNumber: "DEMO #1284921",
       source: "DreamDEXPool.sol",
       status: "EVALUATED",
+      isDemo: true,
     },
   ]);
 
-  // Audit Ledger
+  // Audit Ledger (Strictly Labeled SIMULATED)
   const [auditLedger, setAuditLedger] = useState<AuditRecord[]>([
     {
       id: "aud-1",
       time: "14:30:00",
       event: "PERIODIC_CHECK",
       action: "MAINTAIN_COVERAGE",
-      contract: "0x31a8...91ac",
+      contract: "0x31a8...91ac (DEMO)",
       riskScore: 28,
-      txHash: "0x8a7f91c0284e912ab71c89012a4b89c72e411b932c0211598f39b1a7c41e89b",
+      txHash: "SIMULATED_TX_0x8a7f91c0284e912ab71c89012a4b89c72e411b932c0211598f39b1a7c41e89b",
       status: "CONFIRMED",
+      isDemo: true,
     },
     {
       id: "aud-2",
       time: "14:45:00",
       event: "SETTLEMENT_WINDOW_OPEN",
       action: "AUTO_ROLL",
-      contract: "0x43a1...10aa",
+      contract: "0x43a1...10aa (DEMO)",
       riskScore: 34,
-      txHash: "0x7c41e89b21a3099c6e5412f109b8823194a2871c290119e87d4021bb819c410",
+      txHash: "SIMULATED_TX_0x7c41e89b21a3099c6e5412f109b8823194a2871c290119e87d4021bb819c410",
       status: "CONFIRMED",
+      isDemo: true,
     },
   ]);
 
@@ -152,6 +162,7 @@ export function useRiskEngineState() {
       expiryTime: "14:30 UTC",
       status: "EXPIRED",
       executionTime: "14:15:02 UTC",
+      isDemo: true,
     },
     {
       id: "ladder-2",
@@ -162,6 +173,7 @@ export function useRiskEngineState() {
       expiryTime: "14:45 UTC",
       status: "ROLLED",
       executionTime: "14:30:01 UTC",
+      isDemo: true,
     },
     {
       id: "ladder-3",
@@ -172,6 +184,7 @@ export function useRiskEngineState() {
       expiryTime: "15:00 UTC",
       status: "ACTIVE",
       executionTime: "14:45:01 UTC",
+      isDemo: true,
     },
     {
       id: "ladder-4",
@@ -182,6 +195,7 @@ export function useRiskEngineState() {
       expiryTime: "15:15 UTC",
       status: "QUEUED",
       executionTime: "PENDING AUTO-ROLL",
+      isDemo: true,
     },
   ]);
 
@@ -192,35 +206,38 @@ export function useRiskEngineState() {
   const actualDollarLoss = (portfolioExposureUSD * (priceDropPct / 100));
   const riskDeltaUSD = Number((actualDollarLoss - thresholdDollarLimit).toFixed(2));
 
-  // EIP-7702 Delegation state metadata
+  // EIP-7702 & Session Authorization state metadata
   const delegationMeta = {
-    type: "0x04 SET_CODE",
-    accountEOA: "0x71C9f28a9b12c48d9012a4b89c72e411b9329A2B",
-    delegatedHandler: "0x8F31a980bc712e411b932c0211598f39b1a4C1C",
-    authNonce: 17,
+    type: "EIP-7702 DELEGATED EXECUTION",
+    accountEOA: "0x71C9f28a9b12c48d9012a4b89c72e411b9329A2B (DEMO EOA)",
+    delegatedHandler: "0x8F31a980bc712e411b932c0211598f39b1a4C1C (KasuwaExecutor)",
+    sessionAuthStatus: "ACTIVE SESSION AUTHORIZATION",
+    authNonce: "DEMO #17",
     chainId: 50312,
     permissionModel: "KasuwaExecutor Whitelist Router",
-    userSignatureState: "DELEGATED (1-Time Setup)",
-    popupRequired: "0 Popups Required",
+    userSignatureState: "SIMULATED DELEGATION",
+    popupRequired: "0 POPUPS REQUIRED",
     autonomousExecution: "ENABLED",
+    isDemo: true,
   };
 
-  // Demo Stress Test Trigger (5-8 Seconds Cascade)
+  // Demo Stress Test Trigger (7.5-Second Cascading State Machine)
   const triggerMarketStress = useCallback(() => {
     if (isSimulationRunning) return;
     setIsSimulationRunning(true);
+    setShowFinalSummaryCard(false);
     setSimulationProgress(0);
 
     const nowStr = () => new Date().toISOString().substring(11, 23);
-    const blockNum = 1284925;
+    const blockNum = "DEMO #1284925";
 
-    // Timeline Step 1: Volatility Rising (0s - 1.8s)
+    // Step 1: VOLATILITY_RISING (Risk 34 -> 61, Coverage 71%, Gap 9%)
     setSystemState("VOLATILITY_RISING");
     setSimulationProgress(15);
     setCurrentBtcPrice(63900); // Below threshold strike 64,000!
     setCurrentEthPrice(3380);
-    setRiskScore(68);
-    setCurrentHedgeCoveragePct(74.0);
+    setRiskScore(61);
+    setCurrentHedgeCoveragePct(71.0);
 
     setPriceHistory((prev) => [
       ...prev,
@@ -247,10 +264,10 @@ export function useRiskEngineState() {
       ...prev,
     ]);
 
-    // Step 2: Threshold Breached & Risk Evaluation (1.8s - 3.8s)
+    // Step 2: THRESHOLD_BREACHED (Risk 98, Coverage 58%, Gap 22%)
     setTimeout(() => {
       setSystemState("THRESHOLD_BREACHED");
-      setSimulationProgress(45);
+      setSimulationProgress(40);
       setRiskScore(98);
       setCurrentBtcPrice(62800);
       setCurrentEthPrice(3290);
@@ -273,7 +290,7 @@ export function useRiskEngineState() {
           id: `ev-stress-2`,
           timestamp: nowStr(),
           eventType: "THRESHOLD_BREACH_ALERT",
-          blockNumber: blockNum + 1,
+          blockNumber: "DEMO #1284926",
           source: "KasuwaPolicy.sol",
           status: "EVALUATED",
           isDemo: true,
@@ -282,17 +299,17 @@ export function useRiskEngineState() {
       ]);
     }, 1800);
 
-    // Step 3: Autonomous Execution via EIP-7702 (3.8s - 5.8s)
+    // Step 3: HEDGE_REQUIRED & EXECUTING (EIP-7702 Dispatch)
     setTimeout(() => {
       setSystemState("EXECUTING");
-      setSimulationProgress(75);
+      setSimulationProgress(70);
 
       setReactivityLogs((prev) => [
         {
           id: `ev-stress-3`,
           timestamp: nowStr(),
-          eventType: "EIP7702_SESSION_KEY_DISPATCHED",
-          blockNumber: blockNum + 2,
+          eventType: "EIP7702_DELEGATION_DISPATCHED",
+          blockNumber: "DEMO #1284927",
           source: "KasuwaExecutor.sol",
           status: "DISPATCHED",
           isDemo: true,
@@ -301,21 +318,22 @@ export function useRiskEngineState() {
       ]);
     }, 3800);
 
-    // Step 4: Protection Restored & Auto-Rolled (5.8s - 7.5s)
+    // Step 4: PROTECTED & PROTECTION RESTORED (Coverage 80.0%, Gap 0%, Risk 32)
     setTimeout(() => {
       setSystemState("PROTECTED");
       setSimulationProgress(100);
       setCurrentHedgeCoveragePct(80.0); // Coverage restored!
       setRiskScore(32);
+      setShowFinalSummaryCard(true);
 
-      const demoTx = "0x8a7f91c0284e912ab71c89012a4b89c72e411b932c0211598f39b1a7c41e89b";
+      const demoTx = "SIMULATED_TX_0x8a7f91c0284e912ab71c89012a4b89c72e411b932c0211598f39b1a7c41e89b";
 
       setReactivityLogs((prev) => [
         {
           id: `ev-stress-4`,
           timestamp: nowStr(),
           eventType: "EXECUTION_CONFIRMED",
-          blockNumber: blockNum + 3,
+          blockNumber: "DEMO #1284928",
           source: "DreamDEXPool.sol",
           status: "CONFIRMED",
           isDemo: true,
@@ -329,7 +347,7 @@ export function useRiskEngineState() {
           time: new Date().toISOString().substring(11, 19),
           event: "MARKET_STRESS_AUTO_ROLL",
           action: "REBALANCE_HEDGE",
-          contract: "BTC-DOWN-15M-STRESS",
+          contract: "BTC-DOWN-15M-STRESS (DEMO)",
           riskScore: 98,
           txHash: demoTx,
           status: "CONFIRMED",
@@ -348,6 +366,7 @@ export function useRiskEngineState() {
           expiryTime: "15:30 UTC",
           status: "ACTIVE",
           executionTime: `${nowStr()} UTC`,
+          isDemo: true,
         },
         ...prev.map((item) => item.status === "ACTIVE" ? { ...item, status: "ROLLED" as const } : item),
       ]);
@@ -360,11 +379,13 @@ export function useRiskEngineState() {
     systemState,
     isSimulationRunning,
     simulationProgress,
+    showFinalSummaryCard,
     portfolioExposureUSD,
     downsideThresholdPct,
     protectedNotionalUSD,
     targetHedgeCoveragePct,
     currentHedgeCoveragePct,
+    protectionGapPct,
     riskScore,
     userInteractionsCount,
     priceHistory,

@@ -6,20 +6,20 @@ import { ShieldCheck, AlertCircle } from "lucide-react";
 interface HedgeRatioDialProps {
   targetCoveragePct: number;
   currentCoveragePct: number;
+  protectionGapPct: number;
 }
 
 export function HedgeRatioDial({
   targetCoveragePct,
   currentCoveragePct,
+  protectionGapPct,
 }: HedgeRatioDialProps) {
-  const gapPct = Math.max(0, targetCoveragePct - currentCoveragePct);
-
   let stateColor = "stroke-emerald-400 text-emerald-400 bg-emerald-500/10 border-emerald-500/30";
   let statusText = "Protection Sufficient";
 
   if (currentCoveragePct < 60) {
     stateColor = "stroke-rose-500 text-rose-400 bg-rose-500/10 border-rose-500/30 animate-pulse";
-    statusText = "Protection Breached";
+    statusText = "⚠ HEDGE REQUIRED";
   } else if (currentCoveragePct < targetCoveragePct) {
     stateColor = "stroke-amber-400 text-amber-400 bg-amber-500/10 border-amber-500/30";
     statusText = "Protection Approaching Expiry";
@@ -86,7 +86,7 @@ export function HedgeRatioDial({
         </div>
       </div>
 
-      {/* Target vs Current Breakdown */}
+      {/* Target vs Current Breakdown & Protection Gap */}
       <div className="grid grid-cols-3 gap-2 text-center text-xs bg-slate-900/90 p-2.5 rounded-lg border border-slate-800">
         <div>
           <span className="text-slate-400 text-[10px] uppercase block">Target</span>
@@ -97,9 +97,9 @@ export function HedgeRatioDial({
           <span className="font-bold text-emerald-400">{currentCoveragePct.toFixed(1)}%</span>
         </div>
         <div>
-          <span className="text-slate-400 text-[10px] uppercase block">Coverage Gap</span>
-          <span className={`font-bold ${gapPct > 0 ? "text-rose-400" : "text-emerald-400"}`}>
-            {gapPct.toFixed(1)}%
+          <span className="text-slate-400 text-[10px] uppercase block">Protection Gap</span>
+          <span className={`font-bold ${protectionGapPct > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+            {protectionGapPct.toFixed(1)}%
           </span>
         </div>
       </div>

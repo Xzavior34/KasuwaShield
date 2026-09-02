@@ -41,7 +41,7 @@ function rpcCall(method, params = []) {
 
 async function getLiveTestnetStatus() {
   const blockHex = await rpcCall("eth_blockNumber");
-  const blockNum = blockHex ? parseInt(blockHex, 16) : 14829103;
+  const blockNum = blockHex ? parseInt(blockHex, 16) : 1284925;
   return {
     chain: "Somnia Shannon Testnet",
     chainId: 50312,
@@ -57,17 +57,20 @@ function getHeaderHTML(activeRoute) {
   const replayColor = activeRoute.startsWith('/replay') ? '#10b981' : '#94a3b8';
 
   return `
-    <header style="border-bottom:1px solid #1e293b; background:rgba(2,6,23,0.95); position:sticky; top:0; z-index:50;">
-      <div style="max-width:80rem; margin:0 auto; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between;">
+    <header style="border-bottom:1px solid #1e293b; background:rgba(6,9,17,0.95); position:sticky; top:0; z-index:50;">
+      <div style="max-width:96rem; margin:0 auto; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:0.75rem;">
-          <div style="width:2.25rem; height:2.25rem; border-radius:0.5rem; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); display:flex; align-items:center; justify-content:center; font-size:1.25rem;">🛡️</div>
-          <a href="/" style="font-weight:800; font-size:1.25rem; color:#ffffff; text-decoration:none;">Kasuwa<span style="color:#10b981;">Shield</span></a>
+          <div style="width:2.25rem; height:2.25rem; border-radius:0.5rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; justify-content:center; font-size:1.25rem;">🛡️</div>
+          <div>
+            <a href="/" style="font-weight:800; font-size:1.125rem; color:#ffffff; text-decoration:none; font-family:monospace;">KASUWA<span style="color:#10b981;">SHIELD</span></a>
+            <span style="font-size:0.65rem; color:#94a3b8; font-family:monospace; display:block;">INSTITUTIONAL QUANT DOWNSIDE PROTECTION</span>
+          </div>
         </div>
-        <div style="display:flex; align-items:center; gap:1.5rem; font-size:0.875rem; font-weight:600;">
+        <div style="display:flex; align-items:center; gap:1.5rem; font-size:0.875rem; font-weight:600; font-family:monospace;">
           <a href="/" style="color:${dashColor}; text-decoration:none;">Dashboard</a>
           <a href="/proof/demo-pos-1" style="color:${proofColor}; text-decoration:none;">On-Chain Proof</a>
           <a href="/replay" style="color:${replayColor}; text-decoration:none;">Replay Mode</a>
-          <span style="padding:0.25rem 0.75rem; border-radius:9999px; background:#1e293b; border:1px solid #334155; color:#cbd5e1; font-size:0.75rem;">Somnia Shannon (50312)</span>
+          <span style="padding:0.25rem 0.75rem; border-radius:0.375rem; background:#1e293b; border:1px solid #334155; color:#cbd5e1; font-size:0.75rem;">Somnia Shannon (50312)</span>
         </div>
       </div>
     </header>
@@ -76,44 +79,42 @@ function getHeaderHTML(activeRoute) {
 
 function getReplayViewHTML() {
   return `
-    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem;">
+    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
       <div style="padding:1rem; border-radius:0.75rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fcd34d; font-size:0.875rem; display:flex; align-items:center; justify-content:space-between;">
-        <p style="margin:0;"><strong>HISTORICAL REPLAY MODE:</strong> Dynamic backtest engine computing protection payouts over historical volatility windows.</p>
-        <span style="padding:0.25rem 0.625rem; border-radius:0.375rem; background:rgba(245,158,11,0.25); font-weight:700; font-family:monospace; color:#fef3c7;">DYNAMIC BACKTEST ENGINE</span>
+        <p style="margin:0;"><strong>HISTORICAL REPLAY MODE:</strong> Simulated backtest results over historical volatility windows.</p>
+        <span style="padding:0.25rem 0.625rem; border-radius:0.375rem; background:rgba(245,158,11,0.25); font-weight:700; color:#fef3c7;">DYNAMIC BACKTEST ENGINE</span>
       </div>
 
-      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
+      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
         <div style="display:flex; align-items:center; justify-content:space-between;">
           <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">Dynamic Strategy Backtest Engine</h1>
-          <button onclick="runDynamicBacktest()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ RUN DYNAMIC VOLATILITY BACKTEST</button>
+          <button onclick="runDynamicBacktest()" style="padding:0.625rem 1.25rem; border-radius:0.5rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ RUN DYNAMIC VOLATILITY BACKTEST</button>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; background:#0f172a; padding:1rem; border-radius:0.5rem; border:1px solid #334155;">
           <div>
             <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Simulated Portfolio Exposure ($)</label>
-            <input id="replay-exposure" type="number" value="1000" style="width:100%; background:#0f172a; border:1px solid #334155; border-radius:0.5rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
+            <input id="replay-exposure" type="number" value="25000" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
           </div>
           <div>
             <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Protection Coverage Target (%)</label>
-            <input id="replay-target-pct" type="number" value="30" style="width:100%; background:#0f172a; border:1px solid #334155; border-radius:0.5rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
+            <input id="replay-target-pct" type="number" value="80" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
           </div>
           <div>
             <label style="display:block; font-size:0.75rem; color:#94a3b8; margin-bottom:0.25rem;">Contract Ask Price ($)</label>
-            <input id="replay-price" type="number" value="0.35" step="0.05" style="width:100%; background:#0f172a; border:1px solid #334155; border-radius:0.5rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
+            <input id="replay-price" type="number" value="0.35" step="0.05" style="width:100%; background:#0b101d; border:1px solid #334155; border-radius:0.375rem; padding:0.5rem; color:#fff; font-family:monospace;" oninput="recalculateReplay()"/>
           </div>
         </div>
 
-        <div id="simulation-output" style="display:flex; flex-direction:column; gap:0.75rem; font-family:monospace; font-size:0.85rem;">
+        <div id="simulation-output" style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.85rem;">
         </div>
       </div>
     </div>
 
     <script>
-      var backtestCount = 0;
       var historicalWindows = [
-        { asset: 'BTC', drop: '-2.4% Drop in 15m', time: '2026-08-28 14:15 UTC', defaultExp: 1000, defaultPct: 30, price: 0.35 },
-        { asset: 'ETH', drop: '-4.1% Drop in 1h', time: '2026-08-25 09:30 UTC', defaultExp: 2500, defaultPct: 40, price: 0.40 },
-        { asset: 'SOL', drop: '-3.2% Drop in 15m', time: '2026-08-20 18:45 UTC', defaultExp: 1500, defaultPct: 35, price: 0.30 }
+        { asset: 'BTC', drop: '-2.4% Drop in 15m', time: '2026-08-28 14:15 UTC', defaultExp: 25000, defaultPct: 80, price: 0.35 },
+        { asset: 'ETH', drop: '-4.1% Drop in 1h', time: '2026-08-25 09:30 UTC', defaultExp: 10000, defaultPct: 80, price: 0.40 }
       ];
 
       function computeBacktestRow(w) {
@@ -131,7 +132,7 @@ function getReplayViewHTML() {
         var payoutUSD = (contracts * 1.00).toFixed(2);
         var netProtectedUSD = (parseFloat(payoutUSD) - parseFloat(premiumUSD)).toFixed(2);
 
-        return '<div style="padding:1.25rem; background:#1e293b; border-radius:0.75rem; border:1px solid #334155; display:flex; flex-direction:column; gap:0.75rem;">' +
+        return '<div style="padding:1.25rem; background:#0f172a; border-radius:0.5rem; border:1px solid #334155; display:flex; flex-direction:column; gap:0.75rem;">' +
           '<div style="display:flex; justify-content:space-between; border-bottom:1px solid #334155; padding-bottom:0.5rem;">' +
             '<span style="font-weight:700; color:#ffffff;">' + w.asset + ' — ' + w.time + '</span>' +
             '<span style="color:#fb7185; font-weight:700;">' + w.drop + '</span>' +
@@ -154,30 +155,6 @@ function getReplayViewHTML() {
         }
         container.innerHTML = html;
       }
-
-      function runDynamicBacktest() {
-        backtestCount++;
-        var assets = ['AVAX', 'LINK', 'BNB', 'NEAR'];
-        var asset = assets[backtestCount % assets.length];
-        var dropPct = (2.5 + Math.random() * 3).toFixed(1);
-        var nowTime = new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
-        
-        var newWin = {
-          asset: asset,
-          drop: '-' + dropPct + '% Sudden Volatility Drop',
-          time: nowTime,
-          defaultExp: 1200 + (backtestCount * 300),
-          defaultPct: 30,
-          price: 0.32
-        };
-        historicalWindows.unshift(newWin);
-        recalculateReplay();
-      }
-
-      // Initial calculation on load
-      window.onload = function() {
-        recalculateReplay();
-      };
       recalculateReplay();
     </script>
   `;
@@ -185,31 +162,31 @@ function getReplayViewHTML() {
 
 function getProofViewHTML(status) {
   return `
-    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem;">
-      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; align-items:center; justify-content:space-between;">
+    <div style="max-width:56rem; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
+      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; align-items:center; justify-content:space-between;">
         <div>
-          <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">On-Chain Proof Verification</h1>
-          <p style="font-size:0.75rem; color:#94a3b8; font-family:monospace; margin-top:0.25rem; margin-bottom:0;">Position ID: demo-pos-1 | Verified on Block #${status.latestBlock}</p>
+          <h1 style="font-size:1.25rem; font-weight:700; color:#ffffff; margin:0;">Proof Verification (Demo Mode)</h1>
+          <p style="font-size:0.75rem; color:#94a3b8; margin-top:0.25rem; margin-bottom:0;">Position ID: demo-pos-1 | Verified on Block #${status.latestBlock}</p>
         </div>
-        <span style="padding:0.375rem 0.875rem; border-radius:9999px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#34d399; font-size:0.75rem; font-family:monospace; font-weight:700;">✓ EIP-7702 VERIFIED</span>
+        <span style="padding:0.375rem 0.875rem; border-radius:9999px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fcd34d; font-size:0.75rem; font-weight:700;">SIMULATED TRANSACTION</span>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
           <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">Continuous Policy Parameters</h3>
-          <div style="font-size:0.75rem; font-family:monospace; display:flex; flex-direction:column; gap:0.5rem; color:#cbd5e1;">
-            <div style="display:flex; justify-content:space-between;"><span>Asset:</span><strong style="color:#ffffff;">BTC ($500)</strong></div>
-            <div style="display:flex; justify-content:space-between;"><span>Target Protection:</span><strong style="color:#34d399;">$150.00 (30%)</strong></div>
+          <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:0.5rem; color:#cbd5e1;">
+            <div style="display:flex; justify-content:space-between;"><span>Asset & Exposure:</span><strong style="color:#ffffff;">BTC ($25,000)</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>Target Protection:</span><strong style="color:#34d399;">$20,000.00 (80%)</strong></div>
             <div style="display:flex; justify-content:space-between;"><span>Protection Duration:</span><span>24 Hours Continuous</span></div>
             <div style="display:flex; justify-content:space-between;"><span>Total Budget Allocated:</span><span>$100.00 USD</span></div>
-            <div style="display:flex; justify-content:space-between;"><span>Session Key Mode:</span><strong style="color:#34d399;">EIP-7702 Invisible Local Key</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>Delegated Execution:</span><strong style="color:#34d399;">EIP-7702 (0 Popups Required)</strong></div>
             <div style="display:flex; justify-content:space-between;"><span>Block Height:</span><span>#${status.latestBlock}</span></div>
           </div>
         </div>
 
-        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
+        <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
           <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">KasuwaPolicy Safety Controls</h3>
-          <div style="font-size:0.75rem; font-family:monospace; display:flex; flex-direction:column; gap:0.5rem; color:#cbd5e1;">
+          <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:0.5rem; color:#cbd5e1;">
             <div style="display:flex; justify-content:space-between;"><span>Max Protection Cap:</span><span style="color:#34d399;">50%</span></div>
             <div style="display:flex; justify-content:space-between;"><span>Remaining Budget:</span><span style="color:#34d399;">$47.50 USD</span></div>
             <div style="display:flex; justify-content:space-between;"><span>Max Contract Price:</span><span style="color:#34d399;">0.85</span></div>
@@ -218,18 +195,18 @@ function getProofViewHTML(status) {
         </div>
       </div>
 
-      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
         <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; border-bottom:1px solid #1e293b; padding-bottom:0.5rem; margin:0;">Verifiable Somnia Explorer Hashes</h3>
-        <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.75rem; font-family:monospace;">
-          <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.75rem;">
+          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
             <div><span style="color:#94a3b8; display:block;">Live Shannon Testnet Block #${status.latestBlock}</span><span style="color:#ffffff;">https://shannon-explorer.somnia.network/block/${status.latestBlock}</span></div>
             <a href="https://shannon-explorer.somnia.network/block/${status.latestBlock}" target="_blank" style="color:#34d399;">Block Explorer ↗</a>
           </div>
-          <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
+          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
             <div><span style="color:#94a3b8; display:block;">DreamDEX Collateral Token (tUSDC) Contract</span><span style="color:#ffffff;">${status.collateralToken}</span></div>
             <a href="https://shannon-explorer.somnia.network/address/${status.collateralToken}" target="_blank" style="color:#34d399;">Token Contract ↗</a>
           </div>
-          <div style="padding:0.75rem; background:#1e293b; border-radius:0.75rem; display:flex; align-items:center; justify-content:space-between;">
+          <div style="padding:0.75rem; background:#0f172a; border-radius:0.5rem; display:flex; align-items:center; justify-content:space-between;">
             <div><span style="color:#94a3b8; display:block;">KasuwaShield Risk Policy Contract</span><span style="color:#ffffff;">0x43a18f29d10e42819873a90a218291b87a82910a</span></div>
             <a href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a" target="_blank" style="color:#34d399;">Policy Contract ↗</a>
           </div>
@@ -241,231 +218,21 @@ function getProofViewHTML(status) {
 
 function getDashboardViewHTML(status) {
   return `
-    <div style="display:flex; flex-direction:column; gap:2rem;">
-      <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:2rem;">
+    <div style="display:flex; flex-direction:column; gap:1.5rem; font-family:monospace;">
+      <div style="background:#0b101d; border:1px solid #1e293b; border-radius:0.75rem; padding:1.5rem;">
         <div style="max-width:48rem;">
           <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-size:0.75rem; font-weight:600; margin-bottom:1rem;">
-            <span>EIP-7702 CONTINUOUS AUTO-ROLLING SHIELD — BLOCK #${status.latestBlock}</span>
+            <span>EIP-7702 DELEGATED EXECUTION — BLOCK #${status.latestBlock}</span>
           </div>
-          <h1 style="font-size:2rem; font-weight:800; color:#ffffff; margin-bottom:0.75rem;">
+          <h1 style="font-size:1.75rem; font-weight:800; color:#ffffff; margin-bottom:0.75rem;">
             Don't predict the downside. <span style="color:#10b981;">Protect the position continuously.</span>
           </h1>
-          <p style="color:#94a3b8; font-size:1rem; line-height:1.5; margin:0;">
-            KasuwaShield turns DreamDEX Event Contracts into an autonomous portfolio protection layer using EIP-7702 Ephemeral Session Keys & Somnia Reactivity.
+          <p style="color:#94a3b8; font-size:0.875rem; line-height:1.5; margin:0;">
+            KasuwaShield turns DreamDEX Event Contracts into an autonomous portfolio protection layer using EIP-7702 Delegated Execution & Somnia Reactivity.
           </p>
         </div>
       </div>
-
-      <div id="setup-card" style="display:grid; grid-template-columns:7fr 5fr; gap:2rem;">
-        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
-          <h2 style="font-size:1.125rem; font-weight:700; color:#ffffff; margin:0; display:flex; align-items:center; gap:0.5rem;">🛡️ Configure Continuous Shield</h2>
-          <div style="display:flex; flex-direction:column; gap:1rem;">
-            <div>
-              <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Underlying Asset</label>
-              <div style="display:flex; gap:0.75rem;">
-                <button id="asset-btc-btn" onclick="selectAsset('BTC')" style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #10b981; background:rgba(16,185,129,0.2); color:#6ee7b7; font-size:0.875rem; font-weight:600; cursor:pointer;">BTC</button>
-                <button id="asset-eth-btn" onclick="selectAsset('ETH')" style="flex:1; padding:0.625rem; border-radius:0.75rem; border:1px solid #1e293b; background:#1e293b; color:#94a3b8; font-size:0.875rem; cursor:pointer;">ETH</button>
-              </div>
-            </div>
-            <div>
-              <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Portfolio Exposure (USD)</label>
-              <input id="exposure-input" type="number" value="500" style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; padding:0.625rem 1rem; color:#ffffff; font-family:monospace; box-sizing:border-box;" oninput="updateCalc()"/>
-            </div>
-            <div>
-              <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Protection Target: <span id="target-label" style="color:#34d399; font-weight:700;">30% ($150.00)</span></label>
-              <input id="target-input" type="range" min="10" max="50" step="5" value="30" style="width:100%; accent-color:#10b981;" oninput="updateCalc()"/>
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-              <div>
-                <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Continuous Duration</label>
-                <select id="duration-input" style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; padding:0.625rem 1rem; color:#ffffff; font-family:monospace; font-size:0.875rem; box-sizing:border-box;" onchange="updateCalc()">
-                  <option value="24">24 Hours Continuous</option>
-                  <option value="168">7 Days Continuous</option>
-                </select>
-              </div>
-              <div>
-                <label style="display:block; font-size:0.75rem; font-weight:500; color:#94a3b8; margin-bottom:0.25rem;">Total Budget Cap (USD)</label>
-                <input id="budget-input" type="number" value="100" style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; padding:0.625rem 1rem; color:#ffffff; font-family:monospace; font-size:0.875rem; box-sizing:border-box;" oninput="updateCalc()"/>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:1rem; margin-bottom:1rem;">
-              <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; text-transform:uppercase; margin:0;">Continuous Policy Preview</h3>
-              <span style="padding:0.25rem 0.625rem; border-radius:9999px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-family:monospace; font-size:0.75rem;">Quality 98/100</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.875rem;">
-              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.25rem;"><span style="color:#94a3b8;">Target Protected Exposure</span><span id="preview-target" style="font-family:monospace; color:#ffffff; font-weight:700;">$150.00</span></div>
-              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.25rem;"><span style="color:#94a3b8;">Per-Window Contracts</span><span id="preview-contracts" style="font-family:monospace; color:#ffffff;">150 contracts</span></div>
-              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.25rem;"><span style="color:#94a3b8;">Est. Cost per 15m Window</span><span id="preview-cost" style="font-family:monospace; color:#34d399; font-weight:700;">$52.50</span></div>
-              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:0.25rem;"><span style="color:#94a3b8;">Session Key Delegation</span><span style="font-family:monospace; color:#6ee7b7;">EIP-7702 (1 Sign = 0 Popups)</span></div>
-            </div>
-          </div>
-
-          <div style="margin-top:2rem;">
-            <div id="budget-warn" style="display:none; margin-bottom:1rem; padding:0.75rem; border-radius:0.75rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fcd34d; font-size:0.75rem;">⚠️ Estimated cost per window ($52.50) exceeds total budget cap ($10.00). Adjust budget or exposure.</div>
-            <button id="protect-btn" onclick="executeProtection()" style="width:100%; padding:1rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:1rem; border:none; cursor:pointer;">START CONTINUOUS SHIELD (EIP-7702)</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="active-card" style="display:none; background:#0f172a; border:1px solid #10b981; border-radius:1rem; padding:2rem; flex-direction:column; gap:1.5rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:1rem;">
-          <div>
-            <div style="display:flex; align-items:center; gap:0.5rem;">
-              <span style="padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#34d399; font-size:0.75rem; font-weight:700;">AUTONOMOUS SHIELD ACTIVE</span>
-              <span style="padding:0.25rem 0.75rem; border-radius:9999px; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.4); color:#60a5fa; font-size:0.75rem; font-family:monospace;">🔑 SESSION KEY: ACTIVE (0 POPUPS REQUIRED)</span>
-            </div>
-            <h2 id="active-title" style="font-size:1.25rem; font-weight:700; color:#ffffff; margin-top:0.5rem; margin-bottom:0;">BTC Continuous Auto-Rolling Protection (24 Hours)</h2>
-          </div>
-          <div style="display:flex; gap:0.75rem;">
-            <button onclick="simulateReactiveRoll()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; border:none; cursor:pointer;">⚡ SIMULATE SOMNIA REACTIVE SETTLEMENT & AUTO-ROLL</button>
-            <button onclick="triggerKillSwitch()" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#991b1b; color:#ffffff; font-weight:800; font-size:0.875rem; border:1px solid #dc2626; cursor:pointer;">TERMINATE SHIELD & REVOKE KEY</button>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Protected Exposure</span><span id="active-protected" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#34d399;">$150.00</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Window Cost</span><span id="active-cost" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#cbd5e1;">$52.50</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Remaining Budget</span><span id="active-remaining" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#6ee7b7;">$47.50 USD</span></div>
-          <div style="background:#1e293b; padding:1rem; border-radius:0.75rem; border:1px solid #334155;"><span style="font-size:0.75rem; color:#94a3b8; display:block;">Active Policy Time</span><span id="active-time" style="font-size:1.125rem; font-weight:700; font-family:monospace; color:#fbbf24;">23h 59m</span></div>
-        </div>
-
-        <div style="background:#1e293b; border-radius:0.75rem; padding:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
-          <h3 style="font-size:0.875rem; font-weight:700; color:#ffffff; margin:0;">⚡ Live Auto-Rolling Activity Feed (Somnia Reactivity + Session Key Keeper)</h3>
-          <div id="activity-log" style="display:flex; flex-direction:column; gap:0.5rem; font-family:monospace; font-size:0.75rem;">
-            <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#34d399;">[10:05:12] ✓ EIP-7702 Session Key Delegated to KasuwaExecutor.sol</div>
-            <div style="padding:0.5rem 0.75rem; background:#0f172a; border-radius:0.5rem; color:#cbd5e1;">[10:05:14] ✓ Window #1 Hedged: 150 BTC DOWN contracts @ $0.35 ($52.50)</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="terminated-card" style="display:none; background:#0f172a; border:1px solid #dc2626; border-radius:1rem; padding:2rem; flex-direction:column; gap:1.5rem;">
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:1rem;">
-          <div>
-            <h2 style="font-size:1.5rem; font-weight:800; color:#ef4444; margin:0;">SHIELD TERMINATED & SESSION KEY REVOKED</h2>
-            <p style="font-size:0.75rem; color:#94a3b8; margin-top:0.25rem; margin-bottom:0;">On-chain kill-switch executed. Session key permissions revoked on KasuwaExecutor.sol.</p>
-          </div>
-          <a href="/proof/demo-pos-1" style="padding:0.625rem 1.25rem; border-radius:0.75rem; background:#10b981; color:#022c22; font-weight:800; font-size:0.875rem; text-decoration:none;">VIEW REVOCATION PROOF ↗</a>
-        </div>
-      </div>
     </div>
-
-    <script>
-      var selectedAsset = 'BTC';
-      var windowRollCount = 1;
-      var currentRemBudget = 47.50;
-
-      function selectAsset(asset) {
-        selectedAsset = asset;
-        var btcBtn = document.getElementById('asset-btc-btn');
-        var ethBtn = document.getElementById('asset-eth-btn');
-        if (asset === 'BTC') {
-          btcBtn.style.border = '1px solid #10b981';
-          btcBtn.style.background = 'rgba(16,185,129,0.2)';
-          btcBtn.style.color = '#6ee7b7';
-          ethBtn.style.border = '1px solid #1e293b';
-          ethBtn.style.background = '#1e293b';
-          ethBtn.style.color = '#94a3b8';
-        } else {
-          ethBtn.style.border = '1px solid #10b981';
-          ethBtn.style.background = 'rgba(16,185,129,0.2)';
-          ethBtn.style.color = '#6ee7b7';
-          btcBtn.style.border = '1px solid #1e293b';
-          btcBtn.style.background = '#1e293b';
-          btcBtn.style.color = '#94a3b8';
-        }
-        updateCalc();
-      }
-
-      function updateCalc() {
-        var expInput = document.getElementById('exposure-input');
-        var targetInput = document.getElementById('target-input');
-        var budgetInput = document.getElementById('budget-input');
-        if (!expInput || !targetInput || !budgetInput) return;
-
-        var exp = parseFloat(expInput.value || 500);
-        var pct = parseFloat(targetInput.value || 30);
-        var bud = parseFloat(budgetInput.value || 100);
-
-        var target = (exp * pct) / 100;
-        var contracts = Math.ceil(target);
-        var cost = (contracts * 0.35).toFixed(2);
-
-        if (document.getElementById('target-label')) document.getElementById('target-label').innerText = pct + '% ($' + target.toFixed(2) + ')';
-        if (document.getElementById('preview-target')) document.getElementById('preview-target').innerText = '$' + target.toFixed(2);
-        if (document.getElementById('preview-contracts')) document.getElementById('preview-contracts').innerText = contracts + ' contracts';
-        if (document.getElementById('preview-cost')) document.getElementById('preview-cost').innerText = '$' + cost;
-
-        var warn = document.getElementById('budget-warn');
-        if (warn) {
-          if (parseFloat(cost) > bud) {
-            warn.style.display = 'block';
-            warn.innerText = '⚠️ Estimated cost per window ($' + cost + ') exceeds total budget cap ($' + bud.toFixed(2) + '). Adjust budget or exposure.';
-          } else {
-            warn.style.display = 'none';
-          }
-        }
-      }
-
-      function executeProtection() {
-        var exp = parseFloat(document.getElementById('exposure-input').value || 500);
-        var pct = parseFloat(document.getElementById('target-input').value || 30);
-        var bud = parseFloat(document.getElementById('budget-input').value || 100);
-        var durationHours = document.getElementById('duration-input').value || '24';
-
-        var targetUSD = ((exp * pct) / 100).toFixed(2);
-        var contracts = Math.ceil((exp * pct) / 100);
-        var windowCost = (contracts * 0.35).toFixed(2);
-        currentRemBudget = (bud - parseFloat(windowCost)).toFixed(2);
-
-        document.getElementById('active-title').innerText = selectedAsset + ' Continuous Auto-Rolling Protection (' + (durationHours === '24' ? '24 Hours' : '7 Days') + ')';
-        document.getElementById('active-protected').innerText = '$' + targetUSD;
-        document.getElementById('active-cost').innerText = '$' + windowCost;
-        document.getElementById('active-remaining').innerText = '$' + currentRemBudget + ' USD';
-        document.getElementById('active-time').innerText = (durationHours === '24' ? '23h 59m' : '6d 23h');
-
-        document.getElementById('setup-card').style.display = 'none';
-        document.getElementById('active-card').style.display = 'flex';
-      }
-
-      function simulateReactiveRoll() {
-        windowRollCount++;
-        var windowCost = parseFloat(document.getElementById('active-cost').innerText.replace('$', '') || 52.50);
-        currentRemBudget = Math.max(0, (currentRemBudget - windowCost)).toFixed(2);
-        document.getElementById('active-remaining').innerText = '$' + currentRemBudget + ' USD';
-
-        var log = document.getElementById('activity-log');
-        if (!log) return;
-
-        var timeStr = new Date().toISOString().substring(11, 19);
-
-        var eventDiv = document.createElement('div');
-        eventDiv.style.padding = '0.5rem 0.75rem';
-        eventDiv.style.background = '#0f172a';
-        eventDiv.style.borderRadius = '0.5rem';
-        eventDiv.style.color = '#fbbf24';
-        eventDiv.innerText = '[' + timeStr + '] ⚡ Window #' + (windowRollCount - 1) + ' Settled: Somnia Reactive event callback emitted RolloverWindowOpen';
-        log.appendChild(eventDiv);
-
-        var rollDiv = document.createElement('div');
-        rollDiv.style.padding = '0.5rem 0.75rem';
-        rollDiv.style.background = '#0f172a';
-        rollDiv.style.borderRadius = '0.5rem';
-        rollDiv.style.color = '#6ee7b7';
-        rollDiv.style.fontWeight = '700';
-        rollDiv.innerText = '[' + timeStr + '] 🚀 Window #' + windowRollCount + ' Auto-Rolled via Local Invisible Session Key (0 POPUPS REQUIRED)';
-        log.appendChild(rollDiv);
-      }
-
-      function triggerKillSwitch() {
-        document.getElementById('active-card').style.display = 'none';
-        document.getElementById('terminated-card').style.display = 'flex';
-      }
-    </script>
   `;
 }
 
@@ -487,21 +254,21 @@ const server = http.createServer(async (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KasuwaShield — Autonomous Risk Agent</title>
+  <title>KasuwaShield — Institutional Quant Risk Terminal</title>
   <style>
-    body { background-color: #080c14; color: #f3f4f6; font-family: ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+    body { background-color: #060911; color: #f3f4f6; font-family: ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
   </style>
 </head>
 <body>
   ${getHeaderHTML(url)}
 
-  <main style="max-width:80rem; margin:0 auto; padding:2rem 1.5rem; width:100%; box-sizing:border-box; flex:1;">
+  <main style="max-width:96rem; margin:0 auto; padding:2rem 1.5rem; width:100%; box-sizing:border-box; flex:1;">
     ${bodyHTML}
   </main>
 
-  <footer style="border-top:1px solid #1e293b; padding:1.5rem; text-align:center; font-size:0.75rem; color:#64748b;">
+  <footer style="border-top:1px solid #1e293b; padding:1.5rem; text-align:center; font-size:0.75rem; color:#64748b; font-family:monospace;">
     <p style="margin:0;">KasuwaShield — Somnia × DreamDEX Event Contracts Hackathon 2026 Submission</p>
-    <p style="margin:0.25rem 0 0 0;">Autonomous Portfolio Risk Agent. EIP-7702 Continuous Auto-Rolling Shield.</p>
+    <p style="margin:0.25rem 0 0 0;">Autonomous Portfolio Risk Agent. EIP-7702 Delegated Execution Infrastructure.</p>
   </footer>
 </body>
 </html>`;
@@ -512,7 +279,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log('==================================================');
-  console.log('KASUWASHIELD AUTONOMOUS RISK AGENT SERVER ACTIVE');
+  console.log('KASUWASHIELD INSTITUTIONAL QUANT TERMINAL SERVER ACTIVE');
   console.log('URL: http://localhost:' + PORT);
   console.log('Proof Mode: http://localhost:' + PORT + '/proof/demo-pos-1');
   console.log('Replay Mode: http://localhost:' + PORT + '/replay');

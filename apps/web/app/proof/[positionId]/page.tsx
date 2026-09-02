@@ -7,7 +7,7 @@ import { useRiskEngineState } from "../../../hooks/useRiskEngineState";
 
 export default function ProofPage({ params }: { params: { positionId: string } }) {
   const positionId = params.positionId || "demo-pos-1";
-  const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct } = useRiskEngineState();
+  const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct, protectionGapPct } = useRiskEngineState();
 
   const mockProofData = {
     positionId,
@@ -47,6 +47,7 @@ export default function ProofPage({ params }: { params: { positionId: string } }
       onTriggerStressTest={triggerMarketStress}
       riskScore={riskScore}
       coveragePct={currentHedgeCoveragePct}
+      protectionGapPct={protectionGapPct}
     >
       <div className="space-y-8 max-w-5xl mx-auto font-mono">
         {/* Header */}

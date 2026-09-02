@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRiskEngineState } from "../hooks/useRiskEngineState";
 import { AppShell } from "../components/AppShell";
 import { RiskEngineChart } from "../components/RiskEngineChart";
@@ -14,17 +14,20 @@ import { OnChainProofPanel } from "../components/OnChainProofPanel";
 import { ProtectionLadder } from "../components/ProtectionLadder";
 import { AuditLedger } from "../components/AuditLedger";
 import { DemoTimeline } from "../components/DemoTimeline";
+import { ProtectionRestoredCard } from "../components/ProtectionRestoredCard";
 
 export default function TerminalDashboard() {
   const {
     systemState,
     isSimulationRunning,
     simulationProgress,
+    showFinalSummaryCard,
     portfolioExposureUSD,
     downsideThresholdPct,
     protectedNotionalUSD,
     targetHedgeCoveragePct,
     currentHedgeCoveragePct,
+    protectionGapPct,
     riskScore,
     priceHistory,
     currentBtcPrice,
@@ -39,13 +42,19 @@ export default function TerminalDashboard() {
     triggerMarketStress,
   } = useRiskEngineState();
 
+  const [dismissSummary, setDismissSummary] = useState<boolean>(false);
+
   return (
     <AppShell
       systemState={systemState}
       isSimulationRunning={isSimulationRunning}
-      onTriggerStressTest={triggerMarketStress}
+      onTriggerStressTest={() => {
+        setDismissSummary(false);
+        triggerMarketStress();
+      }}
       riskScore={riskScore}
       coveragePct={currentHedgeCoveragePct}
+      protectionGapPct={protectionGapPct}
     >
       <div className="space-y-6">
         {/* Active Simulation Compact Timeline Bar */}
@@ -54,6 +63,11 @@ export default function TerminalDashboard() {
             systemState={systemState}
             simulationProgress={simulationProgress}
           />
+        )}
+
+        {/* Final Protection Restored Screenshot Card */}
+        {showFinalSummaryCard && !dismissSummary && (
+          <ProtectionRestoredCard onDismiss={() => setDismissSummary(true)} />
         )}
 
         {/* Bento Row 1: Primary Risk Chart & Hedge Coverage Dial */}
@@ -70,6 +84,7 @@ export default function TerminalDashboard() {
             <HedgeRatioDial
               targetCoveragePct={targetHedgeCoveragePct}
               currentCoveragePct={currentHedgeCoveragePct}
+              protectionGapPct={protectionGapPct}
             />
           </div>
         </div>
@@ -105,7 +120,7 @@ export default function TerminalDashboard() {
           </div>
         </div>
 
-        {/* Bento Row 4: Somnia Reactivity Stream & On-Chain Proof */}
+        {/* Bento Row 4: Somnia Reactivity Stream & Proof Verification */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-6">
             <ReactivityMonitor
@@ -114,7 +129,7 @@ export default function TerminalDashboard() {
             />
           </div>
           <div className="lg:col-span-6">
-            <OnChainProofPanel />
+            <OnChainProofPanel isLiveMode={false} />
           </div>
         </div>
 

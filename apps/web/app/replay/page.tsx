@@ -6,7 +6,7 @@ import { Play, RotateCcw, AlertCircle, TrendingDown, CheckCircle2 } from "lucide
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
 
 export default function ReplayPage() {
-  const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct } = useRiskEngineState();
+  const { systemState, isSimulationRunning, triggerMarketStress, riskScore, currentHedgeCoveragePct, protectionGapPct } = useRiskEngineState();
 
   const mockHistoricalEvents = [
     {
@@ -48,6 +48,7 @@ export default function ReplayPage() {
       onTriggerStressTest={triggerMarketStress}
       riskScore={riskScore}
       coveragePct={currentHedgeCoveragePct}
+      protectionGapPct={protectionGapPct}
     >
       <div className="space-y-8 max-w-5xl mx-auto font-mono">
         {/* Simulation Banner */}
