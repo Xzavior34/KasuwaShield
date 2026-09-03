@@ -13,7 +13,8 @@
 **Hackathon**: Somnia × DreamDEX Event Contracts Hackathon 2026  
 **Track**: Autonomous Risk Infrastructure & Event Contracts  
 **Network**: Somnia Shannon Testnet (`Chain ID: 50312`, RPC: `https://dream-rpc.somnia.network`)  
-**Live Signer Address**: `0x07b51d5e96c10368a2d052a63b25171075015938` (`1.000000 STT` gas funded)  
+**Funded Signer Wallet**: [`0x07b51d5e96c10368a2d052a63b25171075015938`](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) (`1.000000 STT` gas funded)  
+**Live Proof Artifact**: [`artifacts/live-testnet-proof.json`](./artifacts/live-testnet-proof.json)  
 **GitHub Repository**: [https://github.com/Xzavior34/KasuwaShield](https://github.com/Xzavior34/KasuwaShield)  
 
 ---
@@ -90,11 +91,19 @@ All financial sizing is calculated via deterministic closed-form equations (zero
 $$\Delta R = \Delta P - (\theta \times E)$$
 *Where $\Delta P$ is realized spot price change, $\theta$ is tolerance threshold (e.g. 8%), and $E$ is total exposure.*
 
-### 2. Optimal Allocation (Kelly Criterion $f^*$)
+### 2. Black-Scholes Binary Downside Probability ($N(-d_2)$)
+$$d_2 = \frac{\ln(S / K) + (r - \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}} \quad \Big| \quad P(\text{Breach}) = N(-d_2)$$
+*Calculated via Abramowitz & Stegun polynomial approximation of standard normal CDF.*
+
+### 3. Conditional Value at Risk (CVaR 97.5% Expected Shortfall)
+$$\text{CVaR}_{97.5\%} = E \times \sigma_{\text{daily}} \times 2.338$$
+*Measures the expected loss in the worst 2.5% of tail-risk scenarios.*
+
+### 4. Optimal Allocation (Kelly Criterion $f^*$)
 $$f^* = \frac{p \cdot b - q}{b}$$
 *Where $p$ is downside probability, $b$ is contract payout odds ($\frac{\$1.00}{\text{Price}}$), and $q = 1 - p$.*
 
-### 3. Value at Risk (VaR 95%) & Coverage Gap
+### 5. Coverage Gap
 $$\text{Coverage Ratio } C = \left(\frac{H}{E}\right) \times 100\% \quad \Big| \quad \text{Coverage Gap} = \text{Target Coverage} - C$$
 
 ---
@@ -137,13 +146,16 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 
 ## 📜 8. Live On-Chain Verified Smart Contracts (Somnia Shannon — 50312)
 
-| Contract | Address | On-Chain Status | Bytecode Size |
+All target DreamDEX contracts are verified live on the Somnia Shannon Testnet Explorer:
+
+| Contract | Address | Explorer URL | Bytecode Size |
 |---|---|:---:|:---:|
-| **DreamDEX WBTC Market** | `0x3605f28aA7C50e7441211e77Cb0762d49539326C` | **BYTECODE VERIFIED ✓** | 568 Bytes |
-| **DreamDEX WETH Market** | `0xD180195da5459C7a0DEA188ed61216ec43682b50` | **BYTECODE VERIFIED ✓** | 568 Bytes |
-| **DreamDEX SOMI Market** | `0x259fD6559214dd5aD3752322426eA9F9fABEFff4` | **BYTECODE VERIFIED ✓** | 568 Bytes |
-| **DreamDEX USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | **BYTECODE VERIFIED ✓** | 7,532 Bytes |
-| **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | **BYTECODE VERIFIED ✓** | 2,192 Bytes |
+| **DreamDEX WBTC Market** | `0x3605f28aA7C50e7441211e77Cb0762d49539326C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x3605f28aA7C50e7441211e77Cb0762d49539326C) | **568 Bytes ✓** |
+| **DreamDEX WETH Market** | `0xD180195da5459C7a0DEA188ed61216ec43682b50` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xD180195da5459C7a0DEA188ed61216ec43682b50) | **568 Bytes ✓** |
+| **DreamDEX SOMI Market** | `0x259fD6559214dd5aD3752322426eA9F9fABEFff4` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x259fD6559214dd5aD3752322426eA9F9fABEFff4) | **568 Bytes ✓** |
+| **DreamDEX USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) | **7,532 Bytes ✓** |
+| **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) | **2,192 Bytes ✓** |
+| **Funded Signer Wallet** | `0x07b51d5e96c10368a2d052a63b25171075015938` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) | **1.000000 STT Gas ✓** |
 | **KasuwaPolicy.sol** | [`contracts/KasuwaPolicy.sol`](./contracts/KasuwaPolicy.sol) | Source in Repo | Solidity ^0.8.24 |
 | **KasuwaExecutor.sol** | [`contracts/KasuwaExecutor.sol`](./contracts/KasuwaExecutor.sol) | Source in Repo | Solidity ^0.8.24 |
 | **KasuwaReactiveHandler.sol** | [`contracts/KasuwaReactiveHandler.sol`](./contracts/KasuwaReactiveHandler.sol) | Source in Repo | Solidity ^0.8.24 |
@@ -154,11 +166,11 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 
 | Tier | Component | Status | Verification Evidence |
 |---|---|:---:|---|
-| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Block `#478,396,771` |
-| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | `0x07b51d5e96c10368a2d052a63b25171075015938` has `1.000000 STT` |
+| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Head Block `#478,406,276` |
+| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | [`0x07b5...5938`](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) has `1.000000 STT` |
 | **Tier A: On-Chain** | 5 DreamDEX Contracts | ✅ VERIFIED | On-chain bytecode verified via `eth_getCode` |
-| **Tier B: Live Infra** | DreamDEX Staging API | ✅ VERIFIED | `https://stg.api.dreamdex.io/v0/markets` (3 live markets) |
-| **Tier C: Code-Verified** | Quant Risk Engine | ✅ VERIFIED | 100% deterministic formulas verified in test suite |
+| **Tier B: Live Infra** | DreamDEX Staging API | ✅ VERIFIED | [`https://stg.api.dreamdex.io/v0/markets`](https://stg.api.dreamdex.io/v0/markets) (3 live markets) |
+| **Tier C: Code-Verified** | Quant Risk Engine | ✅ VERIFIED | 100% deterministic formulas verified in 15/15 tests |
 | **Tier C: Code-Verified** | EIP-7702 Payload Hashing | ✅ VERIFIED | secp256k1 key derivation & EIP-7702 hashing verified |
 | **Tier C: Code-Verified** | 4 Fail-Closed Invariants | ✅ VERIFIED | 4/4 invariant rejection paths tested |
 | **Tier C: Code-Verified** | Two-Tier Idempotency | ✅ VERIFIED | Duplicate market settlements prevented |
@@ -171,7 +183,7 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 ## 🧪 10. Automated Test & Diagnostic Commands
 
 ```bash
-# 1. Run Unit & Invariant Protocol Suite (10/10 Passing - 100%)
+# 1. Run Unit & Invariant Protocol Suite (15/15 Passing - 100%)
 npm test
 
 # 2. Run 4-Tier On-Chain Truth Audit (13/13 Passing - 100%)
@@ -189,18 +201,7 @@ npm run verify:routes
 
 ---
 
-## 🎬 11. Recommended 2-Minute Demo Path for Judges
-
-1. **Dashboard Overview (`/`)**: Show portfolio exposure (\$25k BTC), target coverage (80%), and live breathing SVG chart.
-2. **Interactive Configuration**: Drag the Exposure and Coverage sliders; watch required PUT contracts update in real time.
-3. **Trigger Market Stress**: Click `⚠️ STRESS TEST`. Observe the 133ms risk reaction and the `✓ PROTECTION RESTORED` autonomous rollover.
-4. **Inspect EIP-7702 Architecture (`/execution`)**: Review non-custodial session key bounds; click `🔄 REGENERATE KEY`.
-5. **Backtest Volatility on Replay (`/replay`)**: Drag backtest sliders and click `[ ▶️ RUN PLAYBACK ]` for step-by-step playback.
-6. **Verify Proof Center (`/proof`)**: Inspect live block height `#478,396,771`, 1.0 STT gas balance, verified DreamDEX contracts, and click `[ 📥 EXPORT PROOF JSON ]` to download the receipt.
-
----
-
-## 🛠️ 12. Getting Started
+## 🛠️ 11. Getting Started
 
 ```bash
 # Clone the repository
@@ -220,7 +221,7 @@ node server.js
 
 ---
 
-## 🗺️ 13. Roadmap
+## 🗺️ 12. Roadmap
 
 - [ ] Mainnet deployment with live DreamDEX CLOB taker liquidity.
 - [ ] Integration with native Somnia on-chain reactivity precompiles.
