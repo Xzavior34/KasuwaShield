@@ -3,7 +3,7 @@
 > **BUIDL One-Liner:** KasuwaShield implements a policy-driven downside protection architecture for crypto portfolios using DreamDEX Event Contracts on Somnia Network — configure once, sign once via EIP-7702 architecture, and maintain continuous coverage across rolling windows via Somnia Reactivity.
 
 [![Network: Somnia Shannon](https://img.shields.io/badge/Network-Somnia_Shannon_Testnet_(50312)-10b981?style=flat-square)](https://shannon-explorer.somnia.network)
-[![Live Gas Balance](https://img.shields.io/badge/Signer_Wallet-1.000000_STT_Gas_(Live)-38bdf8?style=flat-square)](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938)
+[![Live Gas Balance](https://img.shields.io/badge/Signer_Wallet-1.000000_STT_Gas_(Live)-38bdf8?style=flat-square)](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA)
 [![Bytecode Verified](https://img.shields.io/badge/Contracts-USDso_%26_Faucet_Bytecode_Verified-c084fc?style=flat-square)](https://shannon-explorer.somnia.network)
 [![Unit & Invariant Tests](https://img.shields.io/badge/Unit_Tests-15%2F15_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
 [![Truth Audit Tests](https://img.shields.io/badge/Truth_Audit-13%2F13_Verified_(100%25)-38bdf8?style=flat-square)](./scripts/e2e-proof-test.ts)
@@ -12,7 +12,7 @@
 **Hackathon**: Somnia × DreamDEX Event Contracts Hackathon 2026  
 **Track**: Autonomous Risk Infrastructure & Event Contracts  
 **Network**: Somnia Shannon Testnet (`Chain ID: 50312`, RPC: `https://dream-rpc.somnia.network`)  
-**Funded Signer Wallet**: [`0x07b51d5e96c10368a2d052a63b25171075015938`](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) (`1.000000 STT` gas funded)  
+**Funded Signer Wallet**: [`0x07764D9031b8747e28d3E1601Ff1417569de22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) (`1.000000 STT` gas funded)  
 **Machine-Readable Truth Artifact**: [`artifacts/truth-audit.json`](./artifacts/truth-audit.json)  
 **Forensic Audit Report**: [`FINAL_AUDIT.md`](./FINAL_AUDIT.md)  
 **GitHub Repository**: [https://github.com/Xzavior34/KasuwaShield](https://github.com/Xzavior34/KasuwaShield)  
@@ -147,7 +147,7 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 |---|---|:---:|:---:|
 | **USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) | **BYTECODE VERIFIED (7.5 KB) ✓** |
 | **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) | **BYTECODE VERIFIED (2.2 KB) ✓** |
-| **Funded Signer Wallet** | `0x07b51d5e96c10368a2d052a63b25171075015938` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) | **1.000000 STT Gas (EOA) ✓** |
+| **Funded Signer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) | **1.000000 STT Gas (EOA) ✓** |
 | **KasuwaPolicy.sol** | `0x43a18f29d10e42819873a90a218291b87a82910a` | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
 | **KasuwaExecutor.sol** | `0x8a92f03d12a4b89c72e411b932c0211598f39b1a` | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
 | **KasuwaReactiveHandler.sol**| Source in Repo | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
@@ -158,8 +158,8 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 
 | Tier | Capability | Status | Evidence & Verification Details |
 |---|---|:---:|---|
-| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Head Block `#478,411,224` |
-| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | [`0x07b5...5938`](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938) has `1.000000 STT` gas |
+| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Head Block `#478,439,878` |
+| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | [`0x0776...22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) has `1.000000 STT` gas |
 | **Tier A: On-Chain** | USDso & Faucet Contracts | ✅ VERIFIED | On-chain bytecode verified via `eth_getCode` |
 | **Tier B: Live Infra** | Event Contract Discovery | 🏷️ SPECIFIED | Keyed strictly by 32-byte `marketId` (`0x679795...`) |
 | **Tier C: Code-Verified** | Quant Risk Engine | ✅ VERIFIED | Black-Scholes $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ tested |

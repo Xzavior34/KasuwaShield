@@ -34,7 +34,7 @@ export default function ProofPage() {
       tierA_OnChain: {
         chainId: 50312,
         fundedSignerWallet: {
-          address: "0x07b51d5e96c10368a2d052a63b25171075015938",
+          address: "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
           sttGasBalance: "1.000000 STT (Live RPC Query)",
           role: "Funded Testnet EOA (Signer)",
         },
@@ -136,7 +136,7 @@ export default function ProofPage() {
 
             <div className="bg-slate-900 p-3 rounded border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Funded Signer Wallet</span>
-              <span className="text-cyan-300 font-mono text-[11px] block truncate">0x07b51d5e96c10368a2d052a63b25171075015938</span>
+              <span className="text-cyan-300 font-mono text-[11px] block truncate">0x07764D9031b8747e28d3E1601Ff1417569de22DA</span>
               <span className="text-[10px] text-emerald-400 block mt-1 font-bold">1.000000 STT Gas Balance</span>
             </div>
           </div>

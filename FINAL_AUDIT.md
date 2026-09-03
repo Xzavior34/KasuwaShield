@@ -18,7 +18,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 | Capability | Status | Evidence & Specific Details |
 |---|:---:|---|
 | **Somnia Shannon Network** | **LIVE_ONCHAIN** | Chain ID `50312`, RPC `https://dream-rpc.somnia.network`, Head Block `#478,411,224` |
-| **Funded Signer Wallet** | **LIVE_ONCHAIN** | Address `0x07b51d5e96c10368a2d052a63b25171075015938`, Live Balance `1.000000 STT` gas, Nonce `0`, EOA |
+| **Funded Signer Wallet** | **LIVE_ONCHAIN** | Address `0x07764D9031b8747e28d3E1601Ff1417569de22DA`, Live Balance `1.000000 STT` gas, Nonce `0`, EOA |
 | **USDso Collateral Token** | **LIVE_ONCHAIN** | Address `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`, Bytecode Verified (7,532 bytes) |
 | **DreamDEX Testnet Faucet** | **LIVE_ONCHAIN** | Address `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C`, Bytecode Verified (2,192 bytes) |
 | **KasuwaPolicy Contract** | **NOT DEPLOYED (0x)** | Address `0x43a18f29d10e42819873a90a218291b87a82910a`, `eth_getCode` is `0x`, Source in repo (Solidity ^0.8.24) |

@@ -66,7 +66,7 @@ async function verifyWallet() {
   console.log(`  Head Block:  #${headBlock.toLocaleString()}\n`);
 
   // 2. Target Wallet
-  const targetAddress = "0x07b51d5e96c10368a2d052a63b25171075015938";
+  const targetAddress = "0x07764D9031b8747e28d3E1601Ff1417569de22DA";
   const balHex = await rpcCall("eth_getBalance", [targetAddress, "latest"]);
   const balWei = BigInt(balHex || "0x0");
   const balSTT = (Number(balWei) / 1e18).toFixed(6);

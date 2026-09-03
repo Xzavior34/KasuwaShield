@@ -10,9 +10,9 @@
     "headBlock": 478411224
   },
   "wallet": {
-    "address": "0x07b51d5e96c10368a2d052a63b25171075015938",
+    "address": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
     "sttGasBalance": "1.000000",
-    "role": "Funded Testnet EOA (Signer Candidate)",
+    "role": "Funded Testnet EOA (Signer & Gas Account)",
     "status": "LIVE_ONCHAIN",
     "isEOA": true
   },

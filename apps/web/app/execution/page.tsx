@@ -15,7 +15,7 @@ export default function ExecutionPage() {
     protectionGapPct,
   } = useRiskEngineState();
 
-  const [sessionKeyAddress, setSessionKeyAddress] = useState("0x07b51d5e96c10368a2d052a63b25171075015938");
+  const [sessionKeyAddress, setSessionKeyAddress] = useState("0x07764D9031b8747e28d3E1601Ff1417569de22DA");
   const [isRevoked, setIsRevoked] = useState(false);
   const [broadcastState, setBroadcastState] = useState<"IDLE" | "SIGNING" | "TRANSMITTED" | "CONFIRMED">("IDLE");
 
