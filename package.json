@@ -15,6 +15,7 @@
     "verify:testnet-wallet": "tsx scripts/verify-testnet-wallet.ts",
     "verify:routes": "node scripts/verify-routes.js",
     "live:testnet": "tsx scripts/live-testnet-runner.ts",
+    "deploy:testnet": "tsx scripts/deploy-contracts.ts",
     "typecheck": "tsc --noEmit",
     "discover": "tsx scripts/discover-markets.ts",
     "inspect": "tsx scripts/inspect-market.ts",
