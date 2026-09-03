@@ -201,7 +201,7 @@ export default function ProofPage() {
             <div className="bg-slate-900 p-3 rounded border border-slate-800 space-y-1">
               <span className="text-[10px] text-slate-400 block uppercase">Market Parameters</span>
               <span className="text-white text-xs font-bold block">15m Binary Windows (900s) · Spread: 4.0%</span>
-              <span className="text-emerald-400 text-[11px] block">✓ Verified >= 60s Expiry Buffer</span>
+              <span className="text-emerald-400 text-[11px] block">✓ Verified &gt;= 60s Expiry Buffer</span>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function ProofPage() {
               <ul className="text-[11px] text-slate-400 space-y-1">
                 <li>• Stale / Expired Market: <strong>REJECTED (SKIP)</strong></li>
                 <li>• Illiquid Orderbook: <strong>REJECTED (POOR QUALITY)</strong></li>
-                <li>• Slippage Breach (>5%): <strong>REJECTED (PRICE SKEW)</strong></li>
+                <li>• Slippage Breach (&gt;5%): <strong>REJECTED (PRICE SKEW)</strong></li>
                 <li>• Budget Depleted: <strong>REJECTED (TERMINATED SAFE)</strong></li>
               </ul>
             </div>
