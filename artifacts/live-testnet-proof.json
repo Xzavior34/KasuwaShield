@@ -2,8 +2,8 @@
   "network": "Somnia Shannon",
   "chainId": 50312,
   "rpcEndpoint": "https://dream-rpc.somnia.network",
-  "timestamp": "2026-09-03T05:19:28.044Z",
-  "liveHeadBlock": 478396771,
+  "timestamp": "2026-09-03T05:27:22.094Z",
+  "liveHeadBlock": 478401507,
   "wallet": {
     "address": "0x07b51d5e96c10368a2d052a63b25171075015938",
     "sttBalance": "1.000000",
@@ -41,19 +41,6 @@
     "marketsFound": 3,
     "markets": [
       {
-        "base": "0x28f34DeFd2b4CB48d9eE6d89f2Be4Bc601694c00",
-        "baseDecimals": 18,
-        "contract": "0x259fD6559214dd5aD3752322426eA9F9fABEFff4",
-        "kind": "spot",
-        "lotSize": "0.01",
-        "minQuantity": "1",
-        "quote": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
-        "quoteDecimals": 18,
-        "stopRegistry": "0xEb97349Aa62A68507c0bE535eD88B0d028a47E1e",
-        "symbol": "SOMI:USDso",
-        "tickSize": "0.0001"
-      },
-      {
         "base": "0x4e85DC48a70DA1298489d5B6FC2492767d98f384",
         "baseDecimals": 8,
         "contract": "0x3605f28aA7C50e7441211e77Cb0762d49539326C",
@@ -78,6 +65,19 @@
         "stopRegistry": "0xf822D4Cb94902d667c9650e702aA5f096cc7598F",
         "symbol": "WETH:USDso",
         "tickSize": "0.01"
+      },
+      {
+        "base": "0x28f34DeFd2b4CB48d9eE6d89f2Be4Bc601694c00",
+        "baseDecimals": 18,
+        "contract": "0x259fD6559214dd5aD3752322426eA9F9fABEFff4",
+        "kind": "spot",
+        "lotSize": "0.01",
+        "minQuantity": "1",
+        "quote": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
+        "quoteDecimals": 18,
+        "stopRegistry": "0xEb97349Aa62A68507c0bE535eD88B0d028a47E1e",
+        "symbol": "SOMI:USDso",
+        "tickSize": "0.0001"
       }
     ],
     "activeMarketTarget": "WBTC:USDso (0x3605f28aA7C50e7441211e77Cb0762d49539326C)"
@@ -100,7 +100,7 @@
     "collateralToken": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
     "signerEOA": "0x07b51d5e96c10368a2d052a63b25171075015938",
     "chainId": 50312,
-    "timestamp": "2026-09-03T05:19:28.038Z"
+    "timestamp": "2026-09-03T05:27:22.091Z"
   },
   "executionStatus": "DRY_RUN_COMPLETED_SAFELY"
 }
