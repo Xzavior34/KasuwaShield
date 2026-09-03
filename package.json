@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm --prefix apps/web install && npm --prefix apps/web run build",
+    "build": "next build apps/web",
     "test": "tsx scripts/run-tests.ts",
     "test:audit": "tsx scripts/e2e-proof-test.ts",
     "verify:testnet-wallet": "tsx scripts/verify-testnet-wallet.ts",
@@ -23,9 +23,23 @@
   "devDependencies": {
     "typescript": "^5.5.4",
     "vitest": "^2.0.5",
-    "tsx": "^4.19.0"
+    "tsx": "^4.19.0",
+    "@types/node": "^20.14.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7"
   },
   "dependencies": {
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.424.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0",
+    "recharts": "^2.12.7",
+    "framer-motion": "^11.3.19",
     "viem": "^2.21.0",
     "dotenv": "^16.4.5"
   }
