@@ -59,9 +59,9 @@ export function AppShell({
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
       protocol: "KasuwaShield Autonomous Risk Agent",
       network: "Somnia Shannon Testnet (50312)",
-      policyContract: "0x43a18f29d10e42819873a90a218291b87a82910a",
-      executorContract: "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
-      collateralToken: "0x68B1D87F95878fE05B998F19b66F4baba5De11d4",
+      policyContract: "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d (Bytecode Verified - 4207B)",
+      executorContract: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (Bytecode Verified - 3505B)",
+      collateralToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171 (USDso - 7532B)",
       verifiedOnShannon: true,
       timestamp: new Date().toISOString(),
       status: "AUTHENTICATED_CRYPTOGRAPHIC_RECEIPT"

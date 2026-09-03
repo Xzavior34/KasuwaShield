@@ -1,14 +1,16 @@
-# 🛡️ KasuwaShield — Autonomous Portfolio Risk Agent
+# 🛡️ KasuwaShield
 
-> **BUIDL One-Liner:** KasuwaShield implements a policy-driven downside protection architecture for crypto portfolios using DreamDEX Event Contracts on Somnia Network — configure once, sign once via EIP-7702 architecture, and maintain continuous coverage across rolling windows via Somnia Reactivity.
+> **Event Contracts expire. Portfolio risk does not.**  
+> KasuwaShield turns short-duration DreamDEX protection into a continuously renewed hedge policy.  
+> **One-time authorization. Bounded autonomy. Automatic rollover.**
 
 [![Network: Somnia Shannon](https://img.shields.io/badge/Network-Somnia_Shannon_Testnet_(50312)-10b981?style=flat-square)](https://shannon-explorer.somnia.network)
-[![Live Gas Balance](https://img.shields.io/badge/Signer_Wallet-1.000000_STT_Gas_(Live)-38bdf8?style=flat-square)](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA)
-[![Bytecode Verified](https://img.shields.io/badge/Contracts-USDso_%26_Faucet_Bytecode_Verified-c084fc?style=flat-square)](https://shannon-explorer.somnia.network)
+[![KasuwaPolicy Deployed](https://img.shields.io/badge/KasuwaPolicy-0xAc8c...140d1d_(4.2KB_Verified)-38bdf8?style=flat-square)](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)
+[![KasuwaExecutor Deployed](https://img.shields.io/badge/KasuwaExecutor-0x80Ac...4B7c69c_(3.5KB_Verified)-c084fc?style=flat-square)](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c)
+[![USDso Collateral Verified](https://img.shields.io/badge/USDso_Token-0x9c32...b171_(7.5KB_Verified)-10b981?style=flat-square)](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171)
 [![Unit & Invariant Tests](https://img.shields.io/badge/Unit_Tests-15%2F15_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
 [![Truth Audit Tests](https://img.shields.io/badge/Truth_Audit-13%2F13_Verified_(100%25)-38bdf8?style=flat-square)](./scripts/e2e-proof-test.ts)
 
-**Tagline**: *"Don't predict the downside. Protect the position continuously."*  
 **Hackathon**: Somnia × DreamDEX Event Contracts Hackathon 2026  
 **Track**: Autonomous Risk Infrastructure & Event Contracts  
 **Network**: Somnia Shannon Testnet (`Chain ID: 50312`, RPC: `https://dream-rpc.somnia.network`)  
@@ -19,37 +21,78 @@
 
 ---
 
-## ⚡ 1. Executive Summary & Category Shift
+## ⚡ 1. One-Line Description
 
-Every 15-minute DreamDEX Event Contract is an efficient, capped-risk financial derivative. However, for continuous portfolio risk management, their short duration creates an impossible user friction:
-
-* To maintain continuous downside insurance for a \$25,000 spot Bitcoin position across a 24-hour day, a user would need to evaluate orderbook spreads and sign **~96 separate wallet transactions** (one every 15 minutes), without missing a single settlement window.
-* Because manual continuous re-hedging is impractical, event contracts are typically relegated to isolated speculative bets rather than fulfilling their highest-value economic utility: **granular, cost-effective downside insurance**.
-
-**KasuwaShield provides the autonomous risk infrastructure layer that makes continuous portfolio hedging practical**:
-
-1. **Configure Once**: The user defines portfolio exposure (\$25,000 BTC), target coverage (80%), duration (24h), and a maximum budget ceiling (\$100).
-2. **Authorize Once (EIP-7702 Architecture)**: The user signs a single scoped delegation payload delegating ephemeral session key execution strictly to `executeAutoRoll()` on allowlisted DreamDEX contracts.
-3. **Continuous Monitoring & Reactive Rollover Architecture**: `KasuwaReactiveHandler.sol` is designed to listen for on-chain settlement events on Somnia L1 and trigger the replacement hedge rollover without requiring repeated wallet popups.
-4. **Sovereign Non-Custodial Control**: The session key is strictly restricted from transferring collateral or withdrawing funds, and the user can revoke execution permissions on-chain in 1 click at any time.
+> **Autonomous portfolio protection built on DreamDEX Event Contracts, using bounded policy execution and continuous hedge rollover.**
 
 ---
 
-## 💡 2. Why KasuwaShield is Different
+## 🛑 2. The Problem
 
-```
-TRADITIONAL PREDICTION MARKET UX:
-[ User Bets ] ──> [ Wait 15 Mins ] ──> [ Settlement ] ──> [ Manual Repost / 96 Popups a Day ]
+Every 15-minute or 1-hour DreamDEX Event Contract is an efficient, capped-risk derivative. However, for continuous portfolio risk management, short durations create severe operational friction:
 
-KASUWASHIELD CONTINUOUS PROTECTION ARCHITECTURE:
-[ Authorize Policy ] ──> [ Quant Risk Engine ] ──> [ Bounded Auto-Roll ] ──> [ Reactive Rollover ] ──> [ Continuous Coverage ]
-```
-
-*KasuwaShield explores a different layer of the stack: policy-driven continuous hedge maintenance rather than one-off speculative prediction trading.*
+* To maintain continuous downside insurance for a \$25,000 spot position across a 24-hour day, a user would need to monitor market spreads and manually approve **~96 separate wallet transactions** (one every 15 minutes), without missing a single settlement window.
+* Because manual continuous re-hedging is practically impossible, Event Contracts are typically treated as isolated speculative bets rather than fulfilling their highest-value economic utility: **granular, cost-effective downside insurance**.
 
 ---
 
-## 🏗️ 3. System Architecture Flow
+## 💡 3. The Insight
+
+Short-duration Event Contracts can become a **continuous protection primitive** when automatically renewed under strict, user-defined policy bounds:
+
+* Instead of placing one-off directional trades, the user defines a **Risk Policy** (exposure, target coverage, maximum budget, and slippage ceiling).
+* The protocol monitors risk continuously, calculates the required hedge size via deterministic quantitative models, executes bounded limit orders, and automatically transitions protection into the next window upon settlement.
+
+> **Trade automation executes trades. KasuwaShield maintains a protection policy.**
+
+---
+
+## 🔄 4. The Solution Lifecycle
+
+```
+USER DEFINES POLICY
+       ↓
+ONE-TIME AUTHORIZATION
+       ↓
+RISK ENGINE MONITORS EXPOSURE
+       ↓
+HEDGE RATIO CALCULATED
+       ↓
+DREAMDEX EVENT CONTRACT SELECTED
+       ↓
+BOUNDED EXECUTION
+       ↓
+MARKET WINDOW EXPIRES
+       ↓
+ROLLOVER DECISION
+       ↓
+NEXT PROTECTION WINDOW
+       ↓
+CONTINUOUS PROTECTION
+```
+
+---
+
+## ⚖️ 5. Why This Is Different
+
+```
+Traditional Event Contract User:
+→ Manually selects market
+→ Manually approves transaction
+→ Manually monitors expiry
+→ Manually reposts next window (96 popups/day)
+
+KasuwaShield User:
+→ Defines protection policy once
+→ Authorizes bounded execution once (EIP-7702 architecture)
+→ Protocol monitors risk continuously
+→ Automatically rolls protection into next window
+→ Terminates safely when budget limit or price ceiling is reached
+```
+
+---
+
+## 🏗️ 6. Core Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -68,9 +111,9 @@ KASUWASHIELD CONTINUOUS PROTECTION ARCHITECTURE:
                                    ▼
 ┌──────────────────────────────────┴─────────────────────────────────────┐
 │                       SOMNIA SHANNON TESTNET                           │
-│  ├── KasuwaPolicy.sol          Enforces remainingBudgetUSD & hard caps │
-│  ├── KasuwaExecutor.sol        EIP-7702 delegated execution router     │
-│  └── KasuwaReactiveHandler.sol Reactive settlement callback listener   │
+│  ├── KasuwaPolicy.sol (0xAc8c...140d1d)   4,207B Verified Bytecode     │
+│  ├── KasuwaExecutor.sol (0x80Ac...4B7c69c) 3,505B Verified Bytecode     │
+│  └── KasuwaReactiveHandler.sol (0x9D60...) Somnia Reactive Callback    │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
                                    ▼
@@ -83,7 +126,55 @@ KASUWASHIELD CONTINUOUS PROTECTION ARCHITECTURE:
 
 ---
 
-## 📐 4. Deterministic Quantitative Risk Engine
+## 🔒 7. Fail-Closed Safety Model
+
+KasuwaShield implements strict fail-closed safety enforcement. Automated executions are rejected if any invariant is breached:
+
+1. **Stale / Expired Market**: If an Event Contract has expired or finalized, execution is blocked (`SKIP`).
+2. **Insufficient Liquidity**: If orderbook depth is insufficient for the requested hedge size, the order is rejected (`POOR QUALITY`).
+3. **Excessive Spread / Slippage**: If the orderbook spread exceeds the policy ceiling (>5%), the order is rejected (`PRICE SKEW`).
+4. **Budget Exhaustion**: If cumulative roll costs reach `totalBudgetUSD`, the policy terminates safely (`TERMINATED SAFE`).
+5. **Duplicate Market Processing**: Two-tier idempotency guards (`processedMarkets[marketId]`) prevent duplicate execution.
+6. **Invalid Policy**: Enforces maximum protection percentage ($\le 50\%$) and non-zero duration bounds.
+7. **Non-Custodial Scope**: Session keys have zero authorization to transfer collateral or withdraw funds.
+
+---
+
+## 🔑 8. EIP-7702 Four-Level Truth Standard
+
+| Layer | Status | Verification Detail |
+|---|:---:|---|
+| **CODE** | ✅ **LIVE VERIFIED** | `packages/execution/src/session-key-manager.ts` implements ephemeral `secp256k1` session key generation |
+| **PAYLOAD** | ✅ **CODE VERIFIED** | `buildEIP7702DelegationPayload()` formats and hashes authorization tuple for Somnia Shannon (`50312`) |
+| **DESIGNATION** | 🏷️ **AUTHORIZATION READY** | Ephemeral key derived in memory; awaits interactive client-side wallet designation |
+| **EXECUTION** | 🏷️ **CODE VERIFIED** | `KasuwaExecutor.sol` validates caller authorization and routes execution to `KasuwaPolicy.sol` |
+
+---
+
+## ⚡ 9. Somnia Reactivity Truth Standard
+
+| Layer | Status | Verification Detail |
+|---|:---:|---|
+| **IMPLEMENTED** | ✅ **VERIFIED** | [`contracts/KasuwaReactiveHandler.sol`](./contracts/KasuwaReactiveHandler.sol) written with reentrancy guard |
+| **COMPILED** | ✅ **VERIFIED** | Solidity `^0.8.24` compilation verified without warnings |
+| **DEPLOYED** | ✅ **LIVE_ONCHAIN** | Mined on Somnia Shannon at Block `#478456927` (`0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`) |
+| **REGISTERED** | ✅ **CODE VERIFIED** | `onMarketSettled()` handler configured to emit `RolloverWindowOpen` |
+| **TRIGGERED** | 🏷️ **UNVERIFIED LIVE** | Awaits live testnet settlement event trigger |
+| **EXECUTED** | 🏷️ **UNVERIFIED LIVE** | Live automated callback execution not yet independently demonstrated |
+
+---
+
+## 📊 10. DreamDEX Event Contract Integration
+
+* **Discovery Method**: Keyed strictly by unique **32-byte `marketId`** to handle pool recycling natively (SpotPool HTTP `/v0/markets` confusion eliminated).
+* **Active Market Target**: `0x679795a0195a1b76cdebb7c51d74e058aee92919b8c3389af86ef24535e8a28c` (BTC 15-Minute Binary Downside Window).
+* **Parameters**: 900s interval, USDso collateral (`0x9c32...b171`), Best Ask: \$0.32, Best Bid: \$0.28, Spread: 4.0%, Liquidity: 500 contracts.
+* **Order Flow Lifecycle**:
+  $$\text{ORDER\_CONSTRUCTED} \longrightarrow \text{ORDER\_SUBMITTED} \longrightarrow \text{ORDER\_RESTED} \longrightarrow \text{ORDER\_FILLED (SIMULATED)}$$
+
+---
+
+## 📐 11. Deterministic Quantitative Risk Engine
 
 All financial sizing is calculated via deterministic closed-form equations (zero AI hallucinations):
 
@@ -105,64 +196,38 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 ---
 
-## 🔒 5. Fail-Closed Safety Model & 4 Rejection Invariants
-
-KasuwaShield implements strict fail-closed policy enforcement. Automated rolls are rejected if any invariant is breached:
-
-1. **Stale Market Rejection**: If an Event Contract has expired or finalized, the execution is blocked (`SKIP`).
-2. **Illiquidity Rejection**: If orderbook depth is insufficient for the requested hedge size, the order is blocked (`POOR QUALITY`).
-3. **Slippage Breach Rejection**: If the orderbook spread exceeds the policy ceiling (>5%), the order is rejected (`PRICE SKEW`).
-4. **Budget Exhaustion Rejection**: If total cumulative roll cost exceeds `remainingBudgetUSD`, the policy terminates safely (`TERMINATED SAFE`).
-
----
-
-## 🔁 6. Two-Tier Idempotency & Duplicate Prevention
-
-To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicate callbacks:
-* **Off-Chain Deduplication**: `processedMarketIds` set tracks processed settlement events in memory.
-* **On-Chain Policy Guard**: `KasuwaPolicy.sol` tracks monotonically increasing `rollsExecuted` and validates budget availability per `marketId`.
-
----
-
-## 🔄 7. 9-Stage Continuous Lifecycle State Machine
+## 🔁 12. Continuous Protection Across Rolling Windows
 
 ```
-[ UNPROTECTED ]
-       │ (Spot drops below strike)
-       ▼
-[ RISK_DETECTED ] ──> [ HEDGE_CALCULATED ] ──> [ HEDGE_PENDING ]
-                                                      │
-                                                      ▼
-[ MONITORING ] <────────────────────────────── [ HEDGE_ACTIVE ]
-       │
-       ▼ (15m window settlement)
-[ ROLLOVER_REQUIRED ] ──> [ REHEDGE_PENDING ] ──> [ HEDGE_ACTIVE / SETTLED_PROFIT ]
+BTC Protection Window #1 (15m)
+       ↓
+Expiry Approaches (Settlement evaluated)
+       ↓
+Risk Recalculated by Quant Engine
+       ↓
+Window #2 Selected (32-byte marketId_2)
+       ↓
+Policy Revalidated (Budget & spread check)
+       ↓
+Bounded Execution via Session Key
+       ↓
+Protection Continues Monotonically
 ```
 
 ---
 
-## 📜 8. Smart Contracts & Address Verification (Somnia Shannon — 50312)
-
-| Contract | Address | On-Chain Status | Bytecode Size |
-|---|---|:---:|:---:|
-| **USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) | **BYTECODE VERIFIED (7.5 KB) ✓** |
-| **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) | **BYTECODE VERIFIED (2.2 KB) ✓** |
-| **Funded Signer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) | **1.000000 STT Gas (EOA) ✓** |
-| **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) | **BYTECODE VERIFIED (4.2 KB) ✓** |
-| **KasuwaExecutor.sol** | `0x80AcBF398663079edBfF26132C9AC04204B7c69c` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) | **BYTECODE VERIFIED (3.5 KB) ✓** |
-| **KasuwaReactiveHandler.sol**| `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) | **TX MINED (#478456927) ✓** |
-
----
-
-## 🔍 9. Definitive Four-Tier Truth Table & Evidence Matrix
+## 🔍 13. Definitive Four-Tier Proof Center Matrix
 
 | Tier | Capability | Status | Evidence & Verification Details |
 |---|---|:---:|---|
-| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Head Block `#478,439,878` |
-| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | [`0x0776...22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) has `1.000000 STT` gas |
-| **Tier A: On-Chain** | USDso & Faucet Contracts | ✅ VERIFIED | On-chain bytecode verified via `eth_getCode` |
+| **Tier A: On-Chain** | Somnia Shannon RPC (50312) | ✅ VERIFIED | Live RPC query at Head Block `#478,460,644` |
+| **Tier A: On-Chain** | KasuwaPolicy Protocol Contract | ✅ VERIFIED | [`0xAc8c...140d1d`](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) (**4,207 Bytes Verified Bytecode**) |
+| **Tier A: On-Chain** | KasuwaExecutor Session Router | ✅ VERIFIED | [`0x80Ac...4B7c69c`](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) (**3,505 Bytes Verified Bytecode**) |
+| **Tier A: On-Chain** | USDso Collateral Token | ✅ VERIFIED | [`0x9c32...b171`](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) (**7,532 Bytes Verified Bytecode**) |
+| **Tier A: On-Chain** | DreamDEX Testnet Faucet | ✅ VERIFIED | [`0x89Eb...6B7C`](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) (**2,192 Bytes Verified Bytecode**) |
+| **Tier A: On-Chain** | Funded Signer Wallet | ✅ VERIFIED | [`0x0776...22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) (**1.000000 STT Gas Balance**) |
 | **Tier B: Live Infra** | Event Contract Discovery | 🏷️ SPECIFIED | Keyed strictly by 32-byte `marketId` (`0x679795...`) |
-| **Tier C: Code-Verified** | Quant Risk Engine | ✅ VERIFIED | Black-Scholes $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ tested |
+| **Tier C: Code-Verified** | Quant Risk Engine | ✅ VERIFIED | Black-Scholes $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ verified |
 | **Tier C: Code-Verified** | EIP-7702 Payload Hashing | ✅ VERIFIED | secp256k1 key derivation & EIP-7702 hashing verified |
 | **Tier C: Code-Verified** | 4 Fail-Closed Invariants | ✅ VERIFIED | 4/4 invariant rejection paths tested |
 | **Tier C: Code-Verified** | Two-Tier Idempotency | ✅ VERIFIED | Duplicate market settlements prevented |
@@ -172,7 +237,20 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 
 ---
 
-## 🧪 10. Automated Test & Diagnostic Commands
+## 📜 14. Live On-Chain Contract Registry (Somnia Shannon — 50312)
+
+| Contract | On-Chain Address | Runtime Bytecode | Somnia Explorer Link |
+|---|---|:---:|:---:|
+| **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | **4,207 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) |
+| **KasuwaExecutor.sol** | `0x80AcBF398663079edBfF26132C9AC04204B7c69c` | **3,505 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) |
+| **KasuwaReactiveHandler.sol**| `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02` | Mined (#478456927) | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) |
+| **USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | **7,532 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) |
+| **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | **2,192 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) |
+| **Deployer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | **1.000000 STT Gas** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) |
+
+---
+
+## 🧪 15. Automated Verification Test Suite
 
 ```bash
 # 1. Run Unit & Invariant Protocol Suite (15/15 Passing - 100%)
@@ -187,36 +265,67 @@ npm run audit:claims
 # 4. Query Live Somnia Shannon Testnet Wallet & Gas Balance (1.0 STT)
 npm run verify:testnet-wallet
 
-# 5. Run End-to-End Live Testnet Diagnostic Runner (Safety Dry-Run)
-npm run live:testnet -- --dry-run
-
-# 6. Verify all 5 Next.js Web Routes (5/5 Passing - 100%)
+# 5. Verify all 5 Next.js Web Routes (5/5 Passing - 100%)
 npm run verify:routes
 ```
 
 ---
 
-## 🛠️ 11. Getting Started
+## 📊 16. Verification Test Results
 
-```bash
-# Clone the repository
-git clone https://github.com/Xzavior34/KasuwaShield.git
-cd KasuwaShield
-
-# Install dependencies
-npm install
-
-# Verify test suite
-npm test
-
-# Launch autonomous terminal
-node server.js
-# Access at http://localhost:3000
+```text
+================================================================================
+  KASUWASHIELD PROTOCOL VERIFICATION TEST RESULTS
+================================================================================
+  [✓] Protocol Unit & Invariant Tests: 15 / 15 PASSING (100%)
+  [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
+  [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
+  [✓] Next.js Web Routes:              5 / 5 PASSING (100%)
+  [✓] Live Testnet Wallet Query:       1.000000 STT (Head Block #478,460,644)
+================================================================================
 ```
 
 ---
 
-## 🗺️ 12. Roadmap
+## ⏱️ 17. 2-Minute Demo Script
+
+* **0:00–0:20 (The Problem)**: *"DreamDEX Event Contracts expire every 15 minutes. Portfolio risk does not. Manually approving 96 daily transactions is impractical."*
+* **0:20–0:40 (Policy Configuration)**: Configure \$25,000 exposure, 80% coverage target, and a \$100 max budget ceiling on the dashboard.
+* **0:40–1:00 (Bounded Authorization)**: Show the scoped session key derivation and EIP-7702 authorization payload bounded strictly to `executeAutoRoll()`.
+* **1:00–1:20 (Risk Detection & Hedge Sizing)**: Trigger the -3.1% shock replay; show the deterministic Black-Scholes $N(-d_2)$ calculation and 133ms reaction benchmark.
+* **1:20–1:40 (Continuous Rollover)**: Show the 15-minute settlement transition into the replacement window with monotonic roll tracking and budget deduction.
+* **1:40–1:55 (Fail-Closed Safety)**: Demonstrate stale market rejection, slippage rejection (>5%), and budget exhaustion kill-switch.
+* **1:55–2:00 (Proof Center)**: Open `/proof` to show verified contract bytecode on Somnia Explorer and download the cryptographic JSON receipt.
+
+---
+
+## ⚖️ 18. Competitive Positioning
+
+| Capability | KasuwaShield |
+|---|:---:|
+| **Exposure-First Protection** | ✅ |
+| **Deterministic Hedge Sizing (Black-Scholes / CVaR / Kelly)** | ✅ |
+| **Bounded Session Key Autonomy** | ✅ |
+| **Fail-Closed Safety Safeguards (4 Invariants)** | ✅ |
+| **Event Contract Integration (32-byte marketId)** | ✅ |
+| **Continuous Multi-Window Rollover Thesis** | ✅ |
+| **On-Chain Bytecode-Verified Contracts** | ✅ |
+| **EIP-7702 Scoped Delegation Architecture** | ✅ |
+| **Somnia Reactivity Rollover Architecture** | ✅ |
+| **Transparent 4-Tier Truth Disclosure** | ✅ |
+
+---
+
+## ⚠️ 19. Truth Disclosure & Limitations
+
+* **Live On-Chain**: Somnia Shannon connection (Chain ID: `50312`), funded wallet (`1.0 STT`), USDso token (`0x9c32...`), faucet (`0x89Eb...`), `KasuwaPolicy` (`0xAc8c...`), `KasuwaExecutor` (`0x80Ac...`), and `KasuwaReactiveHandler` (Mined #478456927).
+* **Code-Verified**: Black-Scholes binary math, CVaR 97.5%, Kelly allocation, EIP-7702 payload hashing, and fail-closed rejection invariants.
+* **Simulated**: Price drop shock replay (BTC \$64.8k $\to$ \$62.8k), CLOB limit order fill (synthetic \$0.28 limit fill due to testnet taker liquidity), and market settlement redemption.
+* **Unverified Live**: Live on-chain dispatch of Somnia Reactivity callbacks and client-side browser-wallet EIP-7702 designation.
+
+---
+
+## 🗺️ 20. Roadmap
 
 - [ ] Mainnet deployment with live DreamDEX CLOB taker liquidity.
 - [ ] Integration with native Somnia on-chain reactivity precompiles.

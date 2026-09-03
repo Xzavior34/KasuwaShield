@@ -14,7 +14,7 @@ export function OnChainProofPanel({
   isLiveMode = false,
   txHash = "SIMULATED_TX_0x8a7f91c0284e912ab71c89012a4b89c72e411b932c0211598f39b1a7c41e89b",
   blockNumber = "DEMO #1284925",
-  contractAddress = "0x43a18f29d10e42819873a90a218291b87a82910a (KasuwaPolicy)",
+  contractAddress = "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d (KasuwaPolicy - Deployed 4.2KB)",
 }: OnChainProofPanelProps) {
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -79,7 +79,7 @@ export function OnChainProofPanel({
         </div>
         {isLiveMode ? (
           <a
-            href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a"
+            href="https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"
             target="_blank"
             rel="noreferrer"
             className="px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold flex items-center space-x-1.5 transition-all text-xs"

@@ -147,7 +147,7 @@ async function runAllTests() {
   // 3. EIP-7702 Delegation & Session Key Tests
   console.log("\n3. EIP-7702 DELEGATION & SESSION KEY TESTS:");
   const mockEOA = "0x71C9999999999999999999999999999999999A2B" as `0x${string}`;
-  const mockExecutor = "0x8a92f03d12a4b89c72e411b932c0211598f39b1a" as `0x${string}`;
+  const mockExecutor = "0x80AcBF398663079edBfF26132C9AC04204B7c69c" as `0x${string}`;
 
   test("Generates valid secp256k1 keypair with proper expiry and budget", () => {
     const session = generateEphemeralSessionKey(mockEOA, "policy-btc-001", 100.0, 24);

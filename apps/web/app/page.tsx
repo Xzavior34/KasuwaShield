@@ -415,10 +415,10 @@ export default function TerminalDashboard() {
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaPolicy.sol</span>
-                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x43a18f29...82910a</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0xAc8c3afB...140d1d</span>
                 </div>
                 <a
-                  href="https://shannon-explorer.somnia.network/address/0x43a18f29d10e42819873a90a218291b87a82910a"
+                  href="https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"
                   target="_blank"
                   className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
@@ -430,10 +430,10 @@ export default function TerminalDashboard() {
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaExecutor.sol (EIP-7702)</span>
-                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x8a92f03d...98f39b1a</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x80AcBF39...4B7c69c</span>
                 </div>
                 <a
-                  href="https://shannon-explorer.somnia.network/address/0x8a92f03d12a4b89c72e411b932c0211598f39b1a"
+                  href="https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c"
                   target="_blank"
                   className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >

@@ -45,9 +45,10 @@ export default function ProofPage() {
           dreamDexUsdsoToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171 (Bytecode Verified - 7532 bytes)",
           dreamDexFaucet: "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C (Bytecode Verified - 2192 bytes)",
         },
-        repoContracts: {
-          kasuwaPolicy: "0x43a18f29d10e42819873a90a218291b87a82910a (Configured in Repo Source)",
-          kasuwaExecutor: "0x8a92f03d12a4b89c72e411b932c0211598f39b1a (Configured in Repo Source)",
+        deployedContracts: {
+          kasuwaPolicy: "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d (Bytecode Verified - 4207 bytes)",
+          kasuwaExecutor: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (Bytecode Verified - 3505 bytes)",
+          kasuwaReactiveHandler: "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02 (Tx Mined - #478456927)",
         }
       },
       tierB_LiveInfrastructure: {

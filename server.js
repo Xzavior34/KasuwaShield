@@ -3,9 +3,9 @@ const https = require('https');
 
 const PORT = 3000;
 const RPC_URL = "https://dream-rpc.somnia.network";
-const COLLATERAL_TOKEN = "0x68B1D87F95878fE05B998F19b66F4baba5De11d4"; // tUSDC
-const POLICY_CONTRACT = "0x43a18f29d10e42819873a90a218291b87a82910a"; // KasuwaPolicy
-const EXECUTOR_CONTRACT = "0x8a92f03d12a4b89c72e411b932c0211598f39b1a"; // KasuwaExecutor
+const COLLATERAL_TOKEN = "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171"; // USDso (Bytecode Verified - 7532B)
+const POLICY_CONTRACT = "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"; // KasuwaPolicy (Bytecode Verified - 4207B)
+const EXECUTOR_CONTRACT = "0x80AcBF398663079edBfF26132C9AC04204B7c69c"; // KasuwaExecutor (Bytecode Verified - 3505B)
 const EXPLORER = "https://shannon-explorer.somnia.network";
 
 let cachedBlock = 1284925;
@@ -459,15 +459,15 @@ function getOverviewHTML(status) {
           </div>
           <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.75rem;">
             <div class="stat-box" style="display:flex; justify-content:space-between; align-items:center;">
-              <div><span class="stat-label">KasuwaPolicy.sol</span><span style="color:#67e8f9; font-size:0.6875rem;">0x43a18f29...82910a</span></div>
+              <div><span class="stat-label">KasuwaPolicy.sol</span><span style="color:#67e8f9; font-size:0.6875rem;">0xAc8c3afB...140d1d (4.2KB)</span></div>
               <a href="${EXPLORER}/address/${POLICY_CONTRACT}" target="_blank" class="link-external" style="font-size:0.625rem;">Shannon Explorer ↗</a>
             </div>
             <div class="stat-box" style="display:flex; justify-content:space-between; align-items:center;">
-              <div><span class="stat-label">KasuwaExecutor.sol (EIP-7702 Router)</span><span style="color:#67e8f9; font-size:0.6875rem;">0x8a92f03d...98f39b1a</span></div>
+              <div><span class="stat-label">KasuwaExecutor.sol (EIP-7702 Router)</span><span style="color:#67e8f9; font-size:0.6875rem;">0x80AcBF39...4B7c69c (3.5KB)</span></div>
               <a href="${EXPLORER}/address/${EXECUTOR_CONTRACT}" target="_blank" class="link-external" style="font-size:0.625rem;">Shannon Explorer ↗</a>
             </div>
             <div class="stat-box" style="display:flex; justify-content:space-between; align-items:center;">
-              <div><span class="stat-label">tUSDC Collateral Token</span><span style="color:#67e8f9; font-size:0.6875rem;">0x68B1D87F...De11d4</span></div>
+              <div><span class="stat-label">USDso Collateral Token</span><span style="color:#67e8f9; font-size:0.6875rem;">0x9c32F382...7bb171 (7.5KB)</span></div>
               <a href="${EXPLORER}/address/${COLLATERAL_TOKEN}" target="_blank" class="link-external" style="font-size:0.625rem;">Shannon Explorer ↗</a>
             </div>
           </div>
@@ -964,23 +964,23 @@ function getProofViewHTML(status) {
           </div>
           <div style="display:flex; flex-direction:column; gap:0.625rem; font-size:0.75rem;">
             <div class="stat-box">
-              <span class="stat-label">KasuwaPolicy.sol</span>
+              <span class="stat-label">KasuwaPolicy.sol (Protocol Policy)</span>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#67e8f9; font-size:0.6875rem;">0x43a18f29...82910a</span>
+                <span style="color:#67e8f9; font-size:0.6875rem;">0xAc8c3afB...140d1d (4.2KB)</span>
                 <a href="${EXPLORER}/address/${POLICY_CONTRACT}" target="_blank" class="link-external" style="font-size:0.625rem;">View on Shannon Explorer ↗</a>
               </div>
             </div>
             <div class="stat-box">
-              <span class="stat-label">tUSDC Collateral Token</span>
+              <span class="stat-label">USDso Collateral Token</span>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#67e8f9; font-size:0.6875rem;">0x68B1D87F...De11d4</span>
+                <span style="color:#67e8f9; font-size:0.6875rem;">0x9c32F382...7bb171 (7.5KB)</span>
                 <a href="${EXPLORER}/address/${COLLATERAL_TOKEN}" target="_blank" class="link-external" style="font-size:0.625rem;">View on Shannon Explorer ↗</a>
               </div>
             </div>
             <div class="stat-box">
               <span class="stat-label">KasuwaExecutor.sol (EIP-7702 Router)</span>
               <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#67e8f9; font-size:0.6875rem;">0x8a92f03d...98f39b1a</span>
+                <span style="color:#67e8f9; font-size:0.6875rem;">0x80AcBF39...4B7c69c (3.5KB)</span>
                 <a href="${EXPLORER}/address/${EXECUTOR_CONTRACT}" target="_blank" class="link-external" style="font-size:0.625rem;">View on Shannon Explorer ↗</a>
               </div>
             </div>
