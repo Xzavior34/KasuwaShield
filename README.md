@@ -149,8 +149,8 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 | **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) | **BYTECODE VERIFIED (2.2 KB) ✓** |
 | **Funded Signer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) | **1.000000 STT Gas (EOA) ✓** |
 | **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) | **BYTECODE VERIFIED (4.2 KB) ✓** |
-| **KasuwaExecutor.sol** | `0x8a92f03d12a4b89c72e411b932c0211598f39b1a` | Configured in Repo Source | Solidity ^0.8.24 (Pending Executor Deploy) |
-| **KasuwaReactiveHandler.sol**| Source in Repo | Configured in Repo Source | Solidity ^0.8.24 (Pending Handler Deploy) |
+| **KasuwaExecutor.sol** | `0x80AcBF398663079edBfF26132C9AC04204B7c69c` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) | **BYTECODE VERIFIED (3.5 KB) ✓** |
+| **KasuwaReactiveHandler.sol**| `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) | **TX MINED (#478456927) ✓** |
 
 ---
 

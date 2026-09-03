@@ -22,8 +22,8 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 | **USDso Collateral Token** | **LIVE_ONCHAIN** | Address `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`, Bytecode Verified (7,532 bytes) |
 | **DreamDEX Testnet Faucet** | **LIVE_ONCHAIN** | Address `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C`, Bytecode Verified (2,192 bytes) |
 | **KasuwaPolicy Contract** | **LIVE_ONCHAIN** | Address `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`, Bytecode Verified (4,207 bytes) |
-| **KasuwaExecutor Contract** | **NOT DEPLOYED (0x)** | Address `0x8a92f03d12a4b89c72e411b932c0211598f39b1a`, `eth_getCode` is `0x`, Source in repo (Solidity ^0.8.24) |
-| **Reactive Handler Contract**| **NOT DEPLOYED (0x)** | Source in repo (`contracts/KasuwaReactiveHandler.sol`), reentrancy protected |
+| **KasuwaExecutor Contract** | **LIVE_ONCHAIN** | Address `0x80AcBF398663079edBfF26132C9AC04204B7c69c`, Bytecode Verified (3,505 bytes) |
+| **Reactive Handler Contract**| **LIVE_ONCHAIN** | Address `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`, Tx Mined (#478456927) |
 | **Event Contract Discovery** | **TESTNET_SPECIFIED** | Keyed strictly by 32-byte `marketId` (`0x679795...`), SpotPool confusion eliminated |
 | **Order Construction** | **CODE_VERIFIED** | Closed-form Quant formulas determine required PUT contracts within budget limits |
 | **Order Submission** | **CODE_VERIFIED** | Bounded limit order payload formatted with max slippage and price limit |

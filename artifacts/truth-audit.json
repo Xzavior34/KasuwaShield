@@ -34,14 +34,16 @@
       "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312)"
     },
     "kasuwaExecutor": {
-      "address": "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
-      "status": "NOT_DEPLOYED_0X",
-      "source": "Solidity ^0.8.24 in repo"
+      "address": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
+      "status": "BYTECODE_VERIFIED",
+      "bytes": 3505,
+      "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312)"
     },
     "kasuwaReactiveHandler": {
-      "address": "N/A",
-      "status": "NOT_DEPLOYED_0X",
-      "source": "Solidity ^0.8.24 in repo"
+      "address": "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
+      "status": "TX_MINED_ONCHAIN",
+      "txHash": "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d",
+      "source": "Solidity ^0.8.24 (Mined at Block #478456927)"
     }
   },
   "eventContracts": {

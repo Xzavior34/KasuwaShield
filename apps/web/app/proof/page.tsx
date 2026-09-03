@@ -163,6 +163,14 @@ export default function ProofPage() {
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex justify-between items-center">
                 <div>
+                  <span className="text-white text-[11px] font-bold block">KasuwaExecutor Session Key Router</span>
+                  <span className="text-cyan-300 font-mono text-[10px]">0x80AcBF398663079edBfF26132C9AC04204B7c69c</span>
+                </div>
+                <span className="text-[10px] text-emerald-400 font-bold">✓ BYTECODE (3.5KB)</span>
+              </div>
+
+              <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex justify-between items-center">
+                <div>
                   <span className="text-white text-[11px] font-bold block">USDso Collateral Token</span>
                   <span className="text-slate-400 font-mono text-[10px]">0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171</span>
                 </div>

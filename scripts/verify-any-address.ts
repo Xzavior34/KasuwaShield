@@ -41,19 +41,18 @@ function rpcCall(method: string, params: any[] = []): Promise<any> {
 }
 
 async function verify() {
-  const addr = "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d";
+  const addr = "0x80AcBF398663079edBfF26132C9AC04204B7c69c";
 
   console.log("================================================================================");
   console.log("  VERIFYING ADDRESS ON SOMNIA SHANNON TESTNET (50312)");
   console.log("================================================================================\n");
 
   const code = await rpcCall("eth_getCode", [addr, "latest"]);
-  const bal = await rpcCall("eth_getBalance", [addr, "latest"]);
   const byteLen = code && code !== "0x" ? (code.length - 2) / 2 : 0;
 
   console.log(`ADDRESS:          ${addr}`);
   console.log(`BYTECODE LENGTH:  ${byteLen} bytes`);
-  console.log(`ON-CHAIN STATUS:  ${byteLen > 0 ? "BYTECODE VERIFIED ON SOMNIA SHANNON ✓" : "EMPTY BYTECODE (EOA / Un-deployed) ✗"}`);
+  console.log(`ON-CHAIN STATUS:  ${byteLen > 0 ? "BYTECODE VERIFIED ON SOMNIA SHANNON ✓" : "EMPTY BYTECODE ✗"}`);
   console.log(`EXPLORER URL:     https://shannon-explorer.somnia.network/address/${addr}\n`);
   console.log("================================================================================");
 }
