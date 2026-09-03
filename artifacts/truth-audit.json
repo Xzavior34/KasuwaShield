@@ -1,100 +1,74 @@
 {
   "protocol": "KasuwaShield Autonomous Risk Agent",
-  "auditStandard": "Somnia × DreamDEX Hackathon Forensic Truth Audit",
-  "timestamp": "2026-09-03T05:42:00.000Z",
+  "auditStandard": "Somnia × DreamDEX Hackathon Red-Team Forensic Truth Audit",
+  "timestamp": "2026-09-03T05:50:00.000Z",
   "network": {
     "name": "Somnia Shannon Testnet",
     "chainId": 50312,
     "rpcEndpoint": "https://dream-rpc.somnia.network",
-    "status": "LIVE_VERIFIED",
-    "headBlock": 478408265
+    "status": "LIVE_ONCHAIN",
+    "headBlock": 478411224
   },
   "wallet": {
     "address": "0x07b51d5e96c10368a2d052a63b25171075015938",
     "sttGasBalance": "1.000000",
     "role": "Funded Testnet EOA (Signer Candidate)",
-    "status": "LIVE_VERIFIED",
+    "status": "LIVE_ONCHAIN",
     "isEOA": true
   },
-  "eventContracts": {
-    "discoveryMethod": "Keyed strictly by 32-byte marketId (never recyclable pool address)",
-    "activeMarkets": [
-      {
-        "marketId": "0x679795a0195a1b76cdebb7c51d74e058aee92919b8c3389af86ef24535e8a28c",
-        "asset": "BTC",
-        "intervalSeconds": 900,
-        "collateralToken": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
-        "bestAskProb": 0.32,
-        "bestBidProb": 0.28,
-        "spread": 0.04,
-        "liquidityContracts": 500,
-        "status": "ACTIVE"
-      },
-      {
-        "marketId": "0x32a10e47b81c2049182371b8e901a8820f124c9012a4b89c72e411b932c02115",
-        "asset": "ETH",
-        "intervalSeconds": 3600,
-        "collateralToken": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
-        "bestAskProb": 0.42,
-        "bestBidProb": 0.38,
-        "spread": 0.04,
-        "liquidityContracts": 1200,
-        "status": "ACTIVE"
-      }
-    ]
-  },
-  "executionStages": {
-    "ORDER_CONSTRUCTED": "PROVEN (Deterministic Quant Math & Kelly Fraction)",
-    "ORDER_SUBMITTED": "PROVEN (Bounded payload with max price limit and slippage)",
-    "ORDER_RESTED": "PROVEN (CLOB limit order resting state)",
-    "ORDER_FILLED": "SIMULATED (No live taker fill claimed on testnet liquidity)"
-  },
-  "eip7702": {
-    "status": "AUTHORIZATION_READY_NOT_YET_DESIGNATED",
-    "architecture": "Non-custodial scoped session key with hard budget limit",
-    "delegationContract": "KasuwaExecutor (0x8a92f03d12a4b89c72e411b932c0211598f39b1a)",
-    "onChainState": "Authorization tuple hashed for Chain ID 50312; awaits browser-wallet signature"
-  },
-  "somniaReactivity": {
-    "status": "IMPLEMENTED_TESTNET_READY",
-    "handlerContract": "KasuwaReactiveHandler.sol (Solidity ^0.8.24)",
-    "features": [
-      "Two-tier idempotency duplicate prevention",
-      "Sequential window rollover tracking",
-      "Fail-closed budget and spread enforcement"
-    ],
-    "liveCallbackStatus": "Not yet independently verified on live testnet"
-  },
-  "smartContracts": {
-    "kasuwaPolicy": {
-      "address": "0x43a18f29d10e42819873a90a218291b87a82910a",
-      "status": "CONFIGURED_IN_REPO_SOURCE",
-      "bytecodeVerified": false
-    },
-    "kasuwaExecutor": {
-      "address": "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
-      "status": "CONFIGURED_IN_REPO_SOURCE",
-      "bytecodeVerified": false
+  "contracts": {
+    "usdsoToken": {
+      "address": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
+      "status": "BYTECODE_VERIFIED",
+      "bytes": 7532
     },
     "dreamDexFaucet": {
       "address": "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C",
       "status": "BYTECODE_VERIFIED",
       "bytes": 2192
     },
-    "usdsoToken": {
-      "address": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
-      "status": "BYTECODE_VERIFIED",
-      "bytes": 7532
+    "kasuwaPolicy": {
+      "address": "0x43a18f29d10e42819873a90a218291b87a82910a",
+      "status": "NOT_DEPLOYED_0X",
+      "source": "Solidity ^0.8.24 in repo"
+    },
+    "kasuwaExecutor": {
+      "address": "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
+      "status": "NOT_DEPLOYED_0X",
+      "source": "Solidity ^0.8.24 in repo"
+    },
+    "kasuwaReactiveHandler": {
+      "address": "N/A",
+      "status": "NOT_DEPLOYED_0X",
+      "source": "Solidity ^0.8.24 in repo"
     }
+  },
+  "eventContracts": {
+    "discoveryMethod": "Keyed strictly by 32-byte marketId (SpotPool confusion eliminated)",
+    "activeMarketTarget": {
+      "marketId": "0x679795a0195a1b76cdebb7c51d74e058aee92919b8c3389af86ef24535e8a28c",
+      "asset": "BTC",
+      "intervalSeconds": 900,
+      "collateralToken": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
+      "bestAskProb": 0.32,
+      "bestBidProb": 0.28,
+      "spread": 0.04,
+      "liquidityContracts": 500,
+      "status": "TESTNET_SPECIFIED"
+    }
+  },
+  "pipelineTruth": {
+    "orderConstruction": "CODE_VERIFIED",
+    "orderSubmission": "CODE_VERIFIED",
+    "clobOrderFill": "SIMULATED (No live taker fill claimed on testnet liquidity)",
+    "marketSettlement": "SIMULATED",
+    "eip7702": "AUTHORIZATION_READY_NOT_YET_DESIGNATED",
+    "somniaReactivity": "ARCHITECTURE_IMPLEMENTED_LIVE_CALLBACK_UNVERIFIED",
+    "automaticRollover": "SIMULATED_SEQUENCE"
   },
   "tests": {
     "unitAndInvariantTests": "15/15 PASSING (100%)",
     "truthAuditTests": "13/13 PASSING (100%)",
     "claimAudit": "100% PASSING (Zero claim violations)"
-  },
-  "simulatedBenchmarks": {
-    "priceShockHarness": "Deterministic BTC $64.8k -> $62.8k drop",
-    "reactionTimeBenchmark": "133ms hardware-timed math calculation",
-    "clobFillSimulator": "Synthetic $0.28 limit fill"
   }
 }
