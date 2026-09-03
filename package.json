@@ -11,6 +11,7 @@
     "build": "next build apps/web",
     "test": "tsx scripts/run-tests.ts",
     "test:audit": "tsx scripts/e2e-proof-test.ts",
+    "audit:claims": "tsx scripts/audit-claims.ts",
     "verify:testnet-wallet": "tsx scripts/verify-testnet-wallet.ts",
     "verify:routes": "node scripts/verify-routes.js",
     "live:testnet": "tsx scripts/live-testnet-runner.ts",
