@@ -14,6 +14,9 @@
 [![Somnia Reactivity](https://img.shields.io/badge/Architecture-Somnia_Reactive_Handler-ec4899?style=flat-square)](./contracts/KasuwaReactiveHandler.sol)
 [![Testnet Ready](https://img.shields.io/badge/Status-Hackathon_Testnet_Prototype-f59e0b?style=flat-square)](https://shannon-explorer.somnia.network)
 
+**Forensic Audit**: [`FINAL_FORENSIC_AUDIT.md`](./FINAL_FORENSIC_AUDIT.md) | **Wiring Proof**: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md) | **EIP-7702 Matrix**: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md)  
+**Machine-Readable Ledgers**: [`artifacts/onchain-verification.json`](./artifacts/onchain-verification.json) | [`artifacts/final-truth-report.json`](./artifacts/final-truth-report.json)
+
 ---
 
 ## ⚡ 1. One-Sentence Explanation
@@ -28,7 +31,7 @@
 
 DreamDEX Event Contracts are short-duration instruments (typically 15-minute or 1-hour expiry windows). While they provide efficient, capped-risk binary derivatives, protecting a continuous spot portfolio exposure creates severe operational friction:
 
-* **Repeated Authorization Friction**: Maintaining 24-hour downside protection over 15-minute windows requires manual approval of **~96 individual wallet transactions per day**.
+* **Repeated Authorization Friction**: Maintaining continuous 24-hour downside protection requires repeated manual wallet approvals across successive windows (e.g. 96 separate transactions per day for 15-minute contracts).
 * **Window Gaps & Missed Rollovers**: Any delay in approving the next contract leaves the underlying portfolio completely unprotected against sudden market drops.
 * **Inconsistent Sizing & Emotional Execution**: Manual traders struggle to calculate mathematically optimal hedge ratios ($N(-d_2)$, CVaR, and Kelly fractions) during fast-moving market dislocations.
 
