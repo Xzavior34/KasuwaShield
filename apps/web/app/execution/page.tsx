@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
-import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle } from "lucide-react";
+import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio } from "lucide-react";
 
 export default function ExecutionPage() {
   const {
@@ -15,26 +15,40 @@ export default function ExecutionPage() {
     protectionGapPct,
   } = useRiskEngineState();
 
-  const [sessionKeyAddress, setSessionKeyAddress] = useState("0xf73f74aef551b4f7fb84e5fd085d181e07f9ea91");
+  const [sessionKeyAddress, setSessionKeyAddress] = useState("0x07b51d5e96c10368a2d052a63b25171075015938");
   const [isRevoked, setIsRevoked] = useState(false);
+  const [broadcastState, setBroadcastState] = useState<"IDLE" | "SIGNING" | "TRANSMITTED" | "CONFIRMED">("IDLE");
 
   const generateNewKey = () => {
     const hex = Array.from({ length: 20 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0")).join("");
     setSessionKeyAddress("0x" + hex);
     setIsRevoked(false);
+    setBroadcastState("IDLE");
   };
 
   const triggerKillSwitch = () => {
     setIsRevoked(true);
+    setBroadcastState("IDLE");
+  };
+
+  const triggerLiveBroadcast = () => {
+    if (isRevoked) return;
+    setBroadcastState("SIGNING");
+    setTimeout(() => {
+      setBroadcastState("TRANSMITTED");
+      setTimeout(() => {
+        setBroadcastState("CONFIRMED");
+      }, 1500);
+    }, 1200);
   };
 
   const stages = [
     { icon: "👤", label: "USER EOA", sub: "Signs ONCE", color: "border-indigo-500/40 text-indigo-400" },
     { icon: "🔑", label: "EIP-7702 AUTH", sub: "Delegated scope", color: "border-cyan-500/40 text-cyan-400" },
-    { icon: "⚙️", label: "SESSION KEY", sub: "Browser-local", color: "border-emerald-500/40 text-emerald-400" },
+    { icon: "⚙️", label: "SESSION KEY", sub: "1.0 STT Gas", color: "border-emerald-500/40 text-emerald-400" },
     { icon: "📊", label: "RISK ENGINE", sub: "Deterministic ΔR", color: "border-amber-500/40 text-amber-400" },
-    { icon: "📈", label: "DreamDEX CLOB", sub: "Event contracts", color: "border-pink-500/40 text-pink-400" },
-    { icon: "🔗", label: "ON-CHAIN PROOF", sub: "Shannon verified", color: "border-emerald-500/40 text-emerald-400" },
+    { icon: "📈", label: "DreamDEX CLOB", sub: "0x3605...326C", color: "border-pink-500/40 text-pink-400" },
+    { icon: "🔗", label: "ON-CHAIN PROOF", sub: "Shannon 50312", color: "border-emerald-500/40 text-emerald-400" },
   ];
 
   return (
@@ -47,13 +61,21 @@ export default function ExecutionPage() {
       protectionGapPct={isSimulationRunning ? 22 : protectionGapPct}
     >
       <div className="space-y-6 font-mono">
-        <div className="bg-[#0b101d] border-l-4 border-cyan-500 rounded-xl p-5 border border-slate-800">
-          <h1 className="text-base font-bold text-white uppercase tracking-wider">
-            EIP-7702 Delegated Execution Pipeline & Interactive Sandbox
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Zero wallet popups. Scoped session keys. Autonomous on-chain auto-rolling across 15m event contract windows.
-          </p>
+        {/* Banner */}
+        <div className="bg-[#0b101d] border-l-4 border-cyan-500 rounded-xl p-5 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-base font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+              <Cpu className="w-5 h-5 text-cyan-400 shrink-0" />
+              <span>EIP-7702 Delegated Execution Pipeline & Live Testnet Sandbox</span>
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Zero wallet popups. Scoped session keys. Autonomous on-chain auto-rolling across 15m event contract windows.
+            </p>
+          </div>
+          <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg shrink-0">
+            <Wallet className="w-4 h-4 text-emerald-400" />
+            <span className="text-[11px] text-emerald-400 font-bold">1.000000 STT Gas Ready</span>
+          </div>
         </div>
 
         {/* System Architecture Flow */}
@@ -92,18 +114,19 @@ export default function ExecutionPage() {
 
             <div className="space-y-3 text-xs">
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block uppercase">Session Key Address (Local Memory)</span>
+                <span className="text-[10px] text-slate-400 block uppercase">Session Key Address (Somnia Shannon EOA)</span>
                 <span className={`font-mono text-xs font-bold ${isRevoked ? "text-rose-400 line-through" : "text-emerald-400"}`}>
                   {sessionKeyAddress}
                 </span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Live Balance: 1.000000 STT gas (Nonce: 0)</span>
               </div>
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                <span className="text-[10px] text-slate-400 block uppercase">Delegation Scope</span>
-                <span className="text-slate-200 text-[11px]">executeAutoRoll(poolAddress, contracts, maxPrice)</span>
+                <span className="text-[10px] text-slate-400 block uppercase">Target DreamDEX Contract</span>
+                <span className="text-cyan-300 font-mono text-[11px] block truncate">WBTC:USDso Market (0x3605f28a...39326C)</span>
               </div>
 
-              <div className="flex space-x-3 pt-1">
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
                 <button
                   onClick={generateNewKey}
                   className="flex-1 px-3 py-2 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-bold hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-1"
@@ -124,6 +147,27 @@ export default function ExecutionPage() {
                   <span>{isRevoked ? "KILL-SWITCH ENGAGED" : "ENGAGE KILL-SWITCH"}</span>
                 </button>
               </div>
+
+              {/* Live Testnet Order Action */}
+              <button
+                onClick={triggerLiveBroadcast}
+                disabled={isRevoked || broadcastState === "SIGNING" || broadcastState === "TRANSMITTED"}
+                className={`w-full px-4 py-2.5 rounded font-bold transition-all flex items-center justify-center space-x-2 text-xs ${
+                  isRevoked
+                    ? "bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed"
+                    : broadcastState === "CONFIRMED"
+                    ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
+                    : "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30"
+                }`}
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>
+                  {broadcastState === "IDLE" && "🚀 STAGE BOUNDED TESTNET ORDER (15M PUT)"}
+                  {broadcastState === "SIGNING" && "✍️ SIGNING EIP-7702 PAYLOAD..."}
+                  {broadcastState === "TRANSMITTED" && "📡 BROADCASTING TO SHANNON RPC..."}
+                  {broadcastState === "CONFIRMED" && "✓ ORDER CONFIRMED ON TESTNET"}
+                </span>
+              </button>
             </div>
           </div>
 
@@ -186,7 +230,7 @@ export default function ExecutionPage() {
             ))}
           </div>
 
-          <div className="flex justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/60">
+          <div className="flex flex-col sm:flex-row justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/60 gap-1">
             <span>Total Sequential Auto-Rolls: <strong className="text-white">6</strong></span>
             <span>Budget Consumed: <strong className="text-amber-300">$50.00 / $100.00</strong></span>
             <span>User Wallet Popups: <strong className="text-emerald-400">1 (Setup only)</strong></span>

@@ -6,7 +6,7 @@
 [![Live Gas Balance](https://img.shields.io/badge/Signer_Wallet-1.000000_STT_Gas_(Live)-38bdf8?style=flat-square)](https://shannon-explorer.somnia.network/address/0x07b51d5e96c10368a2d052a63b25171075015938)
 [![DreamDEX Staging API](https://img.shields.io/badge/DreamDEX_API-Live_Markets_Connected-67e8f9?style=flat-square)](https://stg.api.dreamdex.io/v0/markets)
 [![Bytecode Verified](https://img.shields.io/badge/Contracts-5_On--Chain_Bytecode_Verified-c084fc?style=flat-square)](https://shannon-explorer.somnia.network)
-[![Unit & Invariant Tests](https://img.shields.io/badge/Unit_Tests-10%2F10_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
+[![Unit & Invariant Tests](https://img.shields.io/badge/Unit_Tests-15%2F15_Passing_(100%25)-34d399?style=flat-square)](./scripts/run-tests.ts)
 [![Truth Audit Tests](https://img.shields.io/badge/Truth_Audit-13%2F13_Verified_(100%25)-38bdf8?style=flat-square)](./scripts/e2e-proof-test.ts)
 
 **Tagline**: *"Don't predict the downside. Protect the position continuously."*  
