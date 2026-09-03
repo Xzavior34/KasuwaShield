@@ -55,7 +55,7 @@
     "status": "DEPLOYED_CALLBACK_UNVERIFIED_LIVE"
   },
   "eip7702": {
-    "layer1_implementation": "LIVE_VERIFIED",
+    "layer1_implementation": "CODE_VERIFIED",
     "layer2_payload": "CODE_VERIFIED",
     "layer3_signature": "CODE_VERIFIED",
     "layer4_designation": "NOT_PROVEN_LIVE",
