@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-09-03T08:56:34.923Z",
+  "network": {
+    "chainId": 50312,
+    "headBlock": 478527030,
+    "rpc": "https://dream-rpc.somnia.network"
+  },
+  "contracts": {
+    "kasuwaPolicy": {
+      "name": "KasuwaPolicy.sol",
+      "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+      "bytecodeBytes": 4207,
+      "status": "BYTECODE_VERIFIED",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"
+    },
+    "kasuwaExecutor": {
+      "name": "KasuwaExecutor.sol",
+      "address": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
+      "bytecodeBytes": 3505,
+      "status": "BYTECODE_VERIFIED",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c"
+    },
+    "reactiveHandler": {
+      "name": "KasuwaReactiveHandler.sol",
+      "address": "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
+      "bytecodeBytes": 0,
+      "status": "UNVERIFIED",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
+      "deploymentTx": "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d",
+      "blockNumber": 478456927
+    },
+    "usdsoToken": {
+      "name": "USDso Collateral Token",
+      "address": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
+      "bytecodeBytes": 3765,
+      "status": "BYTECODE_VERIFIED",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171"
+    },
+    "dreamdexFaucet": {
+      "name": "DreamDEX Faucet",
+      "address": "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C",
+      "bytecodeBytes": 1095,
+      "status": "BYTECODE_VERIFIED",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C"
+    },
+    "deployerEOA": {
+      "name": "Deployer Wallet (EOA)",
+      "address": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
+      "balanceSTT": 0.58361398,
+      "status": "FUNDED_LIVE_ONCHAIN"
+    }
+  },
+  "executorPolicyWiring": {
+    "executorAddress": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
+    "expectedPolicyAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+    "storageSlot0": "0x00000000000000000000000007764d9031b8747e28d3e1601ff1417569de22da",
+    "governanceAdmin": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
+    "status": "CONFIGURED_VIA_GOVERNANCE_EOA"
+  }
+}
