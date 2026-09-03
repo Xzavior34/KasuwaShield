@@ -10,6 +10,8 @@
   "scripts": {
     "build": "npm --prefix apps/web install && npm --prefix apps/web run build",
     "test": "tsx scripts/run-tests.ts",
+    "verify:testnet-wallet": "tsx scripts/verify-testnet-wallet.ts",
+    "live:testnet": "tsx scripts/live-testnet-runner.ts",
     "typecheck": "tsc --noEmit",
     "discover": "tsx scripts/discover-markets.ts",
     "inspect": "tsx scripts/inspect-market.ts",
