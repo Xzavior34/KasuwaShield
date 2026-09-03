@@ -148,9 +148,9 @@ To prevent duplicate rollover execution during RPC retries, re-orgs, or duplicat
 | **USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) | **BYTECODE VERIFIED (7.5 KB) ✓** |
 | **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) | **BYTECODE VERIFIED (2.2 KB) ✓** |
 | **Funded Signer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) | **1.000000 STT Gas (EOA) ✓** |
-| **KasuwaPolicy.sol** | `0x43a18f29d10e42819873a90a218291b87a82910a` | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
-| **KasuwaExecutor.sol** | `0x8a92f03d12a4b89c72e411b932c0211598f39b1a` | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
-| **KasuwaReactiveHandler.sol**| Source in Repo | Configured in Repo Source | Solidity ^0.8.24 (Un-deployed) |
+| **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) | **BYTECODE VERIFIED (4.2 KB) ✓** |
+| **KasuwaExecutor.sol** | `0x8a92f03d12a4b89c72e411b932c0211598f39b1a` | Configured in Repo Source | Solidity ^0.8.24 (Pending Executor Deploy) |
+| **KasuwaReactiveHandler.sol**| Source in Repo | Configured in Repo Source | Solidity ^0.8.24 (Pending Handler Deploy) |
 
 ---
 

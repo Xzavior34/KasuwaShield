@@ -28,9 +28,10 @@
       "bytes": 2192
     },
     "kasuwaPolicy": {
-      "address": "0x43a18f29d10e42819873a90a218291b87a82910a",
-      "status": "NOT_DEPLOYED_0X",
-      "source": "Solidity ^0.8.24 in repo"
+      "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+      "status": "BYTECODE_VERIFIED",
+      "bytes": 4207,
+      "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312)"
     },
     "kasuwaExecutor": {
       "address": "0x8a92f03d12a4b89c72e411b932c0211598f39b1a",
