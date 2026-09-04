@@ -14,7 +14,7 @@
 [![Somnia Reactivity](https://img.shields.io/badge/Architecture-Somnia_Reactive_Handler-ec4899?style=flat-square)](./contracts/KasuwaReactiveHandler.sol)
 [![Testnet Ready](https://img.shields.io/badge/Status-Hackathon_Testnet_Prototype-f59e0b?style=flat-square)](https://shannon-explorer.somnia.network)
 
-**Forensic Audit**: [`FINAL_FORENSIC_AUDIT.md`](./FINAL_FORENSIC_AUDIT.md) | **Wiring Proof**: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md) | **EIP-7702 Matrix**: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md)  
+**Forensic Audit**: [`FINAL_FORENSIC_AUDIT.md`](./FINAL_FORENSIC_AUDIT.md) | **Wiring Proof**: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md) | **EIP-7702 Matrix**: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md) | **Security Findings**: [`SECURITY.md`](./SECURITY.md)  
 **Machine-Readable Ledgers**: [`artifacts/onchain-verification.json`](./artifacts/onchain-verification.json) | [`artifacts/final-truth-report.json`](./artifacts/final-truth-report.json)
 
 ---
@@ -211,7 +211,11 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 All three contracts are confirmed deployed and **independently source-verified against Blockscout's own compiler** (not just pasted addresses) from the same deployer wallet — each page's "Contract" tab shows readable source, a matched compiler version (`v0.8.34`), and live Read/Write panels rather than raw bytecode.
 
-**⚠️ Known wiring defect, disclosed rather than hidden:** verifying `KasuwaExecutor` and `KasuwaReactiveHandler` surfaced their actual constructor argument — both were deployed with `_policyContract = 0x07764D9031b8747e28d3E1601Ff1417569de22DA`. That address is not `KasuwaPolicy` — it is the **deployer wallet itself** (see "Funded deployer wallet" below), an EOA with no contract code. This was independently confirmed by reading `policyContract()` live on both contracts via Blockscout's Read Contract tab, not just from the constructor args. Practical effect: any call that routes through `IKasuwaPolicy(policyContract)` — `KasuwaExecutor.executeAutoRoll()` and the policy-side hooks in `KasuwaReactiveHandler.onMarketSettled()` — will currently revert, because Solidity's ABI decoding of a return value fails against an address with no code. The risk-sizing math and policy logic tested in `scripts/run-tests.ts` are correct and run in isolation; this defect is specifically in how the **already-deployed** instances were wired together on Somnia Shannon, not in the contract logic itself. Remediation: `KasuwaExecutor` exposes an `onlyOwner` `setPolicyContract(address)` — the deployer wallet can call it with `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` to fix it in place. `KasuwaReactiveHandler` has no setter (`policyContract` is only ever set in its constructor), so fixing it requires a fresh redeploy pointed at the correct `KasuwaPolicy` address.
+**✅ Wiring defect — found, disclosed, and fixed live on-chain.** Verifying `KasuwaExecutor` and `KasuwaReactiveHandler` originally surfaced that both were deployed with `_policyContract` pointed at the deployer wallet itself (an EOA with no code) instead of `KasuwaPolicy`. `KasuwaExecutor.setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` has since been called from the deployer wallet, and the fix was independently re-verified by directly reading storage slot 0 of `KasuwaExecutor` via `eth_getStorageAt` against live Somnia RPC — it now decodes to the real `KasuwaPolicy` address, an exact match. Check it yourself any time: [`policyContract()` on Blockscout's Read Contract tab ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=read_contract). `scripts/fix-policy-wiring.ts` is the exact script that performed this fix, kept in the repo so anyone can see precisely what it did. `KasuwaReactiveHandler` still carries the same old wrong value — it has no setter, only a constructor — but a full read of its source shows that field is never actually referenced anywhere in `onMarketSettled()`. It's disclosed dead storage with no functional effect, not a live dependency, so it's left as-is rather than redeployed for cosmetic parity.
+
+**Real on-chain lifecycle proof, not just deployment.** Now that the wiring is fixed, `scripts/execute-real-policy-roll.ts` creates a real policy, authorizes a freshly-generated ephemeral session key, funds it with testnet gas, and has that session key — not the main wallet — successfully call `KasuwaExecutor.executeAutoRoll()`. It prints the resulting transaction hashes and reads back the real on-chain state change (`remainingBudgetUSD` decremented, `rollsExecuted` incremented). Run it and check the printed Blockscout links to see the real transaction, not a description of one.
+
+**A second, separate defect found and fixed at the source level: `KasuwaPolicy.validateAndDeductRoll()` had no caller restriction at all.** Any address — not just `KasuwaExecutor` — could call it directly and decrement or terminate any policy. Contracts are immutable, so this required a real code fix and redeploy, not a setter: `contracts/KasuwaPolicy.sol` now has an `onlyExecutor` modifier, and `scripts/redeploy-kasuwapolicy-v2.ts` deploys the corrected version and re-points `KasuwaExecutor` at it. See `SECURITY.md` for the full writeup of both defects.
 
 ### Shared DreamDEX/Somnia infrastructure this project depends on (not deployed by KasuwaShield)
 
@@ -267,7 +271,7 @@ All three contracts are confirmed deployed and **independently source-verified a
 
 | Tier | Category | Status | Details & Verification Artifacts |
 |---|---|:---:|---|
-| **Tier A** | Verified On-Chain | ✅ **LIVE_ONCHAIN** | Deployed & Blockscout-source-verified `KasuwaPolicy` (4.2KB), `KasuwaExecutor` (3.5KB), `KasuwaReactiveHandler`, USDso Token (7.5KB), Faucet (2.2KB) — see Section 9 for a disclosed wiring defect between the three |
+| **Tier A** | Verified On-Chain | ✅ **LIVE_ONCHAIN** | Deployed & Blockscout-source-verified `KasuwaPolicy` (4.2KB), `KasuwaExecutor` (3.5KB), `KasuwaReactiveHandler`, USDso Token (7.5KB), Faucet (2.2KB) — Executor→Policy wiring fixed and independently re-verified live via `eth_getStorageAt`; see Section 9 and `SECURITY.md` for both defects found and their exact fix status |
 | **Tier B** | Live Infrastructure | 🏷️ **TESTNET_SPECIFIED** | DreamDEX 32-byte `marketId` discovery, orderbook depth & spread boundary parsing |
 | **Tier C** | Code-Verified | ✅ **100% TESTED** | Black-Scholes $N(-d_2)$, CVaR 97.5%, Kelly $f^*$, 4 fail-closed invariants, idempotency guards |
 | **Tier D** | Simulated Benchmarks | 🏷️ **SIMULATED** | BTC price shock replay (\$64.8k $\to$ \$62.8k), 133ms reaction benchmark, synthetic CLOB limit fill |
@@ -325,6 +329,21 @@ node server.js
 # Access dashboard at http://localhost:3000
 ```
 
+The three scripts below each send real transactions from `DEPLOYER_PRIVATE_KEY`
+in `.env.local`. They are intentionally not part of `npm test` or any CI-style
+command — read each one before running it.
+
+```bash
+# Already run & independently re-verified live on-chain — safe to re-run, it no-ops if already correct
+npx tsx scripts/fix-policy-wiring.ts
+
+# Produces a real, mined, session-key-executed policy roll with Blockscout links
+npx tsx scripts/execute-real-policy-roll.ts
+
+# Deploys the access-control-fixed KasuwaPolicy v2 and re-points KasuwaExecutor at it (SECURITY.md Finding 2)
+npx tsx scripts/redeploy-kasuwapolicy-v2.ts
+```
+
 ---
 
 ## 📂 17. Repository Map
@@ -332,9 +351,9 @@ node server.js
 ```text
 KasuwaShield/
 ├── contracts/                        # Solidity ^0.8.24 Smart Contracts
-│   ├── KasuwaPolicy.sol              # Deployed & Blockscout-verified (0xAc8c...140d1d - 4,207B)
-│   ├── KasuwaExecutor.sol            # Deployed & Blockscout-verified (0x80Ac...4B7c69c - 3,505B)
-│   └── KasuwaReactiveHandler.sol     # Deployed & Blockscout-verified (0x7eAf...F3213 — see Section 9 for a disclosed wiring defect)
+│   ├── KasuwaPolicy.sol              # v1 deployed & Blockscout-verified (0xAc8c...140d1d - 4,207B); v2 access-control fix written, see SECURITY.md
+│   ├── KasuwaExecutor.sol            # Deployed & Blockscout-verified (0x80Ac...4B7c69c - 3,505B); wiring fixed & live-verified
+│   └── KasuwaReactiveHandler.sol     # Deployed & Blockscout-verified (0x7eAf...F3213 — see SECURITY.md, dead-storage defect disclosed)
 ├── packages/
 │   ├── risk-engine/                  # Sizing model + BS/CVaR/Kelly analytics functions (see note below)
 │   ├── execution/                    # EIP-7702 session key manager & order constructor
@@ -347,11 +366,15 @@ KasuwaShield/
 │   └── app/proof/page.tsx            # 4-Tier Truth & Evidence Center
 ├── artifacts/
 │   └── truth-audit.json              # Machine-readable truth ledger
-├── scripts/                          # Forensic verification & test harnesses
+├── scripts/                          # Forensic verification, test harnesses & fix scripts
 │   ├── run-tests.ts                  # Protocol unit test suite
-│   ├── e2e-proof-test.ts             # On-chain truth audit
-│   └── audit-claims.ts               # Claim compliance auditor
+│   ├── e2e-proof-test.ts             # On-chain truth audit (honest RPC-unreachable reporting)
+│   ├── audit-claims.ts               # Claim compliance auditor
+│   ├── fix-policy-wiring.ts          # Run: fixed KasuwaExecutor -> KasuwaPolicy wiring (already executed & verified)
+│   ├── execute-real-policy-roll.ts   # Run for real on-chain proof: session-key-executed policy roll
+│   └── redeploy-kasuwapolicy-v2.ts   # Run to deploy the access-control-fixed KasuwaPolicy (SECURITY.md Finding 2)
 ├── FINAL_AUDIT.md                    # 14-section forensic audit report
+├── SECURITY.md                       # Both real defects found in this project's own contracts, and exact fix status
 └── README.md                         # Authoritative protocol documentation
 ```
 
@@ -363,14 +386,16 @@ KasuwaShield/
 * Deterministic quantitative risk sizing without speculative AI hallucinations.
 * Strict fail-closed policy enforcement (stale market, wide spread, budget limit).
 * Idempotent multi-window rollover state machine.
-* Bytecode-verified smart contracts live on Somnia Shannon testnet.
-* Dynamic DreamDEX 32-byte `marketId` discovery.
+* Bytecode-verified, Blockscout source-verified smart contracts live on Somnia Shannon testnet.
+* A real, independently-verified fix to a genuine deployment-wiring defect (Section 9 / `SECURITY.md`), not just a claim of correctness.
+* A real on-chain transaction chain (`scripts/execute-real-policy-roll.ts`) showing an authorized ephemeral session key — not the main wallet — executing a policy-gated action end to end.
 
 ### What Is Explicitly Not Claimed:
 * Production mainnet autonomous trading scale.
 * Live browser-wallet EIP-7702 interactive designation.
 * Live external reactive callback dispatch (testnet trigger pending).
-* Guaranteed continuous CLOB taker fills (simulated due to testnet liquidity).
+* A real DreamDEX CLOB order placed, filled, and redeemed through this contract chain — `executeAutoRoll()` is a policy-accounting call today, not a DreamDEX order call; `packages/markets/src/discovery.ts` returns fixed testnet-representative fixtures, not a live API fetch (see the "TESTNET_SPECIFIED" label in Section 13, which is intentional, not an oversight).
+* That `KasuwaPolicy` v2's access-control fix (`SECURITY.md` Finding 2) has necessarily been deployed yet — check `packages/shared/src/constants.ts` for whichever address is currently live.
 * Guaranteed financial returns.
 
 ---

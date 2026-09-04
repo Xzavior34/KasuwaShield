@@ -26,7 +26,7 @@
 
 1. **Testnet CLOB Taker Liquidity**: Relies on synthetic limit order fills during demo benchmarking due to the lack of 24/7 market makers on public testnet.
 2. **Interactive Wallet EIP-7702 Designation**: Authorization payloads are constructed and hashed mathematically in code, but live browser-wallet EOA designation is unverified due to current MetaMask EIP-7702 UI constraints.
-3. **Reactive Callback Execution**: `KasuwaReactiveHandler` is deployed and Blockscout source-verified at `0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213` (a prior claimed address, `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`, was found during audit to be an unused EOA with no deployment transaction -- that claim was false and this is the corrected, independently-confirmed replacement). Autonomous external callback dispatch remains unverified live, and its `policyContract` wiring has the same defect described in Section 5.
+3. **Reactive Callback Execution**: `KasuwaReactiveHandler` is deployed and Blockscout source-verified at `0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213` (a prior claimed address, `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`, was found during audit to be an unused EOA with no deployment transaction -- that claim was false and this is the corrected, independently-confirmed replacement). Autonomous external callback dispatch remains unverified live. Its `policyContract` still holds the same wrong value described in Section 5, unlike `KasuwaExecutor` which has since been fixed -- but a full read of the contract source confirms that field is never referenced anywhere in `onMarketSettled()`, so it is disclosed dead storage with no functional effect, not a live dependency.
 
 ---
 
@@ -45,7 +45,11 @@
 
 * **Live on `KasuwaExecutor`**: `policyContract()` is live on-chain verified returning `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` (KasuwaPolicy).
 * **Storage Slot 0**: Verified holding `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`.
-* **Effect**: Calls routing through `IKasuwaPolicy(policyContract)` execute validation and budget deduction correctly. Full detail: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
+* **Effect**: Calls routing through `IKasuwaPolicy(policyContract)` execute validation and budget deduction correctly, demonstrated end-to-end by `scripts/execute-real-policy-roll.ts`. Full detail: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
+
+## 5b. A Second, Separate Defect Found: KasuwaPolicy Access Control
+
+While scoping the fix above, a full read of `contracts/KasuwaPolicy.sol` turned up an unrelated defect: `validateAndDeductRoll()` had no caller restriction at all -- any address, not just `KasuwaExecutor`, could call it directly and mutate any policy's state. This has a written, compiled fix (`onlyExecutor` modifier, v2 contract) and a ready-to-run redeploy script, but has not yet been deployed. Full writeup and current status: [`SECURITY.md`](./SECURITY.md).
 
 ---
 

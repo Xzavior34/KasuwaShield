@@ -67,5 +67,12 @@
       "kasuwaExecutor": "FIXED ON-CHAIN: setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) confirmed in storage slot 0.",
       "kasuwaReactiveHandler": "onMarketSettled() executes autonomously without relying on policy storage."
     }
+  },
+  "policyAccessControlFinding": {
+    "description": "KasuwaPolicy v1 (0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) validateAndDeductRoll() had no caller restriction -- any address, not just KasuwaExecutor, could call it directly. See SECURITY.md Finding 2.",
+    "severity": "HIGH",
+    "fixStatus": "FIX_WRITTEN_AND_COMPILED_NOT_YET_DEPLOYED",
+    "fix": "contracts/KasuwaPolicy.sol now has an onlyExecutor modifier; artifacts/KasuwaPolicy.v2.compiled.json is the compiled bytecode/ABI; scripts/redeploy-kasuwapolicy-v2.ts deploys it and rewires KasuwaExecutor.",
+    "reference": "SECURITY.md"
   }
 }

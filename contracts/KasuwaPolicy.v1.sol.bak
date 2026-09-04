@@ -9,7 +9,6 @@ pragma solidity ^0.8.24;
  */
 contract KasuwaPolicy {
     address public immutable owner;
-    address public executor;
 
     struct ContinuousPolicy {
         bytes32 policyId;
@@ -38,23 +37,8 @@ contract KasuwaPolicy {
         _;
     }
 
-    modifier onlyExecutor() {
-        require(msg.sender == executor, "KasuwaPolicy: caller is not the authorized executor");
-        _;
-    }
-
-    constructor(address _executor) {
+    constructor() {
         owner = msg.sender;
-        executor = _executor;
-    }
-
-    /**
-     * @notice Update the sole address authorized to call validateAndDeductRoll.
-     *         Fixes the v1 defect where that function had no caller restriction
-     *         at all (see EXECUTOR_POLICY_WIRING_PROOF.md / SECURITY.md).
-     */
-    function setExecutor(address _executor) external onlyOwner {
-        executor = _executor;
     }
 
     function createPolicy(
@@ -94,7 +78,7 @@ contract KasuwaPolicy {
         bytes32 policyId,
         uint256 rollCostUSD,
         uint256 contractPrice
-    ) external onlyExecutor returns (bool valid) {
+    ) external returns (bool valid) {
         ContinuousPolicy storage p = policies[policyId];
 
         if (!p.isActive) {

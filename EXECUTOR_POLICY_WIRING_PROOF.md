@@ -59,7 +59,10 @@ Status:                100% MATCH (LIVE ON-CHAIN VERIFIED)
 | **Executor Bytecode** | ✅ **PASS** | 3,505 bytes deployed and Blockscout source-verified on Somnia Shannon |
 | **ReactiveHandler Bytecode** | ✅ **PASS** | Deployed and Blockscout source-verified on Somnia Shannon |
 | **Policy Bytecode** | ✅ **PASS** | 4,207 bytes deployed and Blockscout source-verified on Somnia Shannon |
-| **Executor → Policy wiring** | ✅ **PASS — LIVE ON-CHAIN VERIFIED** | `policyContract` on `KasuwaExecutor` points directly to `KasuwaPolicy` (`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`) |
-| **Direct Policy Invocations** | ✅ **PASS** | `executeAutoRoll()` routes calls directly to `IKasuwaPolicy(policyContract).validateAndDeductRoll()` |
+| **Executor → Policy wiring** | ✅ **PASS — LIVE ON-CHAIN VERIFIED** | `policyContract` on `KasuwaExecutor` points directly to `KasuwaPolicy` (`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`), fixed via `scripts/fix-policy-wiring.ts` and re-confirmed with a fresh `eth_getStorageAt` read |
+| **ReactiveHandler → Policy wiring** | ⚠️ **STILL WRONG — CONFIRMED INERT** | `KasuwaReactiveHandler.policyContract` still holds the original wrong value (the deployer EOA). It has no setter, only a constructor, so this specific instance cannot be fixed without a redeploy. A full read of `contracts/KasuwaReactiveHandler.sol` shows this field is never referenced anywhere in `onMarketSettled()` — it is disclosed dead storage, not a live dependency, so no redeploy is planned for this alone. |
+| **Direct Policy Invocations** | ✅ **PASS (Executor path)** | `executeAutoRoll()` now successfully routes calls to `IKasuwaPolicy(policyContract).validateAndDeductRoll()` — see `scripts/execute-real-policy-roll.ts` for a real, mined, end-to-end proof of this |
 
-**Status**: **ALL CONTRACTS DEPLOYED, SOURCE-VERIFIED, AND ON-CHAIN WIRED (PASS)**
+**Status**: **EXECUTOR WIRING FIXED AND LIVE-VERIFIED. REACTIVEHANDLER'S COPY OF THE OLD DEFECT REMAINS AND IS DISCLOSED, CONFIRMED FUNCTIONALLY INERT.**
+
+**A separate, second defect** was found while scoping this fix: `KasuwaPolicy.validateAndDeductRoll()` itself had no caller restriction at all — any address, not just `KasuwaExecutor`, could call it directly. This is unrelated to the wiring issue above and is written up in full, including fix status, in [`SECURITY.md`](./SECURITY.md).

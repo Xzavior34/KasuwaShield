@@ -68,7 +68,8 @@
     "eip7702": "SESSION_KEY_GENERATION_VERIFIED; DELEGATION_SIGNING_NOT_IMPLEMENTED (see EIP7702_PROOF.md)",
     "somniaReactivity": "ARCHITECTURE_IMPLEMENTED_LIVE_CALLBACK_UNVERIFIED",
     "automaticRollover": "SIMULATED_SEQUENCE",
-    "policyContractWiring": "MISWIRED_DISCLOSED: KasuwaExecutor and KasuwaReactiveHandler were both deployed with _policyContract pointed at the deployer wallet EOA, not at KasuwaPolicy. See EXECUTOR_POLICY_WIRING_PROOF.md."
+    "policyContractWiring": "KasuwaExecutor -> KasuwaPolicy FIXED and independently re-verified live via eth_getStorageAt. KasuwaReactiveHandler still holds the old wrong value (no setter exists) but that field is confirmed never read by the contract -- disclosed as inert, not a live dependency. See EXECUTOR_POLICY_WIRING_PROOF.md.",
+    "policyAccessControl": "KasuwaPolicy v1 validateAndDeductRoll() had no caller restriction (any address could call it). Fix written (onlyExecutor modifier), compiled, redeploy script ready -- not yet deployed. See SECURITY.md."
   },
   "tests": {
     "unitAndInvariantTests": "17/17 PASSING (100%)",

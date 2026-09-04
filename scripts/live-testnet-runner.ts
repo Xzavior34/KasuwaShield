@@ -68,15 +68,15 @@ function fetchDreamDexMarkets(): Promise<any> {
           try {
             resolve(JSON.parse(body));
           } catch {
-            resolve({ markets: [] });
+            resolve({ markets: [], __fetchFailed: true });
           }
         });
       }
     );
-    req.on("error", () => resolve({ markets: [] }));
+    req.on("error", () => resolve({ markets: [], __fetchFailed: true }));
     req.setTimeout(4000, () => {
       req.destroy();
-      resolve({ markets: [] });
+      resolve({ markets: [], __fetchFailed: true });
     });
     req.end();
   });
@@ -112,7 +112,7 @@ async function runLiveTestnet() {
 
   console.log("[2. WALLET & GAS VERIFICATION]");
   console.log(`  ✓ Address:    ${signerAddress}`);
-  console.log(`  ✓ STT Gas:    ${balSTT} STT (100% Live RPC)\n`);
+  console.log(`  ${balHex ? "✓" : "⚠"} STT Gas:    ${balSTT} STT ${balHex ? "(live RPC read)" : "(RPC unreachable from this environment — value is 0.0 fallback, NOT a confirmed balance)"}\n`);
 
   // Step 5: Bytecode Audit for Contracts
   console.log("[3. ON-CHAIN CONTRACT BYTECODE AUDIT]");
@@ -127,19 +127,29 @@ async function runLiveTestnet() {
   const contractProofObj: Record<string, any> = {};
   for (const c of verifiedContracts) {
     const code = await rpcCall("eth_getCode", [c.address, "latest"]);
-    const isLive = code && code !== "0x" && code.length > 2;
-    console.log(`  ✓ ${c.name.padEnd(28)} (${c.address}): ${isLive ? `BYTECODE VERIFIED (${code.length} bytes)` : "NOT DEPLOYED"}`);
-    contractProofObj[c.name] = { address: c.address, bytecodeVerified: isLive, bytes: code ? code.length : 0 };
+    if (code === null) {
+      console.log(`  ⚠ ${c.name.padEnd(28)} (${c.address}): RPC UNREACHABLE — NOT checked this run (not the same as "not deployed")`);
+      contractProofObj[c.name] = { address: c.address, bytecodeVerified: null, note: "RPC unreachable this run" };
+      continue;
+    }
+    const isLive = code !== "0x" && code.length > 2;
+    console.log(`  ${isLive ? "✓" : "✗"} ${c.name.padEnd(28)} (${c.address}): ${isLive ? `BYTECODE VERIFIED (${code.length} bytes)` : "NOT DEPLOYED (confirmed empty code)"}`);
+    contractProofObj[c.name] = { address: c.address, bytecodeVerified: isLive, bytes: code.length };
   }
   console.log();
 
   // Step 6: Live Market Discovery
   console.log("[4. LIVE DREAMDEX MARKET DISCOVERY]");
   const ddData = await fetchDreamDexMarkets();
-  const markets = ddData.markets || [];
-  console.log(`  ✓ Discovered ${markets.length} live DreamDEX spot/event market contracts:`);
-  for (const m of markets) {
-    console.log(`    - ${m.symbol.padEnd(12)} Contract: ${m.contract} (Lot Size: ${m.lotSize}, Tick: ${m.tickSize})`);
+  const marketsFetchFailed = !ddData || ddData.__fetchFailed === true;
+  const markets = (ddData && ddData.markets) || [];
+  if (marketsFetchFailed) {
+    console.log(`  ⚠ DreamDEX staging API unreachable from this environment this run — 0 markets is NOT evidence none exist.`);
+  } else {
+    console.log(`  ✓ Discovered ${markets.length} live DreamDEX spot/event market contracts:`);
+    for (const m of markets) {
+      console.log(`    - ${m.symbol.padEnd(12)} Contract: ${m.contract} (Lot Size: ${m.lotSize}, Tick: ${m.tickSize})`);
+    }
   }
   console.log();
 
@@ -203,7 +213,8 @@ async function runLiveTestnet() {
   if (isDryRun) {
     console.log("[7. SAFETY GATE — DRY RUN]");
     console.log("  ✓ Dry-run completed safely with zero gas spent.");
-    console.log("  ✓ All on-chain queries, market discovery, and quant calculations verified.\n");
+    console.log("  ✓ Risk-engine calculation ran locally and is deterministic regardless of network state.");
+    console.log("  ℹ On-chain/market checks above are only as reliable as this run's RPC/API connectivity — see section 8 for the honest summary.\n");
   } else {
     console.log("[7. LIVE EXECUTION ATTEMPT]");
     console.log("  ℹ Signer EOA 0x07b51d5e96c10368a2d052a63b25171075015938 has 1.0 STT gas.");
@@ -253,8 +264,16 @@ async function runLiveTestnet() {
   console.log(`[8. LIVE EVIDENCE PERSISTED]`);
   console.log(`  ✓ Generated: ${artifactPath}\n`);
 
+  const anyRpcFailure = chainIdHex === null || blockHex === null || balHex === null || Object.values(contractProofObj).some((c: any) => c.bytecodeVerified === null);
   console.log("================================================================================");
-  console.log("  KASUWASHIELD LIVE TESTNET RUNNER — ALL 8 STAGES VERIFIED (100% TRUTH)");
+  if (anyRpcFailure || marketsFetchFailed) {
+    console.log("  KASUWASHIELD LIVE TESTNET RUNNER — COMPLETED WITH DEGRADED CONNECTIVITY");
+    console.log("  Some live checks above could not reach Somnia RPC and/or the DreamDEX API from");
+    console.log("  this environment this run and are marked accordingly (⚠) rather than counted as");
+    console.log("  verified. Re-run from a network with unrestricted egress for a full live pass.");
+  } else {
+    console.log("  KASUWASHIELD LIVE TESTNET RUNNER — ALL LIVE CHECKS REACHED THIS RUN");
+  }
   console.log("================================================================================");
 }
 
