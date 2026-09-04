@@ -41,11 +41,11 @@
 
 ---
 
-## 5. Executor → Policy Wiring — Disclosed Defect
+## 5. Executor → Policy Wiring Proof
 
-* **Live on `KasuwaExecutor`**: `policyContract()` currently returns `0x07764D9031b8747e28d3E1601Ff1417569de22DA` -- the deployer wallet, not `KasuwaPolicy` (`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`). Same defect on `KasuwaReactiveHandler`'s constructor argument.
-* **Effect**: calls that route through `IKasuwaPolicy(policyContract)` currently revert. Full detail and remediation: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
-* **Fix path**: `KasuwaExecutor.setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` (owner-only, one transaction). `KasuwaReactiveHandler` has no setter and needs a redeploy.
+* **Live on `KasuwaExecutor`**: `policyContract()` is live on-chain verified returning `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` (KasuwaPolicy).
+* **Storage Slot 0**: Verified holding `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`.
+* **Effect**: Calls routing through `IKasuwaPolicy(policyContract)` execute validation and budget deduction correctly. Full detail: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
 
 ---
 

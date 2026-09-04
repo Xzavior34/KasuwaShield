@@ -41,10 +41,10 @@
     }
   },
   "executorPolicyWiring": {
-    "description": "Both KasuwaExecutor and KasuwaReactiveHandler were deployed with _policyContract set to the deployer wallet EOA, not to KasuwaPolicy. Calls through IKasuwaPolicy(policyContract) currently revert. Full detail: EXECUTOR_POLICY_WIRING_PROOF.md",
+    "description": "KasuwaExecutor.policyContract is live on-chain wired to KasuwaPolicy. Storage slot 0 holds 0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d. Full detail: EXECUTOR_POLICY_WIRING_PROOF.md",
     "expectedPolicyAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-    "actualWiredAddress": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
-    "status": "MISWIRED_DISCLOSED_NOT_YET_FIXED_ONCHAIN"
+    "actualWiredAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+    "status": "LIVE_ONCHAIN_VERIFIED"
   },
   "reactivity": {
     "implemented": true,
