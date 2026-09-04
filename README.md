@@ -2,9 +2,9 @@
 
 ### Autonomous Portfolio Protection for DreamDEX Event Contracts
 
-> **Event Contracts expire. Portfolio risk does not.**  
-> KasuwaShield turns short-duration DreamDEX Event Contracts into a continuously renewed hedge policy.  
-> **One-time authorization. Bounded autonomy. Automatic rollover.**
+> **Event Contracts expire every 15 minutes. Your downside risk doesn't.**  
+> KasuwaShield turns one wallet approval into a self-renewing hedge: a bounded, non-custodial on-chain policy — not a human, not an unlimited approval — decides whether each roll is safe, and fails closed the instant it isn't.  
+> **One approval. Hard budget cap. Automatic rollover. Nothing to trust beyond the policy itself.**
 
 [![Somnia Network](https://img.shields.io/badge/Network-Somnia_Shannon_(50312)-10b981?style=flat-square)](https://shannon-explorer.somnia.network)
 [![DreamDEX Protocol](https://img.shields.io/badge/Integration-DreamDEX_Event_Contracts-38bdf8?style=flat-square)](https://dreamdex.io)
@@ -141,6 +141,8 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 > *Disclaimer: KasuwaShield is a prototype risk-management architecture built for hackathon demonstration, not certified financial advice.*
 
+**What actually drives sizing today**: `calculateProtection()` (the function every trade decision runs through) sizes protection linearly from the user's exposure and target percentage, then gates on policy caps and market quality. As of this update, it also computes a **live Kelly hedge fraction** (`kellyHedgeFraction`) on every single call — using the market's own quoted price as the probability input (DreamDEX prices are already probabilities in 1e6 units, so this uses real market data, not an invented volatility assumption) — and returns it on the recommendation object (covered by a dedicated test in `scripts/run-tests.ts`). It is informational today, not yet a hard cap on sizing — that's the honest next step. `standardNormalCDF` and `calculateBinaryDownsideProbability` (Black-Scholes) and `calculateCVaR975` remain real, independently tested implementations that are **not** wired into `calculateProtection()` — they would need a volatility input this simplified market model doesn't carry, and we'd rather leave them as tested utilities than wire in a fabricated volatility number just to claim they're "used".
+
 ---
 
 ## 🔄 7. Continuous Rollover — The Hero Feature
@@ -203,12 +205,22 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 | Contract | Address | Runtime Bytecode | Somnia Explorer Link |
 |---|---|:---:|:---:|
-| **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | **4,207 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) |
-| **KasuwaExecutor.sol** | `0x80AcBF398663079edBfF26132C9AC04204B7c69c` | **3,505 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) |
-| **KasuwaReactiveHandler.sol**| `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02` | Mined (#478456927) | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) |
-| **USDso Token** | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | **7,532 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) |
-| **DreamDEX Testnet Faucet**| `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | **2,192 Bytes** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) |
-| **Funded Signer Wallet** | `0x07764D9031b8747e28d3E1601Ff1417569de22DA` | **1.000000 STT Gas** | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) |
+| **KasuwaPolicy.sol** | `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` | **4,207 Bytes** ✅ Deployed & **Source-verified on Blockscout** | [View verified source ↗](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d?tab=contract) |
+| **KasuwaExecutor.sol** | `0x80AcBF398663079edBfF26132C9AC04204B7c69c` | **3,505 Bytes** ✅ Deployed & **Source-verified on Blockscout** | [View verified source ↗](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=contract) |
+| **KasuwaReactiveHandler.sol**| `0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213` | ✅ Deployed & **Source-verified on Blockscout** (redeployed after the original address was found to be an unused EOA) | [View verified source ↗](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) |
+
+All three contracts are confirmed deployed and **independently source-verified against Blockscout's own compiler** (not just pasted addresses) from the same deployer wallet — each page's "Contract" tab shows readable source, a matched compiler version (`v0.8.34`), and live Read/Write panels rather than raw bytecode.
+
+**⚠️ Known wiring defect, disclosed rather than hidden:** verifying `KasuwaExecutor` and `KasuwaReactiveHandler` surfaced their actual constructor argument — both were deployed with `_policyContract = 0x07764D9031b8747e28d3E1601Ff1417569de22DA`. That address is not `KasuwaPolicy` — it is the **deployer wallet itself** (see "Funded deployer wallet" below), an EOA with no contract code. This was independently confirmed by reading `policyContract()` live on both contracts via Blockscout's Read Contract tab, not just from the constructor args. Practical effect: any call that routes through `IKasuwaPolicy(policyContract)` — `KasuwaExecutor.executeAutoRoll()` and the policy-side hooks in `KasuwaReactiveHandler.onMarketSettled()` — will currently revert, because Solidity's ABI decoding of a return value fails against an address with no code. The risk-sizing math and policy logic tested in `scripts/run-tests.ts` are correct and run in isolation; this defect is specifically in how the **already-deployed** instances were wired together on Somnia Shannon, not in the contract logic itself. Remediation: `KasuwaExecutor` exposes an `onlyOwner` `setPolicyContract(address)` — the deployer wallet can call it with `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` to fix it in place. `KasuwaReactiveHandler` has no setter (`policyContract` is only ever set in its constructor), so fixing it requires a fresh redeploy pointed at the correct `KasuwaPolicy` address.
+
+### Shared DreamDEX/Somnia infrastructure this project depends on (not deployed by KasuwaShield)
+
+| Purpose | Address | Somnia Explorer Link |
+|---|---|:---:|
+| **USDso Token** (collateral) | `0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) |
+| **DreamDEX Testnet Faucet** | `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C` | [View on Explorer ↗](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) |
+
+**Funded deployer wallet**: [`0x07764D9031b8747e28d3E1601Ff1417569de22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) — balance changes with every deployment/gas spend, see the explorer link for the current figure rather than a number pasted here.
 
 ### DreamDEX Protocol Core Reference Addresses (Somnia Shannon)
 * **BinaryMarketsModule**: `0x3ecC694Cef705358864a646142ac17A90E29e388`
@@ -253,7 +265,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 | Tier | Category | Status | Details & Verification Artifacts |
 |---|---|:---:|---|
-| **Tier A** | Verified On-Chain | ✅ **LIVE_ONCHAIN** | Deployed `KasuwaPolicy` (4.2KB), `KasuwaExecutor` (3.5KB), USDso Token (7.5KB), Faucet (2.2KB), Head Block `#478,522,005` |
+| **Tier A** | Verified On-Chain | ✅ **LIVE_ONCHAIN** | Deployed & Blockscout-source-verified `KasuwaPolicy` (4.2KB), `KasuwaExecutor` (3.5KB), `KasuwaReactiveHandler`, USDso Token (7.5KB), Faucet (2.2KB) — see Section 9 for a disclosed wiring defect between the three |
 | **Tier B** | Live Infrastructure | 🏷️ **TESTNET_SPECIFIED** | DreamDEX 32-byte `marketId` discovery, orderbook depth & spread boundary parsing |
 | **Tier C** | Code-Verified | ✅ **100% TESTED** | Black-Scholes $N(-d_2)$, CVaR 97.5%, Kelly $f^*$, 4 fail-closed invariants, idempotency guards |
 | **Tier D** | Simulated Benchmarks | 🏷️ **SIMULATED** | BTC price shock replay (\$64.8k $\to$ \$62.8k), 133ms reaction benchmark, synthetic CLOB limit fill |
@@ -277,7 +289,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 ================================================================================
   KASUWASHIELD PROTOCOL VERIFICATION SUITE
 ================================================================================
-  [✓] Protocol Unit & Invariant Tests: 15 / 15 PASSING (100%)
+  [✓] Protocol Unit & Invariant Tests: 16 / 16 PASSING (100%)
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Next.js Web Routes:              5 / 5 PASSING (Status 200)
@@ -294,7 +306,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 git clone https://github.com/Xzavior34/KasuwaShield.git
 cd KasuwaShield
 
-# 2. Run unit and invariant test suite (15/15 passing)
+# 2. Run unit and invariant test suite (16/16 passing)
 npm test
 
 # 3. Run 4-tier on-chain truth audit (13/13 passing)
@@ -318,11 +330,11 @@ node server.js
 ```text
 KasuwaShield/
 ├── contracts/                        # Solidity ^0.8.24 Smart Contracts
-│   ├── KasuwaPolicy.sol              # Deployed on-chain (0xAc8c...140d1d - 4,207B)
-│   ├── KasuwaExecutor.sol            # Deployed on-chain (0x80Ac...4B7c69c - 3,505B)
-│   └── KasuwaReactiveHandler.sol     # Reactive settlement callback (Mined #478456927)
+│   ├── KasuwaPolicy.sol              # Deployed & Blockscout-verified (0xAc8c...140d1d - 4,207B)
+│   ├── KasuwaExecutor.sol            # Deployed & Blockscout-verified (0x80Ac...4B7c69c - 3,505B)
+│   └── KasuwaReactiveHandler.sol     # Deployed & Blockscout-verified (0x7eAf...F3213 — see Section 9 for a disclosed wiring defect)
 ├── packages/
-│   ├── math/                         # Deterministic Quant Risk Engine (BS, CVaR, Kelly)
+│   ├── risk-engine/                  # Sizing model + BS/CVaR/Kelly analytics functions (see note below)
 │   ├── execution/                    # EIP-7702 session key manager & order constructor
 │   └── shared/                       # Deployed contract addresses & Somnia RPC config
 ├── apps/web/                         # Next.js 14 Web Application

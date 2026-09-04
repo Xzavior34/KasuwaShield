@@ -86,6 +86,13 @@ export function calculateProtection(
 
   const quality = evaluateMarketQuality(market, requiredContracts, maxBudgetUSD, maxSlippagePercent);
 
+  // Kelly fraction computed from the market's OWN quoted probability (DreamDEX
+  // prices are already probabilities in 1e6 units — see docs/TECHNICAL_RECONNAISSANCE.md)
+  // rather than an invented volatility input. In an efficient market this comes out
+  // low (little edge) — that is the formula working correctly, not a bug.
+  const marketImpliedDownsideProbability = market.bestAskProb ?? effectiveContractPrice;
+  const kellyHedgeFraction = calculateKellyHedgeFraction(marketImpliedDownsideProbability, effectiveContractPrice);
+
   const budgetExceeded = estimatedCostUSD > maxBudgetUSD || estimatedCostUSD > policy.maxBudgetUSD;
   const priceTooHigh = effectiveContractPrice > policy.maxContractPrice;
   const marketUnavailable = quality.rating === "UNAVAILABLE";
@@ -116,6 +123,7 @@ export function calculateProtection(
     effectiveProtectionCoverage: effectiveProtectionPercent,
     marketQualityScore: quality.score,
     marketQualityRating: quality.rating,
-    reason
+    reason,
+    kellyHedgeFraction
   };
 }

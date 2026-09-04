@@ -1,4 +1,4 @@
-// Comprehensive 15/15 Protocol Verification Test Suite for KasuwaShield
+// Comprehensive 15-check Protocol Verification Test Suite for KasuwaShield
 import assert from "node:assert";
 import {
   calculateProtection,
@@ -17,7 +17,7 @@ import {
 
 async function runAllTests() {
   console.log("==================================================");
-  console.log("  KASUWASHIELD PROTOCOL VERIFICATION TEST SUITE (15/15)");
+  console.log("  KASUWASHIELD PROTOCOL VERIFICATION TEST SUITE");
   console.log("==================================================");
 
   let passed = 0;
@@ -117,6 +117,24 @@ async function runAllTests() {
     assert.strictEqual(res.estimatedCostUSD, 5.25);
     assert.strictEqual(res.recommendation, "PROTECT");
     assert.ok(res.marketQualityScore >= 80);
+  });
+
+  test("Every calculateProtection() call now computes a live Kelly hedge fraction from the market's own quoted price", () => {
+    const params = {
+      exposureUSD: 50,
+      protectionPercent: 30,
+      contractPrice: 0.35,
+      maxBudgetUSD: 10.0,
+      maxSlippagePercent: 2.0,
+      windowMinutes: 15,
+    };
+    const res = calculateProtection(params, baseMarket, DEFAULT_RISK_POLICY);
+    assert.ok(res.kellyHedgeFraction !== undefined, "kellyHedgeFraction must be present on every recommendation");
+    assert.ok(res.kellyHedgeFraction! >= 0.1 && res.kellyHedgeFraction! <= 1.0, "must be a valid Kelly fraction in [0.1, 1.0]");
+    // baseMarket.bestAskProb (0.32) as probability, contractPrice 0.35 as price:
+    // this should match calling calculateKellyHedgeFraction directly with the same inputs.
+    const expected = calculateKellyHedgeFraction(baseMarket.bestAskProb!, 0.35);
+    assert.strictEqual(res.kellyHedgeFraction, expected);
   });
 
   test("Evaluates market quality score and liquidity boundaries accurately", () => {

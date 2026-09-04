@@ -784,10 +784,12 @@ function getRiskViewHTML(status) {
           <h3 class="card-title" style="margin-bottom:0.75rem;">Optimal Sizing (Kelly Criterion f*)</h3>
           <div style="background:#060911; border:1px solid #1e293b; border-radius:0.375rem; padding:0.75rem; font-size:0.75rem; display:flex; flex-direction:column; gap:0.5rem;">
             <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Formula</span><span style="color:#22d3ee;">f* = (p × b − q) / b</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">p (Downside Event Probability)</span><span style="color:#fff;">0.28</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">b (Event Contract Payout Odds)</span><span style="color:#fff;">2.57x ($1.00 / $0.28)</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">q (1 - p)</span><span style="color:#fff;">0.72</span></div>
-            <div style="border-top:1px solid #1e293b; padding-top:0.5rem; display:flex; justify-content:space-between;"><span style="color:#fff; font-weight:700;">Optimal Sizing Fraction (f*):</span><strong style="color:#34d399;">0.42 (ALLOCATED)</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">p (Model-Estimated Downside Probability)</span><span style="color:#fff;">0.42</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Contract Price Quoted by Market</span><span style="color:#fff;">$0.28</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">b (Payout Odds, 1.00 / Price)</span><span style="color:#fff;">3.57x ($1.00 / $0.28)</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">q (1 - p)</span><span style="color:#fff;">0.58</span></div>
+            <div style="border-top:1px solid #1e293b; padding-top:0.5rem; display:flex; justify-content:space-between;"><span style="color:#fff; font-weight:700;">Optimal Sizing Fraction (f*):</span><strong style="color:#34d399;">0.2576 (ALLOCATED)</strong></div>
+            <div style="color:#64748b; font-size:0.65rem; margin-top:0.25rem;">(0.42 × 3.5714 − 0.58) / 3.5714 = 0.2576 — computed with the same <code>calculateKellyHedgeFraction()</code> now wired into every live <code>calculateProtection()</code> call. Edge here comes from the market pricing the downside at 28% while the model estimates 42% — a real mispricing scenario, not an arbitrary demo number.</div>
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 | **DreamDEX Testnet Faucet** | **LIVE_ONCHAIN** | Address `0x89Ebc05dE83aB9752B95030218BB10A542b96B7C`, Bytecode Verified (2,192 bytes) |
 | **KasuwaPolicy Contract** | **LIVE_ONCHAIN** | Address `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`, Bytecode Verified (4,207 bytes) |
 | **KasuwaExecutor Contract** | **LIVE_ONCHAIN** | Address `0x80AcBF398663079edBfF26132C9AC04204B7c69c`, Bytecode Verified (3,505 bytes) |
-| **Reactive Handler Contract**| **LIVE_ONCHAIN** | Address `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`, Tx Mined (#478456927) |
+| **Reactive Handler Contract**| **LIVE_ONCHAIN** | Address `0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213`, Blockscout source-verified (a prior claimed address was found to be an unused EOA and has been corrected) |
 | **Event Contract Discovery** | **TESTNET_SPECIFIED** | Keyed strictly by 32-byte `marketId` (`0x679795...`), SpotPool confusion eliminated |
 | **Order Construction** | **CODE_VERIFIED** | Closed-form Quant formulas determine required PUT contracts within budget limits |
 | **Order Submission** | **CODE_VERIFIED** | Bounded limit order payload formatted with max slippage and price limit |
@@ -32,7 +32,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 | **EIP-7702 Designation** | **AUTHORIZATION_READY** | Scoped session key hashed for Chain ID 50312; awaits client-side wallet designation |
 | **Somnia Reactive Callback** | **UNVERIFIED_LIVE** | Handler logic implemented and tested; live callback not yet independently verified |
 | **Automatic Rollover** | **SIMULATED_SEQUENCE** | Sequential transitions verified across 6 test windows with monotonic roll tracking |
-| **Deterministic Risk Engine**| **CODE_VERIFIED** | Black-Scholes binary $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ verified in 15/15 tests |
+| **Deterministic Risk Engine**| **CODE_VERIFIED** | Black-Scholes binary $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ verified in 16/16 tests |
 | **Fail-Closed Safety Invariants**| **CODE_VERIFIED** | 4/4 invariant rejection paths enforced (Stale, Liquidity, Slippage, Budget) |
 | **Proof Center UI** | **VERIFIED** | 4-tier truth disclosure rendering live block and downloadable JSON audit receipt |
 
@@ -60,7 +60,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 ================================================================================
   KASUWASHIELD PROTOCOL VERIFICATION TEST MATRIX
 ================================================================================
-  [✓] Protocol Unit & Invariant Tests: 15 / 15 PASSING (100%)
+  [✓] Protocol Unit & Invariant Tests: 16 / 16 PASSING (100%)
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Next.js Web Routes:              5 / 5 PASSING (100%)

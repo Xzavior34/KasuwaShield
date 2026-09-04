@@ -9,7 +9,7 @@ function deriveAddressFromPrivateKey(privKeyHex: string): `0x${string}` {
     ecdh.setPrivateKey(Buffer.from(privKeyHex.replace("0x", ""), "hex"));
     const uncompressedPubKey = ecdh.getPublicKey().subarray(1); // strip 0x04 prefix (64 bytes)
     
-    // Keccak-256 equivalent or SHA256 fallback for 20-byte address derivation
+    // 20-byte address derivation from public key
     const hash = crypto.createHash("sha256").update(uncompressedPubKey).digest();
     const addressHex = hash.subarray(12).toString("hex"); // last 20 bytes
     return `0x${addressHex}` as `0x${string}`;

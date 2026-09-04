@@ -61,6 +61,14 @@ export interface ProtectionRecommendation {
   marketQualityScore: number;
   marketQualityRating: "GOOD" | "FAIR" | "POOR" | "UNAVAILABLE";
   reason: string;
+  /**
+   * Kelly-criterion-optimal hedge fraction (f*), computed live from the
+   * market's own quoted downside probability (bestAskProb) and the
+   * contract price actually being paid. Informational today — it is
+   * returned on every recommendation but does not yet override the
+   * linear sizing above. See README Section 6.
+   */
+  kellyHedgeFraction?: number;
 }
 
 export interface EphemeralSessionKey {

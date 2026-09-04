@@ -26,7 +26,7 @@
 
 1. **Testnet CLOB Taker Liquidity**: Relies on synthetic limit order fills during demo benchmarking due to the lack of 24/7 market makers on public testnet.
 2. **Interactive Wallet EIP-7702 Designation**: Authorization payloads are constructed and hashed mathematically in code, but live browser-wallet EOA designation is unverified due to current MetaMask EIP-7702 UI constraints.
-3. **Reactive Callback Execution**: `KasuwaReactiveHandler` deployment transaction was mined on-chain at block `#478456927`, but autonomous external callback dispatch remains unverified live.
+3. **Reactive Callback Execution**: `KasuwaReactiveHandler` is deployed and Blockscout source-verified at `0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213` (a prior claimed address, `0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`, was found during audit to be an unused EOA with no deployment transaction -- that claim was false and this is the corrected, independently-confirmed replacement). Autonomous external callback dispatch remains unverified live, and its `policyContract` wiring has the same defect described in Section 5.
 
 ---
 
@@ -34,23 +34,24 @@
 
 * **KasuwaPolicy.sol**: [`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) — **4,207 Bytes Verified**
 * **KasuwaExecutor.sol**: [`0x80AcBF398663079edBfF26132C9AC04204B7c69c`](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) — **3,505 Bytes Verified**
-* **KasuwaReactiveHandler.sol**: [`0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02`](https://shannon-explorer.somnia.network/address/0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) — **Tx Mined at Block #478456927**
+* **KasuwaReactiveHandler.sol**: [`0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213`](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) — Deployed & Blockscout source-verified (redeployed after an earlier claimed address was found to be an unused EOA)
 * **USDso Collateral Token**: [`0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) — **3,765 Bytes (7.5KB) Verified**
 * **DreamDEX Faucet**: [`0x89Ebc05dE83aB9752B95030218BB10A542b96B7C`](https://shannon-explorer.somnia.network/address/0x89Ebc05dE83aB9752B95030218BB10A542b96B7C) — **1,095 Bytes (2.2KB) Verified**
 * **Funded Deployer EOA**: [`0x07764D9031b8747e28d3E1601Ff1417569de22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA) — **0.583614 STT Gas**
 
 ---
 
-## 5. Executor → Policy Wiring Proof
+## 5. Executor → Policy Wiring — Disclosed Defect
 
-* **Storage Slot 0**: Verified holding deployer EOA (`0x07764D9031b8747e28d3E1601Ff1417569de22DA`).
-* **Governance**: Deployer holds sole permission to call `setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` to configure and update the policy execution router.
+* **Live on `KasuwaExecutor`**: `policyContract()` currently returns `0x07764D9031b8747e28d3E1601Ff1417569de22DA` -- the deployer wallet, not `KasuwaPolicy` (`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`). Same defect on `KasuwaReactiveHandler`'s constructor argument.
+* **Effect**: calls that route through `IKasuwaPolicy(policyContract)` currently revert. Full detail and remediation: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
+* **Fix path**: `KasuwaExecutor.setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` (owner-only, one transaction). `KasuwaReactiveHandler` has no setter and needs a redeploy.
 
 ---
 
 ## 6. Final Test Suite Results
 
-* **Protocol Unit & Invariant Tests**: **15 / 15 PASSING (100%)**
+* **Protocol Unit & Invariant Tests**: **16 / 16 PASSING (100%)**
 * **4-Tier On-Chain Truth Audit**: **13 / 13 PASSING (100%)**
 * **Claim Auditor**: **100% Truth Compliant (0 violations)**
 * **Web Routes**: **5 / 5 PASSING (100% Status 200)**
