@@ -13,6 +13,7 @@ import {
   generateEphemeralSessionKey,
   buildEIP7702DelegationPayload,
   executeSessionKeyAutoRoll,
+  deriveAddressFromPrivateKey,
 } from "../packages/execution/src/session-key-manager.js";
 
 async function runAllTests() {
@@ -174,6 +175,30 @@ async function runAllTests() {
     assert.strictEqual(session.userEOA, mockEOA);
     assert.strictEqual(session.remainingBudgetUSD, 100.0);
     assert.strictEqual(session.expiresAt - session.authorizedAt, 24 * 3600);
+  });
+
+  test("Session key address is the REAL Ethereum address for its private key (Keccak-256, not a SHA-256 stand-in)", () => {
+    // Fixed private-key -> address vectors, independently computed with viem's audited
+    // privateKeyToAddress() (cross-checked against 20 random keys before being hardcoded
+    // here, so this regression test needs no npm dependency to run). This matters because
+    // a prior version of deriveAddressFromPrivateKey() used SHA-256 in place of Keccak-256
+    // -- it passed every other check while silently generating addresses nobody could ever
+    // sign for, since the "address" wasn't the one actually reachable from the private key.
+    const knownVectors: Array<[`0x${string}`, string]> = [
+      ["0x380489834b4c2111993aaf518386568dd2b34c40e07dc9ef5c38e91578bb4983", "0xf59787e59274a2636cb5d28e3902f46ea51d4bf3"],
+      ["0xbc855da3d292a8e5086697d882b752a8afec2d4ebb2e1cc8ef5967858f7fd9a9", "0xa82d3462e249b7b5b21e5590b0ae0929819ef0ee"],
+      ["0x11076ee67e947290db576c3d3670e58dc68a9ee2e237e5deaae8e2de2bdaf857", "0xdd25ddf84682c459ce76b7edd78893c25811da52"],
+    ];
+    for (const [privateKey, expectedAddress] of knownVectors) {
+      assert.strictEqual(deriveAddressFromPrivateKey(privateKey).toLowerCase(), expectedAddress);
+    }
+
+    // Also confirm the live session-key generator's output is internally consistent.
+    const session = generateEphemeralSessionKey(mockEOA, "policy-regression-001", 100.0, 24);
+    assert.strictEqual(
+      session.address.toLowerCase(),
+      deriveAddressFromPrivateKey(session.privateKey).toLowerCase()
+    );
   });
 
   test("Constructs valid EIP-7702 delegation payload for Somnia Shannon (50312)", () => {

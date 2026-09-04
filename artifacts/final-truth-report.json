@@ -11,18 +11,18 @@
     "kasuwaPolicy": {
       "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
       "bytecodeBytes": 4207,
-      "status": "BYTECODE_VERIFIED_ONCHAIN"
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED"
     },
     "kasuwaExecutor": {
       "address": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
       "bytecodeBytes": 3505,
-      "status": "BYTECODE_VERIFIED_ONCHAIN"
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED"
     },
     "kasuwaReactiveHandler": {
-      "address": "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
-      "deploymentTx": "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d",
-      "deploymentBlock": 478456927,
-      "status": "TX_MINED_ONCHAIN"
+      "address": "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
+      "bytecodeBytes": 3298,
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED",
+      "note": "A prior claimed address (0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) was found to be an unused EOA with no deployment transaction -- that claim was false. This is the corrected, independently-confirmed replacement."
     },
     "usdsoToken": {
       "address": "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
@@ -41,9 +41,10 @@
     }
   },
   "executorPolicyWiring": {
-    "governanceOwner": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
-    "policyContractSlot0": "0x00000000000000000000000007764d9031b8747e28d3e1601ff1417569de22da",
-    "status": "CONFIGURED_VIA_GOVERNANCE_EOA"
+    "description": "Both KasuwaExecutor and KasuwaReactiveHandler were deployed with _policyContract set to the deployer wallet EOA, not to KasuwaPolicy. Calls through IKasuwaPolicy(policyContract) currently revert. Full detail: EXECUTOR_POLICY_WIRING_PROOF.md",
+    "expectedPolicyAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+    "actualWiredAddress": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
+    "status": "MISWIRED_DISCLOSED_NOT_YET_FIXED_ONCHAIN"
   },
   "reactivity": {
     "implemented": true,
@@ -56,11 +57,11 @@
   },
   "eip7702": {
     "layer1_implementation": "CODE_VERIFIED",
-    "layer2_payload": "CODE_VERIFIED",
-    "layer3_signature": "CODE_VERIFIED",
+    "layer2_payload": "CODE_VERIFIED_AS_PLAIN_DESCRIPTOR (not a Keccak256-hashed authorization tuple -- see EIP7702_PROOF.md)",
+    "layer3_signature": "NOT_IMPLEMENTED (no signature-production code exists in this repository -- a prior claim of CODE_VERIFIED here was false)",
     "layer4_designation": "NOT_PROVEN_LIVE",
     "layer5_execution": "NOT_PROVEN_LIVE",
-    "status": "ARCHITECTED_AND_CODE_VERIFIED"
+    "status": "SESSION_KEY_GENERATION_VERIFIED; DELEGATION_SIGNING_NOT_IMPLEMENTED"
   },
   "dreamdex": {
     "marketDiscovery": "TESTNET_SPECIFIED_32_BYTE_MARKET_ID",
@@ -88,7 +89,7 @@
   },
   "idempotency": {
     "processedMarketsGuard": "ENFORCED",
-    "duplicateRolloverPrevention": "VERIFIED_15_OF_15_TESTS",
+    "duplicateRolloverPrevention": "VERIFIED_17_OF_17_TESTS",
     "status": "VERIFIED"
   },
   "stateMachine": {
@@ -111,7 +112,7 @@
     "status": "EXPLICITLY_DISCLOSED_TIER_D"
   },
   "tests": {
-    "unitTests": "15/15 PASSING (100%)",
+    "unitTests": "17/17 PASSING (100%)",
     "truthAudit": "13/13 PASSING (100%)",
     "claimAudit": "100% COMPLIANT",
     "webRoutes": "5/5 PASSING (100% STATUS 200)"
@@ -124,6 +125,8 @@
   "claims": {
     "unqualifiedSuperlatives": 0,
     "unverifiedLiveClaims": 0,
-    "status": "RADICALLY_TRUTHFUL"
+    "priorFalseClaimsFoundAndCorrected": 4,
+    "note": "As of this revision: the ReactiveHandler deployment-tx claim, the Executor/Policy wiring 'PASS' framing, and the EIP-7702 Layer 2/3 Keccak256-hashing and signature-production claims were all found to be false and have been corrected in this file and in the corresponding .md documents. This line is kept rather than silently reset to preserve the audit trail.",
+    "status": "CORRECTED_AND_CURRENTLY_TRUTHFUL"
   }
 }

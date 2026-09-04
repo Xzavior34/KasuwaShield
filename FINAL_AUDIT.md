@@ -32,7 +32,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 | **EIP-7702 Designation** | **AUTHORIZATION_READY** | Scoped session key hashed for Chain ID 50312; awaits client-side wallet designation |
 | **Somnia Reactive Callback** | **UNVERIFIED_LIVE** | Handler logic implemented and tested; live callback not yet independently verified |
 | **Automatic Rollover** | **SIMULATED_SEQUENCE** | Sequential transitions verified across 6 test windows with monotonic roll tracking |
-| **Deterministic Risk Engine**| **CODE_VERIFIED** | Black-Scholes binary $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ verified in 16/16 tests |
+| **Deterministic Risk Engine**| **CODE_VERIFIED** | Black-Scholes binary $N(-d_2)$, CVaR 97.5%, Kelly $f^*$ verified in 17/17 tests |
 | **Fail-Closed Safety Invariants**| **CODE_VERIFIED** | 4/4 invariant rejection paths enforced (Stale, Liquidity, Slippage, Budget) |
 | **Proof Center UI** | **VERIFIED** | 4-tier truth disclosure rendering live block and downloadable JSON audit receipt |
 
@@ -60,7 +60,7 @@ KasuwaShield provides a policy-driven downside protection architecture for crypt
 ================================================================================
   KASUWASHIELD PROTOCOL VERIFICATION TEST MATRIX
 ================================================================================
-  [✓] Protocol Unit & Invariant Tests: 16 / 16 PASSING (100%)
+  [✓] Protocol Unit & Invariant Tests: 17 / 17 PASSING (100%)
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Next.js Web Routes:              5 / 5 PASSING (100%)

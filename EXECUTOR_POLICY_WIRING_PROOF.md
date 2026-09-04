@@ -65,15 +65,15 @@ Actual value on both contracts:   0x07764D9031b8747e28d3E1601Ff1417569de22DA
 | **Executor Bytecode** | ✅ **PASS** | 3,505 bytes deployed and Blockscout source-verified on Somnia Shannon |
 | **ReactiveHandler Bytecode** | ✅ **PASS** | Deployed and Blockscout source-verified on Somnia Shannon |
 | **Policy Bytecode** | ✅ **PASS** | 4,207 bytes deployed and Blockscout source-verified on Somnia Shannon |
-| **Executor → Policy wiring** | ❌ **FAIL** | `policyContract` on `KasuwaExecutor` points at the deployer EOA, not `KasuwaPolicy` |
-| **ReactiveHandler → Policy wiring** | ❌ **FAIL** | Same defect, and unlike `KasuwaExecutor` this one has no setter to fix it in place |
+| **Executor → Policy wiring** | ❌ **FAIL — functionally broken** | `policyContract` on `KasuwaExecutor` points at the deployer EOA, not `KasuwaPolicy`, and this field is actually read by `executeAutoRoll()` |
+| **ReactiveHandler → Policy wiring** | ❌ **FAIL — but functionally inert** | Same wrong value is stored in `KasuwaReactiveHandler.policyContract`, but a full read of [`contracts/KasuwaReactiveHandler.sol`](./contracts/KasuwaReactiveHandler.sol) shows that field is set once in the constructor and never read anywhere else in the contract — `onMarketSettled()` never references it. It is dead, unused storage, not a live dependency, so this defect has no on-chain behavioral consequence today. |
 | **Direct Policy Invocations** | ❌ **Would currently revert** | `executeAutoRoll()` calls `IKasuwaPolicy(policyContract).validateAndDeductRoll()` against an address with no code — Solidity's ABI decoding of the `bool` return value fails against an EOA, so this call reverts today |
 
-**Status**: **CONTRACTS DEPLOYED & SOURCE-VERIFIED — WIRING BETWEEN THEM IS BROKEN (disclosed, not yet fixed on-chain)**
+**Status**: **CONTRACTS DEPLOYED & SOURCE-VERIFIED — EXECUTOR WIRING IS BROKEN AND FUNCTIONALLY BLOCKS `executeAutoRoll()` (disclosed, not yet fixed on-chain). REACTIVEHANDLER'S COPY OF THE SAME DEFECT IS DISCLOSED FOR COMPLETENESS BUT HAS NO FUNCTIONAL EFFECT (unused storage).**
 
 ## 5. Remediation
 
-* **KasuwaExecutor**: owner-only `setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` fixes this in a single transaction from the deployer wallet.
-* **KasuwaReactiveHandler**: no setter exists; the only fix is a fresh redeploy with the correct `_policyContract` constructor argument.
+* **KasuwaExecutor**: owner-only `setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d)` fixes this in a single transaction from the deployer wallet. A ready-to-run script is provided at [`scripts/fix-policy-wiring.ts`](./scripts/fix-policy-wiring.ts) — it reads `DEPLOYER_PRIVATE_KEY` from `.env.local` (never printed or transmitted anywhere else) and sends exactly this one transaction using `viem`. Run it yourself, in your own terminal, after reading it: `npx tsx scripts/fix-policy-wiring.ts`.
+* **KasuwaReactiveHandler**: no setter exists, so a fully correct fix would require a fresh redeploy with the right `_policyContract` constructor argument. Given that field is never actually read by the contract (see above), this redeploy is not required for `KasuwaShield` to function correctly — it is a cosmetic/documentation-accuracy fix only, listed here for completeness rather than urgency.
 
-Both are one deployer-wallet action away from being fixed for real — they are being disclosed here rather than papered over, and rather than being fixed silently without a paper trail of what was wrong and why.
+The Executor fix is one deployer-wallet transaction away from being fixed for real. It is being disclosed here rather than papered over, and rather than being fixed silently without a paper trail of what was wrong and why. This assistant does not hold, view, or transmit the deployer private key, and does not sign or broadcast transactions on the user's behalf — the fix script above is meant to be reviewed and run by the wallet owner directly.

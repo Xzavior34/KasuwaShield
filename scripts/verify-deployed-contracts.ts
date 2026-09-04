@@ -41,26 +41,22 @@ function rpcCall(method: string, params: any[] = []): Promise<any> {
 }
 
 async function verify() {
-  const handlerAddr = "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02";
-  const txHash = "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d";
+  const handlerAddr = "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213";
+  // No hardcoded txHash here on purpose -- a prior version fell back to printing a
+  // hardcoded block number and "MINED (Y)" even when the receipt lookup returned null.
+  // Bytecode presence (checked below) is what actually proves this address is live.
 
   console.log("================================================================================");
   console.log("  VERIFYING ON-CHAIN KASUWA CONTRACT ON SOMNIA SHANNON TESTNET (50312)");
   console.log("================================================================================\n");
 
   const code = await rpcCall("eth_getCode", [handlerAddr, "latest"]);
-  const receipt = await rpcCall("eth_getTransactionReceipt", [txHash]);
   const byteLen = code && code !== "0x" ? (code.length - 2) / 2 : 0;
 
   console.log(`CONTRACT:         KasuwaReactiveHandler`);
   console.log(`ADDRESS:          ${handlerAddr}`);
   console.log(`BYTECODE LENGTH:  ${byteLen} bytes`);
-  console.log(`ON-CHAIN STATUS:  ${byteLen > 0 ? "BYTECODE VERIFIED ON SOMNIA SHANNON ✓" : "EMPTY BYTECODE ✗"}\n`);
-
-  console.log(`TX HASH:          ${txHash}`);
-  console.log(`TX BLOCK:         #${receipt ? parseInt(receipt.blockNumber, 16) : "478456927"}`);
-  console.log(`GAS USED:         ${receipt ? parseInt(receipt.gasUsed, 16) : "6125789"}`);
-  console.log(`TX STATUS:        ${receipt && receipt.status === "0x1" ? "SUCCESS (0x1) ✓" : "MINED ✓"}\n`);
+  console.log(`ON-CHAIN STATUS:  ${byteLen > 0 ? "BYTECODE VERIFIED ON SOMNIA SHANNON ✓" : "EMPTY BYTECODE -- NOT A DEPLOYED CONTRACT ✗"}\n`);
 
   console.log(`EXPLORER URL:     https://shannon-explorer.somnia.network/address/${handlerAddr}`);
   console.log("================================================================================");

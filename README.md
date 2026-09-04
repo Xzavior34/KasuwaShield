@@ -253,9 +253,11 @@ All three contracts are confirmed deployed and **independently source-verified a
 > **EIP-7702 provides the authorization model KasuwaShield is designed around: a user can authorize bounded execution logic without turning the system into a conventional custodial trading account.**
 
 * **Implemented & Code-Verified**:
-  * In-memory `secp256k1` ephemeral session keypair derivation (`session-key-manager.ts`).
-  * EIP-7702 delegation tuple construction and Keccak256 authorization hashing.
+  * In-memory `secp256k1` ephemeral session keypair derivation, with address derivation via a locally-implemented, test-vector-verified Keccak-256 (`session-key-manager.ts` — `generateEphemeralSessionKey`, `deriveAddressFromPrivateKey`).
+  * A plain-object delegation descriptor (`chainId`, `contractAddress`, `sessionKeyAddress`, `policyId`, `remainingBudgetUSD`, `nonce`, `validUntil`) for the demo harness (`buildEIP7702DelegationPayload`).
   * Smart contract authorization verification (`KasuwaExecutor.sol`).
+* **Not implemented (previously overclaimed, now corrected)**:
+  * Keccak256-hashing an EIP-7702 authorization tuple and signing it with the session key -- this repository does not do this. `buildEIP7702DelegationPayload()` returns a plain descriptor object, not a signed authorization. Full detail and the exact steps this would take: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md).
 * **Unclaimed / Not Verified Live**:
   * Live interactive browser-wallet EOA designation (due to current lack of native MetaMask EIP-7702 UI support).
 
@@ -289,7 +291,7 @@ All three contracts are confirmed deployed and **independently source-verified a
 ================================================================================
   KASUWASHIELD PROTOCOL VERIFICATION SUITE
 ================================================================================
-  [✓] Protocol Unit & Invariant Tests: 16 / 16 PASSING (100%)
+  [✓] Protocol Unit & Invariant Tests: 17 / 17 PASSING (100%)
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Next.js Web Routes:              5 / 5 PASSING (Status 200)
@@ -306,7 +308,7 @@ All three contracts are confirmed deployed and **independently source-verified a
 git clone https://github.com/Xzavior34/KasuwaShield.git
 cd KasuwaShield
 
-# 2. Run unit and invariant test suite (16/16 passing)
+# 2. Run unit and invariant test suite (17/17 passing)
 npm test
 
 # 3. Run 4-tier on-chain truth audit (13/13 passing)

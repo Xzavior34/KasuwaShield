@@ -70,9 +70,13 @@ async function runForensicAudit() {
     },
     reactiveHandler: {
       name: "KasuwaReactiveHandler.sol",
-      address: "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
+      address: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
       role: "Reactive Settlement Rollover Callback",
-      txHash: "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d",
+      // No txHash pinned here on purpose: a prior version hardcoded a specific tx hash and
+      // fell back to printing "CONFIRMED (Y)" even when eth_getTransactionReceipt returned
+      // null for it. Bytecode-presence (checked below, same as every other contract) is
+      // what actually proves this address is live -- it doesn't need special-cased logic
+      // that can silently lie.
     },
     usdsoToken: {
       name: "USDso Collateral Token",
@@ -131,15 +135,6 @@ async function runForensicAudit() {
       explorerUrl: `https://shannon-explorer.somnia.network/address/${item.address}`,
     };
 
-    if (key === "reactiveHandler" && "txHash" in item) {
-      const receipt = await rpcCall("eth_getTransactionReceipt", [item.txHash]);
-      const txBlock = receipt ? parseInt(receipt.blockNumber, 16) : 478456927;
-      console.log(`  Tx Hash:  ${item.txHash}`);
-      console.log(`  Tx Block: #${txBlock}`);
-      console.log(`  Receipt:  ${receipt && receipt.status === "0x1" ? "SUCCESS (0x1) ✓" : "CONFIRMED ✓"}`);
-      verificationResults.contracts[key].deploymentTx = item.txHash;
-      verificationResults.contracts[key].blockNumber = txBlock;
-    }
     console.log("");
   }
 
@@ -156,19 +151,29 @@ async function runForensicAudit() {
     policyResolvedFromExecutor = "0x" + slot0.slice(-40);
   }
 
+  // Actually compare the resolved value against the target instead of just printing both
+  // side by side -- a prior version of this script did the latter and then hardcoded the
+  // status to "CONFIGURED_VIA_GOVERNANCE_EOA" regardless of whether they matched, which is
+  // how a real miswiring (policyContract pointed at the deployer EOA instead of
+  // KasuwaPolicy) went undetected by this exact check for a while.
+  const wiringMatches = policyResolvedFromExecutor.toLowerCase() === policyAddr.toLowerCase();
+  const wiringStatus = wiringMatches ? "WIRED_CORRECTLY" : "MISWIRED";
+
   console.log(`KasuwaExecutor:            ${executorAddr}`);
   console.log(`Target KasuwaPolicy:       ${policyAddr}`);
   console.log(`Storage Slot 0 Value:      ${slot0}`);
   console.log(`Resolved Policy from Exec: ${policyResolvedFromExecutor}`);
-  console.log(`Governance Admin (EOA):    ${contracts.deployerEOA.address}`);
+  console.log(`Match:                     ${wiringMatches ? "YES ✓ WIRED_CORRECTLY" : "NO ✗ MISWIRED -- policyContract does not point at KasuwaPolicy"}`);
+  console.log(`Deployer Wallet (EOA):     ${contracts.deployerEOA.address}`);
   console.log("--------------------------------------------------------------------------------\n");
 
   verificationResults.executorPolicyWiring = {
     executorAddress: executorAddr,
     expectedPolicyAddress: policyAddr,
     storageSlot0: slot0,
-    governanceAdmin: contracts.deployerEOA.address,
-    status: "CONFIGURED_VIA_GOVERNANCE_EOA",
+    resolvedPolicyFromExecutor: policyResolvedFromExecutor,
+    deployerWallet: contracts.deployerEOA.address,
+    status: wiringStatus,
   };
 
   const artifactsDir = path.resolve(process.cwd(), "artifacts");

@@ -1,6 +1,6 @@
 {
   "protocol": "KasuwaShield Autonomous Risk Agent",
-  "auditStandard": "Somnia × DreamDEX Hackathon Red-Team Forensic Truth Audit",
+  "auditStandard": "Somnia \u00d7 DreamDEX Hackathon Red-Team Forensic Truth Audit",
   "timestamp": "2026-09-03T05:50:00.000Z",
   "network": {
     "name": "Somnia Shannon Testnet",
@@ -29,21 +29,21 @@
     },
     "kasuwaPolicy": {
       "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-      "status": "BYTECODE_VERIFIED",
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED",
       "bytes": 4207,
       "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312)"
     },
     "kasuwaExecutor": {
       "address": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
-      "status": "BYTECODE_VERIFIED",
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED",
       "bytes": 3505,
       "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312)"
     },
     "kasuwaReactiveHandler": {
-      "address": "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02",
-      "status": "TX_MINED_ONCHAIN",
-      "txHash": "0x6aece55c5c7f45cc512fcefeeb3fed7870fa850edf7385e4ce5d8a972de8da7d",
-      "source": "Solidity ^0.8.24 (Mined at Block #478456927)"
+      "address": "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
+      "status": "BLOCKSCOUT_SOURCE_VERIFIED",
+      "source": "Solidity ^0.8.24 (Deployed on Somnia Shannon 50312, compiler v0.8.34)",
+      "note": "A prior claimed address (0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02) was found to be an unused EOA -- no deployment transaction ever existed at that address, despite this file previously claiming one had been mined. This is the corrected, independently-confirmed replacement."
     }
   },
   "eventContracts": {
@@ -65,12 +65,13 @@
     "orderSubmission": "CODE_VERIFIED",
     "clobOrderFill": "SIMULATED (No live taker fill claimed on testnet liquidity)",
     "marketSettlement": "SIMULATED",
-    "eip7702": "AUTHORIZATION_READY_NOT_YET_DESIGNATED",
+    "eip7702": "SESSION_KEY_GENERATION_VERIFIED; DELEGATION_SIGNING_NOT_IMPLEMENTED (see EIP7702_PROOF.md)",
     "somniaReactivity": "ARCHITECTURE_IMPLEMENTED_LIVE_CALLBACK_UNVERIFIED",
-    "automaticRollover": "SIMULATED_SEQUENCE"
+    "automaticRollover": "SIMULATED_SEQUENCE",
+    "policyContractWiring": "MISWIRED_DISCLOSED: KasuwaExecutor and KasuwaReactiveHandler were both deployed with _policyContract pointed at the deployer wallet EOA, not at KasuwaPolicy. See EXECUTOR_POLICY_WIRING_PROOF.md."
   },
   "tests": {
-    "unitAndInvariantTests": "15/15 PASSING (100%)",
+    "unitAndInvariantTests": "17/17 PASSING (100%)",
     "truthAuditTests": "13/13 PASSING (100%)",
     "claimAudit": "100% PASSING (Zero claim violations)"
   }

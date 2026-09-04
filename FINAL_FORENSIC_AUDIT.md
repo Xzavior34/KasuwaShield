@@ -51,7 +51,7 @@
 
 ## 6. Final Test Suite Results
 
-* **Protocol Unit & Invariant Tests**: **16 / 16 PASSING (100%)**
+* **Protocol Unit & Invariant Tests**: **17 / 17 PASSING (100%)**
 * **4-Tier On-Chain Truth Audit**: **13 / 13 PASSING (100%)**
 * **Claim Auditor**: **100% Truth Compliant (0 violations)**
 * **Web Routes**: **5 / 5 PASSING (100% Status 200)**

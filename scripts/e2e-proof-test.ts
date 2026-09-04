@@ -89,22 +89,47 @@ async function runTruthAudit() {
 
   await testItem("TIER A", "Somnia Shannon Network Chain ID (50312)", async () => {
     const res = await rpcCall("eth_chainId");
-    const chainId = res ? parseInt(res, 16) : 50312;
-    assert.strictEqual(chainId, 50312);
+    if (res === null) {
+      console.log(`      -> RPC unreachable from this environment; chain ID NOT live-verified this run (expected 50312 per config).`);
+    } else {
+      const chainId = parseInt(res, 16);
+      assert.strictEqual(chainId, 50312);
+      console.log(`      -> Live eth_chainId returned 50312.`);
+    }
   });
 
   await testItem("TIER A", "Live Somnia Head Block Height Query", async () => {
     const res = await rpcCall("eth_blockNumber");
-    if (res) liveHeadBlock = parseInt(res, 16);
+    if (res === null) {
+      console.log(`      -> RPC unreachable from this environment; head block NOT live-verified this run (last known: #${liveHeadBlock.toLocaleString()}, stale).`);
+      return;
+    }
+    liveHeadBlock = parseInt(res, 16);
     assert.ok(liveHeadBlock > 1000000);
-    console.log(`      -> Somnia Head Block: #${liveHeadBlock.toLocaleString()}`);
+    console.log(`      -> Somnia Head Block (live): #${liveHeadBlock.toLocaleString()}`);
   });
 
   await testItem("TIER A", "Bytecode Verification Query (eth_getCode)", async () => {
-    const tUSDC = SOMNIA_SHANNON_CONFIG.testUsdcAddress;
-    console.log(`      -> USDso (${tUSDC}): VERIFIED TESTNET COLLATERAL (7,532 bytes)`);
-    console.log(`      -> KasuwaPolicy (0xAc8c3afB...140d1d): DEPLOYED & BYTECODE VERIFIED (4,207 bytes)`);
-    console.log(`      -> KasuwaExecutor (0x80AcBF39...4B7c69c): DEPLOYED & BYTECODE VERIFIED (3,505 bytes)`);
+    const addrs: Array<[string, string]> = [
+      ["USDso", SOMNIA_SHANNON_CONFIG.testUsdcAddress],
+      ["KasuwaPolicy", SOMNIA_SHANNON_CONFIG.kasuwaPolicyAddress],
+      ["KasuwaExecutor", SOMNIA_SHANNON_CONFIG.kasuwaExecutorAddress],
+    ];
+    let anyLive = false;
+    for (const [name, addr] of addrs) {
+      const code = await rpcCall("eth_getCode", [addr, "latest"]);
+      if (code === null) {
+        console.log(`      -> ${name} (${addr}): RPC unreachable, NOT live-verified this run.`);
+        continue;
+      }
+      anyLive = true;
+      const byteLen = (code.length - 2) / 2;
+      assert.ok(byteLen > 0, `${name} has no deployed bytecode`);
+      console.log(`      -> ${name} (${addr}): DEPLOYED & BYTECODE VERIFIED LIVE (${byteLen.toLocaleString()} bytes)`);
+    }
+    if (!anyLive) {
+      console.log(`      -> NOTE: no live eth_getCode succeeded this run; deployment is instead evidenced separately via Blockscout source verification (see README section 9).`);
+    }
   });
 
   // TIER B: VERIFIED AGAINST LIVE INFRASTRUCTURE
@@ -139,7 +164,7 @@ async function runTruthAudit() {
     assert.strictEqual(key.remainingBudgetUSD, 100.0);
   });
 
-  await testItem("TIER C", "EIP-7702 Delegation Payload Construction & Hashing", () => {
+  await testItem("TIER C", "EIP-7702 Delegation Payload Construction (object only — no signature hashing occurs; see EIP7702_PROOF.md)", () => {
     const key = generateEphemeralSessionKey(mockUserEOA, "policy-btc-001", 50.0, 12);
     const payload = buildEIP7702DelegationPayload(key, mockExecutor);
     assert.strictEqual(payload.chainId, 50312);
@@ -237,7 +262,7 @@ async function runTruthAudit() {
   });
 
   console.log("\n================================================================================");
-  console.log(`  TRUTH AUDIT COMPLETE: ${passed}/${total} PROOFS VERIFIED (100% TECHNICAL ACCURACY)`);
+  console.log(`  TRUTH AUDIT COMPLETE: ${passed}/${total} PROOFS PASSED (Tier A live-chain calls are honestly reported per-item above; some may show as RPC-unreachable rather than live-verified depending on network egress)`);
   console.log("================================================================================");
 
   if (passed !== total) {
