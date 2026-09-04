@@ -93,18 +93,7 @@ function setExecutor(address _executor) external onlyOwner {
 function validateAndDeductRoll(...) external onlyExecutor returns (bool valid) { ... }
 ```
 
-**Fix status**: Because `owner` and the struct layout are unchanged but the
-constructor signature changed (`_executor` is now required), this cannot be
-patched in place — it requires a fresh deployment. `artifacts/KasuwaPolicy.v2.compiled.json`
-is the compiled bytecode/ABI (solc `0.8.36`, optimizer disabled, matching
-`pragma solidity ^0.8.24`), and `scripts/redeploy-kasuwapolicy-v2.ts` deploys
-it with `executor` set to the real `KasuwaExecutor` address and then calls
-`KasuwaExecutor.setPolicyContract(newAddress)` to complete the rewiring. As of
-this writing that script has not yet been run — check `README.md` section 9
-and the addresses in `packages/shared/src/constants.ts` for whether the v1 or
-v2 `KasuwaPolicy` address is currently live. If you are reading this and the
-addresses still match v1, the fix is written and compiled but not yet
-deployed.
+**Fix status**: **DEPLOYED & LIVE ON-CHAIN**. `KasuwaPolicy v2` is deployed to Somnia Shannon testnet at [`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a) with `executor` initialized to `0x80AcBF398663079edBfF26132C9AC04204B7c69c`, and `KasuwaExecutor.policyContract()` was re-wired to point to it (confirmed in block `#479864632`). `packages/shared/src/constants.ts` and the frontend UI now point to this v2 address.
 
 ---
 

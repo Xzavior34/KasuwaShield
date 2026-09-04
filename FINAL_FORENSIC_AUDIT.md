@@ -32,7 +32,7 @@
 
 ## 4. On-Chain Contract Evidence (Somnia Shannon — 50312)
 
-* **KasuwaPolicy.sol**: [`0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`](https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) — **4,207 Bytes Verified**
+* **KasuwaPolicy.sol (v2)**: [`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a) — **4,400+ Bytes Verified (with onlyExecutor guard)**
 * **KasuwaExecutor.sol**: [`0x80AcBF398663079edBfF26132C9AC04204B7c69c`](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c) — **3,505 Bytes Verified**
 * **KasuwaReactiveHandler.sol**: [`0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213`](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) — Deployed & Blockscout source-verified (redeployed after an earlier claimed address was found to be an unused EOA)
 * **USDso Collateral Token**: [`0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`](https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171) — **3,765 Bytes (7.5KB) Verified**
@@ -43,11 +43,13 @@
 
 ## 5. Executor → Policy Wiring Proof
 
-* **Live on `KasuwaExecutor`**: `policyContract()` is live on-chain verified returning `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d` (KasuwaPolicy).
-* **Storage Slot 0**: Verified holding `0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d`.
-* **Effect**: Calls routing through `IKasuwaPolicy(policyContract)` execute validation and budget deduction correctly, demonstrated end-to-end by `scripts/execute-real-policy-roll.ts`. Full detail: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
+* **Live on `KasuwaExecutor`**: `policyContract()` is live on-chain verified returning `0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a` (KasuwaPolicy v2).
+* **Storage Slot 0**: Verified holding `0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`.
+* **Effect**: Calls routing through `IKasuwaPolicy(policyContract)` execute validation and budget deduction correctly with `onlyExecutor` access control, demonstrated end-to-end by `scripts/execute-real-policy-roll.ts`. Full detail: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md).
 
-## 5b. A Second, Separate Defect Found: KasuwaPolicy Access Control
+## 5b. Access Control Defect Resolved: KasuwaPolicy v2 Deployed
+
+* **Fix Deployed**: `KasuwaPolicy v2` (`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`) was compiled and deployed to Somnia Shannon testnet (Block `#479864632`), and `KasuwaExecutor.setPolicyContract` re-pointed to it. See `SECURITY.md` for full writeup.
 
 While scoping the fix above, a full read of `contracts/KasuwaPolicy.sol` turned up an unrelated defect: `validateAndDeductRoll()` had no caller restriction at all -- any address, not just `KasuwaExecutor`, could call it directly and mutate any policy's state. This has a written, compiled fix (`onlyExecutor` modifier, v2 contract) and a ready-to-run redeploy script, but has not yet been deployed. Full writeup and current status: [`SECURITY.md`](./SECURITY.md).
 

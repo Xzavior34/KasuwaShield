@@ -29,7 +29,7 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
     payoutUSD: 20000.0,
     marketId: "0x679795a0195a1b76cdebb7c51d74e058aee92919b8c3389af86ef24535e8a28c",
     poolAddress: "0x43a18f29d10e42819873a90a218291b87a82910a",
-    collateralToken: "0x68B1D87F95878fE05B998F19b66F4baba5De11d4 (tUSDC)",
+    collateralToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171 (USDso)",
     blockNumber: 1284925,
     timestamp: "2026-09-02 08:45:12 UTC",
     policy: {
@@ -157,11 +157,11 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
               <div>
-                <span className="text-slate-400 block">DreamDEX Collateral Token (tUSDC)</span>
+                <span className="text-slate-400 block">DreamDEX Collateral Token (USDso)</span>
                 <span className="text-slate-200">{mockProofData.collateralToken}</span>
               </div>
               <a
-                href={`${explorerBase}0x68B1D87F95878fE05B998F19b66F4baba5De11d4`}
+                href={`${explorerBase}0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 sm:mt-0 text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-bold"

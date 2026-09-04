@@ -9,8 +9,8 @@
   },
   "contracts": {
     "kasuwaPolicy": {
-      "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-      "bytecodeBytes": 4207,
+      "address": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+      "bytecodeBytes": 4450,
       "status": "BLOCKSCOUT_SOURCE_VERIFIED"
     },
     "kasuwaExecutor": {
@@ -41,9 +41,9 @@
     }
   },
   "executorPolicyWiring": {
-    "description": "KasuwaExecutor.policyContract is live on-chain wired to KasuwaPolicy. Storage slot 0 holds 0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d. Full detail: EXECUTOR_POLICY_WIRING_PROOF.md",
-    "expectedPolicyAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-    "actualWiredAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
+    "description": "KasuwaExecutor.policyContract is live on-chain wired to KasuwaPolicy v2. Storage slot 0 holds 0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a. Full detail: EXECUTOR_POLICY_WIRING_PROOF.md",
+    "expectedPolicyAddress": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+    "actualWiredAddress": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
     "status": "LIVE_ONCHAIN_VERIFIED"
   },
   "reactivity": {

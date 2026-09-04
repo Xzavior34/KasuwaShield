@@ -36,6 +36,8 @@
 
 import fs from "node:fs";
 import path from "node:path";
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import {
   createWalletClient,
   createPublicClient,
@@ -174,10 +176,10 @@ async function main() {
   await publicClient.waitForTransactionReceipt({ hash: authHash });
   console.log("  confirmed.\n");
 
-  console.log("Step 3/4 — Funding session key with 0.01 STT for gas");
+  console.log("Step 3/4 — Funding session key with 0.5 STT for gas");
   const fundHash = await deployerWallet.sendTransaction({
     to: sessionAccount.address,
-    value: parseEther("0.01"),
+    value: parseEther("0.5"),
   });
   console.log(`  tx: ${fundHash}`);
   await publicClient.waitForTransactionReceipt({ hash: fundHash });

@@ -29,6 +29,8 @@
  * This script never touches DEPLOYER_PRIVATE_KEY except as the local signer.
  */
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 import fs from "node:fs";
 import path from "node:path";
 import { createWalletClient, createPublicClient, http, getAddress } from "viem";

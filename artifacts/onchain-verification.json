@@ -7,12 +7,12 @@
   },
   "contracts": {
     "kasuwaPolicy": {
-      "name": "KasuwaPolicy.sol",
-      "address": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-      "bytecodeBytes": 4207,
+      "name": "KasuwaPolicy.sol (v2)",
+      "address": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+      "bytecodeBytes": 4450,
       "status": "BLOCKSCOUT_SOURCE_VERIFIED",
-      "explorerUrl": "https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d?tab=contract",
-      "compilerVersion": "v0.8.34+commit.80d5c536",
+      "explorerUrl": "https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract",
+      "compilerVersion": "v0.8.36+commit.8a079791",
       "optimizationEnabled": false
     },
     "kasuwaExecutor": {
@@ -57,22 +57,41 @@
     }
   },
   "policyContractWiring": {
-    "description": "KasuwaExecutor.policyContract is live on-chain wired to KasuwaPolicy (0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d). Storage slot 0 was updated via setPolicyContract() and verified by live eth_getStorageAt and policyContract() queries.",
-    "expectedPolicyAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-    "actualWiredAddress": "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d",
-    "actualWiredAddressType": "Verified Smart Contract (4,207 bytes bytecode)",
+    "description": "KasuwaExecutor.policyContract is live on-chain wired to KasuwaPolicy v2 (0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a). Storage slot 0 was updated via setPolicyContract() and verified by live eth_getStorageAt and policyContract() queries.",
+    "expectedPolicyAddress": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+    "actualWiredAddress": "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+    "actualWiredAddressType": "Verified Smart Contract (4,400+ bytes bytecode)",
     "status": "LIVE_ONCHAIN_VERIFIED",
-    "practicalImpact": "KasuwaExecutor.executeAutoRoll() successfully routes validation and budget deductions to KasuwaPolicy.sol on Somnia Shannon.",
+    "practicalImpact": "KasuwaExecutor.executeAutoRoll() successfully routes validation and budget deductions to KasuwaPolicy.sol on Somnia Shannon with onlyExecutor access control.",
     "remediation": {
-      "kasuwaExecutor": "FIXED ON-CHAIN: setPolicyContract(0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) confirmed in storage slot 0.",
+      "kasuwaExecutor": "FIXED ON-CHAIN: setPolicyContract(0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a) confirmed in storage slot 0.",
       "kasuwaReactiveHandler": "onMarketSettled() executes autonomously without relying on policy storage."
     }
   },
   "policyAccessControlFinding": {
-    "description": "KasuwaPolicy v1 (0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d) validateAndDeductRoll() had no caller restriction -- any address, not just KasuwaExecutor, could call it directly. See SECURITY.md Finding 2.",
+    "description": "KasuwaPolicy v1 validateAndDeductRoll() had no caller restriction. Resolved in KasuwaPolicy v2 with onlyExecutor modifier, deployed at 0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a. See SECURITY.md Finding 2.",
     "severity": "HIGH",
-    "fixStatus": "FIX_WRITTEN_AND_COMPILED_NOT_YET_DEPLOYED",
-    "fix": "contracts/KasuwaPolicy.sol now has an onlyExecutor modifier; artifacts/KasuwaPolicy.v2.compiled.json is the compiled bytecode/ABI; scripts/redeploy-kasuwapolicy-v2.ts deploys it and rewires KasuwaExecutor.",
+    "fixStatus": "DEPLOYED_AND_LIVE_ONCHAIN",
+    "fix": "contracts/KasuwaPolicy.sol has onlyExecutor modifier; KasuwaPolicy v2 is deployed at 0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a and wired to KasuwaExecutor.",
     "reference": "SECURITY.md"
+  },
+  "realLifecycleExecutionProof": {
+    "status": "LIVE_ONCHAIN_VERIFIED",
+    "policyId": "0x9e4721639009e3fa32480ec85ba239166ed760aae367a3c8b3fc1636a1ac901f",
+    "deployerAddress": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
+    "sessionKeyAddress": "0x6DaFe8171DBAB532F06B52C8c00E2D05540aB615",
+    "transactions": {
+      "createPolicy": "0x716c140c1b0729c59cede0177d474d0a922134bf6613f07e06c834f1596e27bc",
+      "authorizeSessionKey": "0x11339f6d3a9afd4e8c200ac7b8ea8cc94612527cd0d3ffc8c888ce3f81fff2f0",
+      "fundSessionKey": "0xd25d317e847a4382501e82fb2153c064ba7589ff28185c407bd54151f8a0f617",
+      "executeAutoRoll": "0x6aea872e1034b52c25e852b0a061624c6ae1d030b0ebeb717a9673bca3169f06"
+    },
+    "blockNumber": 479888195,
+    "stateVerification": {
+      "remainingBudgetUSD": 45,
+      "totalBudgetUSD": 50,
+      "rollsExecuted": 1,
+      "isActive": true
+    }
   }
 }

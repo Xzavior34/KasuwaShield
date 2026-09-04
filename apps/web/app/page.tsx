@@ -330,8 +330,8 @@ export default function TerminalDashboard() {
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">DreamDEX CLOB Order Book</h3>
                 <p className="text-[9px] sm:text-[10px] text-slate-400">15-Min Binary Event Contracts ($1.00 / $0.00)</p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-300 border border-purple-500/30">
-                LIVE DEPTH
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                SIMULATED DEPTH
               </span>
             </div>
 
@@ -415,10 +415,10 @@ export default function TerminalDashboard() {
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaPolicy.sol</span>
-                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0xAc8c3afB...140d1d</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0xbd2a26c3...f9c550a</span>
                 </div>
                 <a
-                  href="https://shannon-explorer.somnia.network/address/0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"
+                  href="https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a"
                   target="_blank"
                   className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
@@ -444,11 +444,11 @@ export default function TerminalDashboard() {
 
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">tUSDC Collateral Token</span>
-                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x68B1D87F...De11d4</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">USDso Collateral Token</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x9c32F382...bb171</span>
                 </div>
                 <a
-                  href="https://shannon-explorer.somnia.network/address/0x68B1D87F95878fE05B998F19b66F4baba5De11d4"
+                  href="https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171"
                   target="_blank"
                   className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
                 >
@@ -466,7 +466,7 @@ export default function TerminalDashboard() {
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">Agent Telemetry Stream</h3>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               </div>
-              <span className="text-[10px] text-emerald-400 font-bold">● LIVE</span>
+              <span className="text-[10px] text-amber-400 font-bold">● SIMULATED</span>
             </div>
 
             <div className="bg-[#060911] border border-slate-800 rounded-lg p-2.5 h-32 sm:h-36 overflow-y-auto space-y-1 text-[10px] sm:text-[11px] text-emerald-400 font-mono">

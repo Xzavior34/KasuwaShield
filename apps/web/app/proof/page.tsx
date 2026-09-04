@@ -15,13 +15,38 @@ export default function ProofPage() {
     protectionGapPct,
   } = useRiskEngineState();
 
-  const [headBlock, setHeadBlock] = useState(478395810);
+  const [headBlock, setHeadBlock] = useState<number | null>(null);
+  const [rpcStatus, setRpcStatus] = useState<"connecting" | "live" | "unreachable">("connecting");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setHeadBlock((prev) => prev + 1);
-    }, 2000);
-    return () => clearInterval(timer);
+    let cancelled = false;
+
+    const pollBlockNumber = async () => {
+      try {
+        const res = await fetch("https://dream-rpc.somnia.network", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
+        });
+        const json = await res.json();
+        const blockNum = parseInt(json.result, 16);
+        if (!cancelled && Number.isFinite(blockNum)) {
+          setHeadBlock(blockNum);
+          setRpcStatus("live");
+        } else if (!cancelled) {
+          setRpcStatus("unreachable");
+        }
+      } catch {
+        if (!cancelled) setRpcStatus("unreachable");
+      }
+    };
+
+    pollBlockNumber();
+    const timer = setInterval(pollBlockNumber, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, []);
 
   const downloadProofReceipt = () => {
@@ -46,9 +71,9 @@ export default function ProofPage() {
           dreamDexFaucet: "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C (Bytecode Verified - 2192 bytes)",
         },
         deployedContracts: {
-          kasuwaPolicy: "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d (Bytecode Verified - 4207 bytes)",
+          kasuwaPolicy: "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a (Bytecode Verified - v2)",
           kasuwaExecutor: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (Bytecode Verified - 3505 bytes)",
-          kasuwaReactiveHandler: "0x9D60C436CCD13055EE4CeAb4b8E77d24c2CA5c02 (Tx Mined - #478456927)",
+          kasuwaReactiveHandler: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213 (Bytecode Verified, Blockscout source-verified -- redeployed after the original address was found to be an unused EOA with no deployment tx; see SECURITY.md)",
         }
       },
       tierB_LiveInfrastructure: {
@@ -57,7 +82,7 @@ export default function ProofPage() {
         marketExpiryValidation: "Verified >= 60s Buffer",
       },
       tierC_CodeVerified: {
-        unitTests: "10/10 Tests Passed (100%)",
+        unitTests: "17/17 Tests Passed (100%)",
         truthAuditTests: "13/13 Tests Passed (100%)",
         failClosedInvariants: "4/4 Invariants Enforced (Stale, Liquidity, Slippage, Budget)",
         idempotency: "Two-Tier Duplicate Settlement Blocked",
@@ -67,7 +92,7 @@ export default function ProofPage() {
         clobFillSimulator: "Simulated $0.28 Limit Fill",
         benchmarkReactionTime: "133ms Simulated",
       },
-      truthAuditStatus: "100% PROVABLE TECHNICAL TRUTH",
+      truthAuditStatus: "Tiered evidence report -- see tierA/B/C/D breakdown above for what is on-chain, live, code-verified, or simulated. Not a blanket truth claim.",
       timestamp: new Date().toISOString()
     }, null, 2));
     const dlAnchor = document.createElement('a');
@@ -117,8 +142,10 @@ export default function ProofPage() {
                 Tier A: Verified On-Chain (Somnia Shannon Testnet — 50312)
               </h2>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              ● LIVE RPC SYNC
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${rpcStatus === "live" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : rpcStatus === "unreachable" ? "bg-amber-500/10 text-amber-400 border-amber-500/30" : "bg-slate-500/10 text-slate-400 border-slate-500/30"}`}>
+              {rpcStatus === "live" && "● LIVE RPC SYNC"}
+              {rpcStatus === "unreachable" && "○ RPC UNREACHABLE"}
+              {rpcStatus === "connecting" && "○ CONNECTING"}
             </span>
           </div>
 
@@ -131,8 +158,14 @@ export default function ProofPage() {
 
             <div className="bg-slate-900 p-3 rounded border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Live Head Block Height</span>
-              <strong className="text-emerald-400 text-sm block my-0.5">#{headBlock.toLocaleString()}</strong>
-              <span className="text-[10px] text-emerald-500">● eth_blockNumber Active</span>
+              <strong className="text-emerald-400 text-sm block my-0.5">
+                {headBlock !== null ? `#${headBlock.toLocaleString()}` : "--"}
+              </strong>
+              <span className={`text-[10px] ${rpcStatus === "live" ? "text-emerald-500" : rpcStatus === "unreachable" ? "text-amber-500" : "text-slate-500"}`}>
+                {rpcStatus === "live" && "● eth_blockNumber Active (real RPC call, refreshed every 5s)"}
+                {rpcStatus === "unreachable" && "○ RPC unreachable from your browser right now"}
+                {rpcStatus === "connecting" && "○ Connecting..."}
+              </span>
             </div>
 
             <div className="bg-slate-900 p-3 rounded border border-slate-800">
@@ -156,10 +189,10 @@ export default function ProofPage() {
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-white text-[11px] font-bold block">KasuwaPolicy Protocol Contract</span>
-                  <span className="text-cyan-300 font-mono text-[10px]">0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d</span>
+                  <span className="text-white text-[11px] font-bold block">KasuwaPolicy Protocol Contract (v2)</span>
+                  <span className="text-cyan-300 font-mono text-[10px]">0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a</span>
                 </div>
-                <span className="text-[10px] text-emerald-400 font-bold">✓ BYTECODE (4.2KB)</span>
+                <span className="text-[10px] text-emerald-400 font-bold">✓ BYTECODE (4.4KB)</span>
               </div>
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800 flex justify-between items-center">
@@ -203,8 +236,8 @@ export default function ProofPage() {
             <h2 className="text-xs sm:text-sm font-bold text-cyan-400 uppercase tracking-wider">
               Tier B: Verified Against Live External Infrastructure
             </h2>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              LIVE API (200 OK)
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              TESTNET_SPECIFIED (fixture data)
             </span>
           </div>
 
@@ -212,7 +245,7 @@ export default function ProofPage() {
             <div className="bg-slate-900 p-3 rounded border border-slate-800 space-y-1">
               <span className="text-[10px] text-slate-400 block uppercase">DreamDEX Staging API</span>
               <span className="text-white text-xs font-bold block">https://stg.api.dreamdex.io/v0/markets</span>
-              <span className="text-emerald-400 text-[11px] block">✓ Discovered 3 active markets (WBTC, WETH, SOMI)</span>
+              <span className="text-amber-400 text-[11px] block">○ discoverLiveBinaryMarkets() currently returns a fixed testnet-representative fixture, not a live fetch to this endpoint -- see README Section 18</span>
             </div>
 
             <div className="bg-slate-900 p-3 rounded border border-slate-800 space-y-1">
@@ -230,7 +263,7 @@ export default function ProofPage() {
               Tier C: Code-Verified / Local Invariants (100% Tested)
             </h2>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-              23/23 TESTS PASSING
+              17/17 TESTS PASSING
             </span>
           </div>
 

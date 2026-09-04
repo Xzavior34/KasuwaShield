@@ -4,7 +4,7 @@ const https = require('https');
 const PORT = 3000;
 const RPC_URL = "https://dream-rpc.somnia.network";
 const COLLATERAL_TOKEN = "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171"; // USDso (Bytecode Verified - 7532B)
-const POLICY_CONTRACT = "0xAc8c3afB4f11b43E1C90fC57AEDc91e3e7140d1d"; // KasuwaPolicy (Bytecode Verified - 4207B)
+const POLICY_CONTRACT = "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a"; // KasuwaPolicy v2 (Bytecode Verified)
 const EXECUTOR_CONTRACT = "0x80AcBF398663079edBfF26132C9AC04204B7c69c"; // KasuwaExecutor (Bytecode Verified - 3505B)
 const EXPLORER = "https://shannon-explorer.somnia.network";
 

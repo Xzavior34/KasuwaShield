@@ -15,13 +15,20 @@ export default function ExecutionPage() {
     protectionGapPct,
   } = useRiskEngineState();
 
-  const [sessionKeyAddress, setSessionKeyAddress] = useState("0x07764D9031b8747e28d3E1601Ff1417569de22DA");
+  const generateEphemeralAddress = () =>
+    "0x" + Array.from({ length: 20 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0")).join("");
+
+  // NOTE: this must never default to the deployer/funded wallet address
+  // (0x07764D9031b8747e28d3E1601Ff1417569de22DA) -- the whole point of a session
+  // key is that it is NOT the main wallet, and defaulting to that address here
+  // undermines that story for anyone who lands on this page without clicking
+  // "Regenerate Key" first.
+  const [sessionKeyAddress, setSessionKeyAddress] = useState<string>(() => generateEphemeralAddress());
   const [isRevoked, setIsRevoked] = useState(false);
   const [broadcastState, setBroadcastState] = useState<"IDLE" | "SIGNING" | "TRANSMITTED" | "CONFIRMED">("IDLE");
 
   const generateNewKey = () => {
-    const hex = Array.from({ length: 20 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0")).join("");
-    setSessionKeyAddress("0x" + hex);
+    setSessionKeyAddress(generateEphemeralAddress());
     setIsRevoked(false);
     setBroadcastState("IDLE");
   };
@@ -74,7 +81,7 @@ export default function ExecutionPage() {
           </div>
           <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg shrink-0">
             <Wallet className="w-4 h-4 text-emerald-400" />
-            <span className="text-[11px] text-emerald-400 font-bold">1.000000 STT Gas Ready</span>
+            <span className="text-[11px] text-emerald-400 font-bold">1.000000 STT Gas Ready (demo balance)</span>
           </div>
         </div>
 
@@ -118,7 +125,7 @@ export default function ExecutionPage() {
                 <span className={`font-mono text-xs font-bold ${isRevoked ? "text-rose-400 line-through" : "text-emerald-400"}`}>
                   {sessionKeyAddress}
                 </span>
-                <span className="text-[10px] text-slate-500 block mt-0.5">Live Balance: 1.000000 STT gas (Nonce: 0)</span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Demo-generated address (not signed or funded on-chain here) -- Nonce: 0</span>
               </div>
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
@@ -162,12 +169,17 @@ export default function ExecutionPage() {
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>
-                  {broadcastState === "IDLE" && "🚀 STAGE BOUNDED TESTNET ORDER (15M PUT)"}
-                  {broadcastState === "SIGNING" && "✍️ SIGNING EIP-7702 PAYLOAD..."}
-                  {broadcastState === "TRANSMITTED" && "📡 BROADCASTING TO SHANNON RPC..."}
-                  {broadcastState === "CONFIRMED" && "✓ ORDER CONFIRMED ON TESTNET"}
+                  {broadcastState === "IDLE" && "🚀 STAGE BOUNDED TESTNET ORDER (15M PUT) -- SIMULATED"}
+                  {broadcastState === "SIGNING" && "✍️ SIGNING EIP-7702 PAYLOAD... (SIMULATED)"}
+                  {broadcastState === "TRANSMITTED" && "📡 BROADCASTING TO SHANNON RPC... (SIMULATED)"}
+                  {broadcastState === "CONFIRMED" && "✓ SIMULATED ORDER COMPLETE (no real tx broadcast)"}
                 </span>
               </button>
+              <p className="text-[10px] text-amber-500/80 text-center">
+                This button drives a scripted UI state machine for demo purposes -- it does not sign or broadcast
+                a real transaction. For a real, mined, session-key-executed roll see{" "}
+                <code>scripts/execute-real-policy-roll.ts</code>.
+              </p>
             </div>
           </div>
 
@@ -212,7 +224,12 @@ export default function ExecutionPage() {
 
         {/* 6-Window Timeline */}
         <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Auto-Roll Execution Timeline (Last 6 Windows)</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Auto-Roll Execution Timeline (Last 6 Windows)</h3>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              SIMULATED HISTORY
+            </span>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
             {[
               { t: "T-6", cost: "$8.20", status: "ROLLED", color: "text-emerald-400" },
