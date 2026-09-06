@@ -7,7 +7,7 @@ import { Shield, Activity, Cpu, Database, RotateCcw, AlertTriangle, Layers, Book
 import { SystemState } from "../../hooks/useRiskEngineState";
 
 interface AppShellProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   systemState?: SystemState;
   isSimulationRunning?: boolean;
   onTriggerStressTest?: () => void;
