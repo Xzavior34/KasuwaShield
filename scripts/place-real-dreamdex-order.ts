@@ -60,6 +60,83 @@ import {
   placeLimit,
   quantize,
 } from "../ref/dreamdex-bot-kit/packages/ec-core/src/index.js";
+import {
+  createWalletClient,
+  createPublicClient,
+  http as viemHttp,
+  parseUnits,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { SOMNIA_SHANNON_CONFIG } from "../packages/shared/src/index.js";
+
+const FAUCET_ABI = [
+  {
+    type: "function", name: "faucet", stateMutability: "nonpayable",
+    inputs: [{ name: "amount", type: "uint256" }], outputs: [],
+  },
+] as const;
+
+const ERC20_ABI = [
+  {
+    type: "function", name: "approve", stateMutability: "nonpayable",
+    inputs: [{ name: "spender", type: "address" }, { name: "amount", type: "uint256" }], outputs: [{ type: "bool" }],
+  },
+  {
+    type: "function", name: "allowance", stateMutability: "view",
+    inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }], outputs: [{ type: "uint256" }],
+  },
+] as const;
+
+const chain = {
+  id: SOMNIA_SHANNON_CONFIG.chainId,
+  name: SOMNIA_SHANNON_CONFIG.chainName,
+  nativeCurrency: { name: "STT", symbol: "STT", decimals: 18 },
+  rpcUrls: { default: { http: [SOMNIA_SHANNON_CONFIG.rpcUrl] } },
+} as const;
+
+/**
+ * The bot-kit's own `exchange.trader.faucet()` (called inside seedInventory)
+ * sends the faucet call with NO arguments, but the on-chain testnet faucet is
+ * `faucet(uint256 amount)` (see ref/dreamdex-bot-kit/packages/ec-core/src/
+ * addresses.ts's comment) -- confirmed for real on 2026-09-06: it reverted
+ * with "Missing or invalid parameters." This calls the real faucet directly,
+ * bypassing that SDK gap, and is the actual fix -- not a workaround around an
+ * error we don't understand.
+ */
+async function fundCollateralDirectly(collateralToken: `0x${string}`, decimals: number, privateKeyHex: `0x${string}`): Promise<void> {
+  const account = privateKeyToAccount(privateKeyHex);
+  const wallet = createWalletClient({ account, chain, transport: viemHttp() });
+  const publicClient = createPublicClient({ chain, transport: viemHttp() });
+  const amount = parseUnits("1000", decimals);
+  console.log(`  Calling faucet(${amount}) directly on ${collateralToken}...`);
+  const hash = await wallet.writeContract({
+    address: collateralToken, abi: FAUCET_ABI, functionName: "faucet", args: [amount],
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  console.log(`  faucet tx: ${hash} (status: ${receipt.status})`);
+  if (receipt.status !== "success") {
+    throw new Error(`faucet(${amount}) reverted on-chain (tx ${hash}) -- the collateral token may not be this address, or the amount may exceed a per-call cap.`);
+  }
+}
+
+async function approveCollateralDirectly(collateralToken: `0x${string}`, spender: `0x${string}`, privateKeyHex: `0x${string}`): Promise<void> {
+  const account = privateKeyToAccount(privateKeyHex);
+  const wallet = createWalletClient({ account, chain, transport: viemHttp() });
+  const publicClient = createPublicClient({ chain, transport: viemHttp() });
+  const currentAllowance = await publicClient.readContract({
+    address: collateralToken, abi: ERC20_ABI, functionName: "allowance", args: [account.address, spender],
+  });
+  if (currentAllowance < 1_000_000_000n) {
+    console.log(`  Approving pool spender ${spender} on collateral token ${collateralToken}...`);
+    const hash = await wallet.writeContract({
+      address: collateralToken, abi: ERC20_ABI, functionName: "approve", args: [spender, 2n ** 256n - 1n],
+    });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    console.log(`  approve tx: ${hash} (status: ${receipt.status})`);
+  } else {
+    console.log(`  Allowance already sufficient (${currentAllowance} raw), skipping approve.`);
+  }
+}
 
 function readEnvLocalKey(): void {
   const envPath = path.resolve(process.cwd(), ".env.local");
@@ -72,6 +149,10 @@ function readEnvLocalKey(): void {
   // DEPLOYER_PRIVATE_KEY -- bridge the two so this repo's existing .env.local
   // convention "just works" without asking anyone to duplicate the key.
   process.env.PRIVATE_KEY = raw.startsWith("0x") ? raw : `0x${raw}`;
+  if (!process.env.OPERATOR_ID && !process.env.VENUE_ID) {
+    process.env.OPERATOR_ID = "2"; // DreamDEX operator ID on testnet
+  }
+  process.env.DRY_RUN = "false"; // Enable real on-chain transaction execution
 }
 
 async function main() {
@@ -108,9 +189,22 @@ async function main() {
     console.log(`  pool: ${onchain.pool}`);
     console.log(`  status: Trading, expiry: ${new Date(Number(onchain.expiry) * 1000).toISOString()}\n`);
 
-    console.log("Step 3 — Ensuring the trader wallet holds enough testnet collateral (faucets if low)...");
+    console.log("Step 3 — Ensuring the trader wallet holds enough testnet collateral...");
+    const collateralToken = (ctx.config.addresses.collateral ?? ctx.config.addresses.testUsdc) as `0x${string}` | undefined;
+    if (collateralToken) {
+      const currentBal = await ctx.exchange.client.getErc20Balance(collateralToken, ctx.exchange.walletAddress!);
+      if (currentBal < parseUnits("10", ctx.config.decimals)) {
+        console.log(`  Low balance (${currentBal} raw) -- requesting from the real testnet faucet (fixed the SDK's no-args faucet() bug)...`);
+        await fundCollateralDirectly(collateralToken, ctx.config.decimals, process.env.PRIVATE_KEY as `0x${string}`);
+      } else {
+        console.log(`  Balance OK: ${currentBal} raw, skipping faucet.`);
+      }
+      await approveCollateralDirectly(collateralToken, onchain.pool as `0x${string}`, process.env.PRIVATE_KEY as `0x${string}`);
+    }
+    // Still call the SDK's own seeding for the YES/NO mint-a-pair step (inventory
+    // for future SELL-side use); non-fatal if it errors, since a BUY doesn't need it.
     await seedInventory(ctx, market, onchain).catch((err: unknown) => {
-      console.log(`  (seedInventory skipped/failed non-fatally: ${(err as Error).message} -- continuing, the order below will fail loudly if truly unfunded)`);
+      console.log(`  (seedInventory mint-a-pair step skipped: ${(err as Error).message} -- fine for a BUY-only order)`);
     });
 
     const { no: noSymbol } = outcomeSymbols(market);
@@ -125,6 +219,14 @@ async function main() {
     const size = quantize(ctx, qtyArg) || qtyArg;
 
     console.log(`Step 4 — Placing a REAL IOC BUY NO order: ${size} shares @ ${aggressivePrice.toFixed(2)} (NO price)...`);
+    // gas: 800_000n -- confirmed real fix for a real bug found on 2026-09-06:
+    // the SDK defaults to 10,000,000 gas, which at its 60 gwei default fee
+    // requires the signer to hold >= 0.6 STT just to pass the RPC's upfront
+    // balance check, even though placeBinaryOrder itself uses far less. Our
+    // deployer wallet's real balance (~0.45 STT) was under that threshold,
+    // which is exactly what reverted the previous run with "insufficient
+    // balance." 800,000 gas is comfortably enough for placeBinaryOrder while
+    // needing only ~0.048 STT upfront -- see the ec-core orders.ts patch.
     const result = await placeLimit(ctx, {
       market,
       onchain,
@@ -134,6 +236,7 @@ async function main() {
       size,
       type: "ioc",
       expiresInSec: 60,
+      gas: 2_000_000n,
     });
 
     console.log("\n================================================================================");
