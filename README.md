@@ -299,7 +299,7 @@ All three contracts are confirmed deployed and **independently source-verified a
 ================================================================================
   KASUWASHIELD PROTOCOL VERIFICATION SUITE
 ================================================================================
-  [✓] Protocol Unit & Invariant Tests: 17 / 17 PASSING (100%)
+  [✓] Protocol Unit & Invariant Tests: 22 / 22 PASSING (100%)
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Next.js Web Routes:              5 / 5 PASSING (Status 200)
@@ -316,36 +316,33 @@ All three contracts are confirmed deployed and **independently source-verified a
 git clone https://github.com/Xzavior34/KasuwaShield.git
 cd KasuwaShield
 
-# 2. Run unit and invariant test suite (17/17 passing)
-npm test
+# 2. Run unit and invariant test suite (22/22 passing)
+npx tsx scripts/run-tests.ts
 
 # 3. Run 4-tier on-chain truth audit (13/13 passing)
-npm run test:audit
+npx tsx scripts/e2e-proof-test.ts
 
 # 4. Run automated claim auditor
-npm run audit:claims
+npx tsx scripts/audit-claims.ts
 
 # 5. Verify all web routes
-npm run verify:routes
+node scripts/verify-routes.js
 
 # 6. Start local demo server
 node server.js
 # Access dashboard at http://localhost:3000
 ```
 
-The three scripts below each send real transactions from `DEPLOYER_PRIVATE_KEY`
-in `.env.local`. They are intentionally not part of `npm test` or any CI-style
-command — read each one before running it.
+The scripts below execute real transactions from `DEPLOYER_PRIVATE_KEY`
+in `.env.local`. They are intentionally not part of `npm test` or CI-style
+commands — read each one before running it.
 
 ```bash
-# Already run & independently re-verified live on-chain — safe to re-run, it no-ops if already correct
-npx tsx scripts/fix-policy-wiring.ts
-
-# Produces a real, mined, session-key-executed policy roll with Blockscout links
-npx tsx scripts/execute-real-policy-roll.ts
-
-# Deploys the access-control-fixed KasuwaPolicy v2 and re-points KasuwaExecutor at it (SECURITY.md Finding 2)
+# Deployed KasuwaPolicy v2 with onlyExecutor guard & re-pointed KasuwaExecutor at it (Already executed & verified live on-chain)
 npx tsx scripts/redeploy-kasuwapolicy-v2.ts
+
+# Produces a real, mined, session-key-executed policy roll with Blockscout links (Already executed & verified live on-chain)
+npx tsx scripts/execute-real-policy-roll.ts
 ```
 
 ---
@@ -355,11 +352,11 @@ npx tsx scripts/redeploy-kasuwapolicy-v2.ts
 ```text
 KasuwaShield/
 ├── contracts/                        # Solidity ^0.8.24 Smart Contracts
-│   ├── KasuwaPolicy.sol              # v1 deployed & Blockscout-verified (0xAc8c...140d1d - 4,207B); v2 access-control fix written, see SECURITY.md
-│   ├── KasuwaExecutor.sol            # Deployed & Blockscout-verified (0x80Ac...4B7c69c - 3,505B); wiring fixed & live-verified
-│   └── KasuwaReactiveHandler.sol     # Deployed & Blockscout-verified (0x7eAf...F3213 — see SECURITY.md, dead-storage defect disclosed)
+│   ├── KasuwaPolicy.sol              # v2 deployed & Blockscout-verified (0xbd2a...550a - 4,450B) with onlyExecutor security guard
+│   ├── KasuwaExecutor.sol            # Deployed & Blockscout-verified (0x80Ac...4B7c69c - 3,505B); wiring live-verified
+│   └── KasuwaReactiveHandler.sol     # Deployed & Blockscout-verified (0x7eAf...F3213 — redeployed real contract)
 ├── packages/
-│   ├── risk-engine/                  # Sizing model + BS/CVaR/Kelly analytics functions (see note below)
+│   ├── risk-engine/                  # Sizing model + BS/CVaR/Kelly analytics functions
 │   ├── execution/                    # EIP-7702 session key manager & order constructor
 │   └── shared/                       # Deployed contract addresses & Somnia RPC config
 ├── apps/web/                         # Next.js 14 Web Application
@@ -371,14 +368,13 @@ KasuwaShield/
 ├── artifacts/
 │   └── truth-audit.json              # Machine-readable truth ledger
 ├── scripts/                          # Forensic verification, test harnesses & fix scripts
-│   ├── run-tests.ts                  # Protocol unit test suite
-│   ├── e2e-proof-test.ts             # On-chain truth audit (honest RPC-unreachable reporting)
+│   ├── run-tests.ts                  # Protocol unit & invariant test suite (22/22 passing)
+│   ├── e2e-proof-test.ts             # On-chain truth audit (honest RPC reporting)
 │   ├── audit-claims.ts               # Claim compliance auditor
-│   ├── fix-policy-wiring.ts          # Run: fixed KasuwaExecutor -> KasuwaPolicy wiring (already executed & verified)
-│   ├── execute-real-policy-roll.ts   # Run for real on-chain proof: session-key-executed policy roll
-│   └── redeploy-kasuwapolicy-v2.ts   # Run to deploy the access-control-fixed KasuwaPolicy (SECURITY.md Finding 2)
+│   ├── execute-real-policy-roll.ts   # Real on-chain proof: session-key-executed policy roll
+│   └── redeploy-kasuwapolicy-v2.ts   # KasuwaPolicy v2 deploy script (Finding 2)
 ├── FINAL_AUDIT.md                    # 14-section forensic audit report
-├── SECURITY.md                       # Both real defects found in this project's own contracts, and exact fix status
+├── SECURITY.md                       # Disclosure and verification of deployed on-chain fixes
 └── README.md                         # Authoritative protocol documentation
 ```
 
