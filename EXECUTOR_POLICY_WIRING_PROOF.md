@@ -85,4 +85,33 @@ Executed via `scripts/execute-real-policy-roll.ts` on Somnia Shannon Testnet:
    Block: `#479888195` | Status: `success`  
    State Readback: `remainingBudgetUSD: 45` (started at 50), `rollsExecuted: 1`, `isActive: true`.
 
-**Status**: **ALL CONTRACTS DEPLOYED, SOURCE-VERIFIED, ON-CHAIN WIRED TO V2, AND FULL LIFECYCLE PROVEN ON-CHAIN (PASS)**
+---
+
+## 6. Live Automated Keeper Daemon Proof (3 Consecutive Rolls)
+
+Executed via `scripts/keeper-daemon.ts` on Somnia Shannon Testnet:
+
+* **Policy ID**: `0x7a3db100cbdfc093a1cf64fc02d08a5c3ba3867ffab860d5b403e05a0694e9f7`
+* **Ephemeral Session Key**: `0xEbB5bfa17d0c3A0B1c9006Eb589aBff8FdfB437c`
+* **Total Budget**: 50 USD | **Roll Size**: 5 USD | **Window**: 15s
+
+### Keeper Daemon Transactions
+
+1. **`KasuwaPolicy.createPolicy(...)`**  
+   Tx: [`0x0ca24aec71c5e5e30469c1206cf0962937ac51a96def6069d98a7a5f419bb58b`](https://shannon-explorer.somnia.network/tx/0x0ca24aec71c5e5e30469c1206cf0962937ac51a96def6069d98a7a5f419bb58b)
+2. **`KasuwaExecutor.authorizeSessionKey(...)`**  
+   Tx: [`0x6192a9a32587ec57093d5d7c4b5efcbf6f3406e904b51c278e39a8c9931a1e76`](https://shannon-explorer.somnia.network/tx/0x6192a9a32587ec57093d5d7c4b5efcbf6f3406e904b51c278e39a8c9931a1e76)
+3. **Session Key Gas Funding (0.2 STT)**  
+   Tx: [`0xa2c9165f0e73f0f329cca02ed1662931ebd1d2ac6b0bf666461c659556dfc391`](https://shannon-explorer.somnia.network/tx/0xa2c9165f0e73f0f329cca02ed1662931ebd1d2ac6b0bf666461c659556dfc391)
+4. **Window 1 Auto-Roll Tx (Block #481236242)**  
+   Tx: [`0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae`](https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae) — Budget remaining: 45 USD
+5. **Window 2 Auto-Roll Tx (Block #481236422)**  
+   Tx: [`0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3`](https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3) — Budget remaining: 40 USD
+6. **Window 3 Auto-Roll Tx (Block #481236611)**  
+   Tx: [`0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7`](https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7) — Budget remaining: 35 USD
+
+**Final State Readback**: `rollsExecuted: 3`, `remainingBudgetUSD: 35`, `isActive: true`.
+
+---
+
+**Status**: **ALL CONTRACTS DEPLOYED, SOURCE-VERIFIED, ON-CHAIN WIRED TO V2, AND FULL MULTI-WINDOW LIFECYCLE PROVEN ON-CHAIN (PASS)**

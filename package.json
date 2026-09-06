@@ -20,7 +20,9 @@
     "discover": "tsx scripts/discover-markets.ts",
     "inspect": "tsx scripts/inspect-market.ts",
     "preflight": "tsx scripts/demo-preflight.ts",
-    "smoke": "tsx scripts/testnet-smoke.ts"
+    "smoke": "tsx scripts/testnet-smoke.ts",
+    "place-order": "tsx scripts/place-real-dreamdex-order.ts",
+    "keeper": "tsx scripts/keeper-daemon.ts"
   },
   "devDependencies": {
     "typescript": "^5.5.4",
@@ -43,6 +45,7 @@
     "recharts": "^2.12.7",
     "framer-motion": "^11.3.19",
     "viem": "^2.21.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "@somnia-chain/markets-sdk": "^0.28.1"
   }
 }

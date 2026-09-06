@@ -3,9 +3,14 @@ pragma solidity ^0.8.24;
 
 /**
  * @title KasuwaReactiveHandler
- * @notice Somnia Reactive Callback contract for KasuwaShield Continuous Auto-Rolling Shield.
- *         Natively listens to DreamDEX settlement events on Somnia, claims winning outcome tokens,
- *         prevents duplicate event triggers, and emits RolloverWindowOpen to trigger the off-chain ephemeral session key keeper loop.
+ * @notice Settlement-notification contract for KasuwaShield's Continuous Auto-Rolling Shield.
+ *         Somnia's reactive infrastructure is intended to invoke onMarketSettled() when a DreamDEX
+ *         market this policy is watching settles (that live trigger wiring is still pending -- see
+ *         README Section 18); this contract itself does not poll or subscribe to DreamDEX. It
+ *         prevents duplicate processing per marketId, and on a real winning-outcome settlement it
+ *         emits PayoutRedeemed as a notification record -- it does not itself call DreamDEX to claim
+ *         or transfer the payout token. It emits RolloverWindowOpen to signal the off-chain
+ *         ephemeral session-key keeper that a new auto-roll window is open.
  */
 contract KasuwaReactiveHandler {
     address public immutable owner;

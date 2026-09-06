@@ -7,9 +7,14 @@ interface IKasuwaPolicy {
 
 /**
  * @title KasuwaExecutor
- * @notice Restricted session-key execution router for EIP-7702 Continuous Auto-Rolling Shields.
- *         Allows authorized local ephemeral Session Keys to execute DreamDEX IOC taker orders
- *         without user wallet popups, restricted strictly to allowlisted pools & remaining budget.
+ * @notice Restricted session-key execution GATE for EIP-7702 Continuous Auto-Rolling Shields.
+ *         Lets an authorized ephemeral Session Key trigger a policy-gated auto-roll for a user
+ *         without a wallet popup: this contract validates the caller and deducts the roll's cost
+ *         from the user's remaining budget in KasuwaPolicy, then emits AutoRollExecuted with the
+ *         intended dreamdexPool/quantity/price as an auditable record of what was authorized.
+ *         It does NOT itself call DreamDEX or place an order -- placing the actual DreamDEX order
+ *         from the same session key is a separate, off-chain step (see scripts/ for the current
+ *         proof-of-concept and README Section 18 for exactly what is and isn't claimed).
  */
 contract KasuwaExecutor {
     address public immutable owner;
@@ -57,7 +62,9 @@ contract KasuwaExecutor {
     }
 
     /**
-     * @notice Execute an auto-rolled hedge using an authorized local Session Key (0 popups required)
+     * @notice Validate + budget-gate an auto-rolled hedge for an authorized local Session Key
+     *         (0 wallet popups required). Emits AutoRollExecuted as the on-chain authorization
+     *         record; the DreamDEX order itself is placed off-chain by the caller, not by this call.
      */
     function executeAutoRoll(
         address userEOA,

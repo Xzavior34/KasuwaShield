@@ -82,7 +82,7 @@ export default function ProofPage() {
         marketExpiryValidation: "Verified >= 60s Buffer",
       },
       tierC_CodeVerified: {
-        unitTests: "17/17 Tests Passed (100%)",
+        unitTests: "22/22 Tests Passed (100%)",
         truthAuditTests: "13/13 Tests Passed (100%)",
         failClosedInvariants: "4/4 Invariants Enforced (Stale, Liquidity, Slippage, Budget)",
         idempotency: "Two-Tier Duplicate Settlement Blocked",
@@ -263,7 +263,7 @@ export default function ProofPage() {
               Tier C: Code-Verified / Local Invariants (100% Tested)
             </h2>
             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-              17/17 TESTS PASSING
+              22/22 TESTS PASSING
             </span>
           </div>
 
