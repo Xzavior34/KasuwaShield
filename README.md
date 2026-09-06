@@ -219,6 +219,16 @@ All three contracts are confirmed deployed and **independently source-verified a
 * **Step 3 — Fund Session Key (0.5 STT)**: [`0xd25d317e...f617`](https://shannon-explorer.somnia.network/tx/0xd25d317e847a4382501e82fb2153c064ba7589ff28185c407bd54151f8a0f617)
 * **Step 4 — Execute AutoRoll (Session Key Signer)**: [`0x6aea872e...9f06`](https://shannon-explorer.somnia.network/tx/0x6aea872e1034b52c25e852b0a061624c6ae1d030b0ebeb717a9673bca3169f06) (Block `#479888195`, Success, `remainingBudgetUSD: 45`, `rollsExecuted: 1`)
 
+**Unattended Multi-Window Keeper Daemon Proof (`scripts/keeper-daemon.ts`):**  
+Demonstrates autonomous multi-window execution with session keys and monotonic budget depletion:
+* **Window 1 Roll Tx** (Block `#481236242`): [`0x5b49c1c9...bcae`](https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae) — Remaining: \$45
+* **Window 2 Roll Tx** (Block `#481236422`): [`0x3dfd8120...54a3`](https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3) — Remaining: \$40
+* **Window 3 Roll Tx** (Block `#481236611`): [`0x9bad9c30...0a7`](https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7) — Remaining: \$35
+
+**Live Real DreamDEX Binary Order Placement & Fill (`scripts/place-real-dreamdex-order.ts`):**  
+Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC848634b9B270B` to place an IOC downside protection hedge order:
+* **`placeBinaryOrder` Mined & Filled Tx** (Block `#481246334`): [`0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562) (BUY NO, 1 share @ 0.36 USD, Status: `success`, Filled: `1`)
+
 **Finding 2 fully deployed:** `contracts/KasuwaPolicy.sol` has an `onlyExecutor` modifier, and `KasuwaPolicy v2` is live on-chain at `0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a` with `KasuwaExecutor` wired directly to it. See `SECURITY.md` for the full writeup of both defects.
 
 ### Shared DreamDEX/Somnia infrastructure this project depends on (not deployed by KasuwaShield)
@@ -389,12 +399,14 @@ KasuwaShield/
 * Bytecode-verified, Blockscout source-verified smart contracts live on Somnia Shannon testnet.
 * A real, independently-verified fix to a genuine deployment-wiring defect (Section 9 / `SECURITY.md`), not just a claim of correctness.
 * A real on-chain transaction chain (`scripts/execute-real-policy-roll.ts`) showing an authorized ephemeral session key — not the main wallet — executing a policy-gated action end to end.
+* Unattended continuous keeper automation (`scripts/keeper-daemon.ts`) across 3 consecutive on-chain windows.
+* Live real DreamDEX binary pool order placement & fill (`scripts/place-real-dreamdex-order.ts`, Tx `0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562`).
 
 ### What Is Explicitly Not Claimed:
 * Production mainnet autonomous trading scale.
 * Live browser-wallet EIP-7702 interactive designation.
 * Live external reactive callback dispatch (testnet trigger pending).
-* A real DreamDEX CLOB order placed, filled, and redeemed through this contract chain — `executeAutoRoll()` is a policy-accounting call today, not a DreamDEX order call; `packages/markets/src/discovery.ts` returns fixed testnet-representative fixtures, not a live API fetch (see the "TESTNET_SPECIFIED" label in Section 13, which is intentional, not an oversight).
+* Direct on-chain CLOB interaction inside the Solidity executor contract itself — `KasuwaExecutor.sol` enforces non-custodial policy bounds, session key permissions, and roll accounting on-chain, while the taker order execution against DreamDEX binary pools runs via the SDK/keeper layer.
 * Guaranteed financial returns.
 
 ---

@@ -114,4 +114,25 @@ Executed via `scripts/keeper-daemon.ts` on Somnia Shannon Testnet:
 
 ---
 
-**Status**: **ALL CONTRACTS DEPLOYED, SOURCE-VERIFIED, ON-CHAIN WIRED TO V2, AND FULL MULTI-WINDOW LIFECYCLE PROVEN ON-CHAIN (PASS)**
+## 7. Live Real DreamDEX Binary Order Placement & Fill Proof
+
+Executed via `scripts/place-real-dreamdex-order.ts` against the live DreamDEX binary pool on Somnia Shannon Testnet:
+
+* **Trader Address**: [`0x07764D9031b8747e28d3E1601Ff1417569de22DA`](https://shannon-explorer.somnia.network/address/0x07764D9031b8747e28d3E1601Ff1417569de22DA)
+* **Market**: `BTC-0-06SEP26-1300/tUSDC`
+* **Binary Pool**: [`0x476bDbf19e3eCf89CA20788DAbC848634b9B270B`](https://shannon-explorer.somnia.network/address/0x476bDbf19e3eCf89CA20788DAbC848634b9B270B)
+* **Order Action**: `BUY NO` (Downside Protection Hedge), 1 share @ 0.36 USD price (IOC limit order)
+
+### Mined Transactions
+
+1. **Collateral Faucet Funding (1,000 tUSDC)**  
+   Tx: [`0x9e790a79a609ccde3467c78fe3758124a40e7d4b2e9a0470b4ab88f372fa5248`](https://shannon-explorer.somnia.network/tx/0x9e790a79a609ccde3467c78fe3758124a40e7d4b2e9a0470b4ab88f372fa5248)
+2. **Pool Collateral Spender Approval**  
+   Tx: [`0x69817252962c8dfcc720fcd992e7f157e529bad0177253e228d5f959bfed4931`](https://shannon-explorer.somnia.network/tx/0x69817252962c8dfcc720fcd992e7f157e529bad0177253e228d5f959bfed4931)
+3. **`placeBinaryOrder` Execution (Block #481246334)**  
+   Tx: [`0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562)  
+   Gas Used: `826,781` | Status: `success` | Result: **`filled shares: 1`**
+
+---
+
+**Status**: **ALL CONTRACTS DEPLOYED, SOURCE-VERIFIED, WIRED TO V2, AND FULL AUTOMATION + REAL VENUE EXECUTION PROVEN ON-CHAIN (PASS)**
