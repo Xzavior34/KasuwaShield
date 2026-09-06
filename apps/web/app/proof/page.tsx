@@ -71,9 +71,9 @@ export default function ProofPage() {
           dreamDexFaucet: "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C (Bytecode Verified - 2192 bytes)",
         },
         deployedContracts: {
-          kasuwaPolicy: "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a (Bytecode Verified - v2)",
-          kasuwaExecutor: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (Bytecode Verified - 3505 bytes)",
-          kasuwaReactiveHandler: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213 (Bytecode Verified, Blockscout source-verified -- redeployed after the original address was found to be an unused EOA with no deployment tx; see SECURITY.md)",
+          kasuwaPolicy: "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a (Source-Verified - v2)",
+          kasuwaExecutor: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (Source-Verified - 3505 bytes)",
+          kasuwaReactiveHandler: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213 (Source-Verified -- redeployed real contract; see SECURITY.md)",
         }
       },
       tierB_LiveInfrastructure: {

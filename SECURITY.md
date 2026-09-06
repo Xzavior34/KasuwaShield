@@ -93,7 +93,7 @@ function setExecutor(address _executor) external onlyOwner {
 function validateAndDeductRoll(...) external onlyExecutor returns (bool valid) { ... }
 ```
 
-**Fix status**: **DEPLOYED & LIVE ON-CHAIN**. `KasuwaPolicy v2` is deployed to Somnia Shannon testnet at [`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a) with `executor` initialized to `0x80AcBF398663079edBfF26132C9AC04204B7c69c`, and `KasuwaExecutor.policyContract()` was re-wired to point to it (confirmed in block `#479864632`). `packages/shared/src/constants.ts` and the frontend UI now point to this v2 address.
+**Fix status**: **DEPLOYED, SOURCE-VERIFIED & LIVE ON-CHAIN**. `KasuwaPolicy v2` is deployed to Somnia Shannon testnet at [`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract) (Source-verified on Blockscout with compiler `v0.8.36`), with `executor` initialized to `0x80AcBF398663079edBfF26132C9AC04204B7c69c`, and `KasuwaExecutor.policyContract()` was re-wired to point to it (confirmed in block `#479864632`). `packages/shared/src/constants.ts` and the frontend UI now point to this v2 address.
 
 ---
 
