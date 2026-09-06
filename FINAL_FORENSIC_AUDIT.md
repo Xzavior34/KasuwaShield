@@ -49,15 +49,14 @@
 
 ## 5b. Access Control Defect Resolved: KasuwaPolicy v2 Deployed
 
-* **Fix Deployed**: `KasuwaPolicy v2` (`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`) was compiled and deployed to Somnia Shannon testnet (Block `#479864632`), and `KasuwaExecutor.setPolicyContract` re-pointed to it. See `SECURITY.md` for full writeup.
-
-While scoping the fix above, a full read of `contracts/KasuwaPolicy.sol` turned up an unrelated defect: `validateAndDeductRoll()` had no caller restriction at all -- any address, not just `KasuwaExecutor`, could call it directly and mutate any policy's state. This has a written, compiled fix (`onlyExecutor` modifier, v2 contract) and a ready-to-run redeploy script, but has not yet been deployed. Full writeup and current status: [`SECURITY.md`](./SECURITY.md).
+* **Fix Deployed**: `KasuwaPolicy v2` (`0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a`) was compiled and deployed to Somnia Shannon testnet (Block `#479864632`) with the `onlyExecutor` modifier, and `KasuwaExecutor.setPolicyContract` re-pointed to it. See `SECURITY.md` and `EXECUTOR_POLICY_WIRING_PROOF.md` for full writeup and on-chain verification.
 
 ---
 
 ## 6. Final Test Suite Results
 
-* **Protocol Unit & Invariant Tests**: **17 / 17 PASSING (100%)**
+* **Protocol Unit & Invariant Tests**: **22 / 22 PASSING (100%)**
+* **4-Tier On-Chain Truth Audit**: **13 / 13 PASSING (100%)**
 * **4-Tier On-Chain Truth Audit**: **13 / 13 PASSING (100%)**
 * **Claim Auditor**: **100% Truth Compliant (0 violations)**
 * **Web Routes**: **5 / 5 PASSING (100% Status 200)**

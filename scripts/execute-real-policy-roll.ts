@@ -12,7 +12,7 @@
  * script proves the risk-policy/session-key/executor chain genuinely works
  * on-chain end to end. It does not prove a real trade was won and redeemed
  * the way a full DreamDEX integration would (that is a larger, separate
- * build — see the honesty notes in FINAL_AUDIT.md).
+ * build — see the honesty notes in FINAL_FORENSIC_AUDIT.md).
  *
  * Four transactions, all sent from your own deployer wallet (acting as the
  * "user" for this demo) except the last one, which is sent by a freshly

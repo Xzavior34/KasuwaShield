@@ -373,7 +373,7 @@ KasuwaShield/
 │   ├── audit-claims.ts               # Claim compliance auditor
 │   ├── execute-real-policy-roll.ts   # Real on-chain proof: session-key-executed policy roll
 │   └── redeploy-kasuwapolicy-v2.ts   # KasuwaPolicy v2 deploy script (Finding 2)
-├── FINAL_AUDIT.md                    # 14-section forensic audit report
+├── FINAL_FORENSIC_AUDIT.md           # 14-section forensic audit report
 ├── SECURITY.md                       # Disclosure and verification of deployed on-chain fixes
 └── README.md                         # Authoritative protocol documentation
 ```
