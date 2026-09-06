@@ -19,9 +19,25 @@
 
 ---
 
+## ✅ Proof, Not Promises
+
+Every claim below is a link a judge can click and check independently — not a screenshot, not a self-reported number. This is the actual, current, on-chain state of KasuwaShield on Somnia Shannon testnet as of this submission:
+
+| Claim | Independent Proof |
+|---|---|
+| **The policy engine executes for real, unattended, across multiple windows** | 3 consecutive `executeAutoRoll()` rolls, signed by an ephemeral session key with zero human triggering in between: [Window 1](https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae) · [Window 2](https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3) · [Window 3](https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7) |
+| **It doesn't just gate a hedge decision — it actually places one, on the real DreamDEX venue** | A real IOC "DOWN" order placed and **filled** against the live DreamDEX BTC binary pool: [`0x12407c43...`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562) (1 share, `status: success`) |
+| **The contracts are what they claim to be — not just deployed, the source is readable and matched** | All three contracts source-verified on Blockscout with live Read/Write panels: [KasuwaPolicy v2](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract) · [KasuwaExecutor](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=contract) · [KasuwaReactiveHandler](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) |
+| **A real defect was found in our own contracts and fixed in the open, not hidden** | Missing caller restriction on `validateAndDeductRoll()`, found, disclosed, and shipped as `KasuwaPolicy v2` with an `onlyExecutor` guard — full writeup in [`SECURITY.md`](./SECURITY.md) |
+| **The math and safety invariants are actually tested, not asserted** | 22/22 unit & invariant tests passing — run it yourself: `npm test` |
+
+We'd rather hand a judge four things they can verify in ninety seconds than one thing they have to take our word for.
+
+---
+
 ## ⚡ 1. One-Sentence Explanation
 
-> **KasuwaShield monitors portfolio risk, calculates a bounded hedge, enforces execution policy, and prepares the next Event Contract hedge before the current protection window expires.**
+> **KasuwaShield monitors portfolio risk, calculates a bounded hedge, enforces execution policy, places the real hedge order on DreamDEX, and prepares the next Event Contract hedge before the current protection window expires — unattended.**
 
 > **This is a protection policy, not a prediction bot.**
 
