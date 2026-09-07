@@ -444,6 +444,21 @@ export default function TerminalDashboard() {
 
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
                 <div>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">KasuwaReactiveHandler.sol</span>
+                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x7eAfd01B...eED2F3213</span>
+                </div>
+                <a
+                  href="https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213"
+                  target="_blank"
+                  className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 text-[10px] sm:text-[11px]"
+                >
+                  <span>Explorer</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
+              <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
+                <div>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">USDso Collateral Token</span>
                   <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x9c32F382...bb171</span>
                 </div>

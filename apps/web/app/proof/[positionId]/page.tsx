@@ -27,9 +27,11 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
     entryPrice: 0.35,
     totalCostUSD: 7000.0,
     payoutUSD: 20000.0,
-    marketId: "0x679795a0195a1b76cdebb7c51d74e058aee92919b8c3389af86ef24535e8a28c",
-    poolAddress: "0x43a18f29d10e42819873a90a218291b87a82910a",
-    collateralToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171 (USDso)",
+    marketId: "0x476bDbf19e3eCf89CA20788DAbC848634b9B270B",
+    policyContract: "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
+    executorContract: "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
+    reactiveHandlerContract: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
+    collateralToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
     blockNumber: 1284925,
     timestamp: "2026-09-02 08:45:12 UTC",
     policy: {
@@ -141,14 +143,46 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
           <div className="space-y-3 text-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
               <div>
-                <span className="text-slate-400 block">KasuwaPolicy.sol Contract</span>
-                <span className="text-slate-200">{mockProofData.poolAddress}</span>
+                <span className="text-slate-400 block">KasuwaPolicy.sol (v2)</span>
+                <span className="text-cyan-300 font-mono text-[11px]">{mockProofData.policyContract}</span>
               </div>
               <a
-                href={`${explorerBase}${mockProofData.poolAddress}`}
+                href={`${explorerBase}${mockProofData.policyContract}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 sm:mt-0 text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-bold"
+                className="mt-2 sm:mt-0 text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
+              >
+                <span>View Explorer</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <div>
+                <span className="text-slate-400 block">KasuwaExecutor.sol (EIP-7702)</span>
+                <span className="text-cyan-300 font-mono text-[11px]">{mockProofData.executorContract}</span>
+              </div>
+              <a
+                href={`${explorerBase}${mockProofData.executorContract}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 sm:mt-0 text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
+              >
+                <span>View Explorer</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <div>
+                <span className="text-slate-400 block">KasuwaReactiveHandler.sol</span>
+                <span className="text-cyan-300 font-mono text-[11px]">{mockProofData.reactiveHandlerContract}</span>
+              </div>
+              <a
+                href={`${explorerBase}${mockProofData.reactiveHandlerContract}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 sm:mt-0 text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
               >
                 <span>View Explorer</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -158,13 +192,13 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
               <div>
                 <span className="text-slate-400 block">DreamDEX Collateral Token (USDso)</span>
-                <span className="text-slate-200">{mockProofData.collateralToken}</span>
+                <span className="text-cyan-300 font-mono text-[11px]">{mockProofData.collateralToken}</span>
               </div>
               <a
-                href={`${explorerBase}0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171`}
+                href={`${explorerBase}${mockProofData.collateralToken}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 sm:mt-0 text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-bold"
+                className="mt-2 sm:mt-0 text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
               >
                 <span>View Explorer</span>
                 <ExternalLink className="w-3.5 h-3.5" />

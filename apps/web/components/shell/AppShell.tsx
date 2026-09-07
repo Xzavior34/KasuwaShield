@@ -374,7 +374,7 @@ export function AppShell({
               </div>
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
                 <strong className="text-purple-400 block mb-1">2. Somnia On-Chain Reactivity</strong>
-                <p className="text-slate-400 text-[10px] sm:text-[11px]"><code>KasuwaReactiveHandler.sol</code> detects settlements on-chain — zero keeper dependencies.</p>
+                <p className="text-slate-400 text-[10px] sm:text-[11px]"><code>KasuwaReactiveHandler.sol</code> prevents duplicate settlement processing on-chain. Live auto-rolling today runs via a real, verified unattended keeper daemon — native reactive-precompile triggering is on the roadmap.</p>
               </div>
             </div>
 
