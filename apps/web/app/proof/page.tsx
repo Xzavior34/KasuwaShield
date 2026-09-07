@@ -158,8 +158,8 @@ export default function ProofPage() {
 
             <div className="bg-slate-900 p-3 rounded border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Live Head Block Height</span>
-              <strong className="text-emerald-400 text-sm block my-0.5">
-                {headBlock !== null ? `#${headBlock.toLocaleString()}` : "--"}
+              <strong className="text-emerald-400 text-sm block my-0.5" suppressHydrationWarning>
+                {headBlock !== null ? `#${headBlock.toLocaleString("en-US")}` : "--"}
               </strong>
               <span className={`text-[10px] ${rpcStatus === "live" ? "text-emerald-500" : rpcStatus === "unreachable" ? "text-amber-500" : "text-slate-500"}`}>
                 {rpcStatus === "live" && "● eth_blockNumber Active (real RPC call, refreshed every 5s)"}

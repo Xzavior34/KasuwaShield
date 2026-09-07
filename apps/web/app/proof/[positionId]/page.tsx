@@ -90,20 +90,20 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
             </h3>
 
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-800/40">
+              <div className="flex justify-between py-1 border-b border-slate-800/40" suppressHydrationWarning>
                 <span className="text-slate-400">Asset & Portfolio Exposure:</span>
                 <span className="text-white font-bold">
-                  {mockProofData.asset} (${mockProofData.exposureUSD.toLocaleString()})
+                  {mockProofData.asset} (${mockProofData.exposureUSD.toLocaleString("en-US")})
                 </span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-800/40">
+              <div className="flex justify-between py-1 border-b border-slate-800/40" suppressHydrationWarning>
                 <span className="text-slate-400">Target Protection:</span>
-                <span className="text-emerald-400 font-bold">${mockProofData.protectedUSD.toLocaleString()}</span>
+                <span className="text-emerald-400 font-bold">${mockProofData.protectedUSD.toLocaleString("en-US")}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-800/40">
+              <div className="flex justify-between py-1 border-b border-slate-800/40" suppressHydrationWarning>
                 <span className="text-slate-400">Contracts Purchased:</span>
                 <span className="text-slate-200">
-                  {mockProofData.requiredContracts.toLocaleString()} contracts @ ${mockProofData.entryPrice}
+                  {mockProofData.requiredContracts.toLocaleString("en-US")} contracts @ ${mockProofData.entryPrice}
                 </span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-800/40">

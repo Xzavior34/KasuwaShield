@@ -110,9 +110,9 @@ export default function ReplayPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             {/* Exposure Slider */}
             <div className="bg-slate-900 p-3 rounded border border-slate-800 space-y-1.5">
-              <div className="flex justify-between">
+              <div className="flex justify-between" suppressHydrationWarning>
                 <span className="text-slate-400 text-[11px]">Portfolio Exposure:</span>
-                <strong className="text-white">${exposure.toLocaleString()}</strong>
+                <strong className="text-white">${exposure.toLocaleString("en-US")}</strong>
               </div>
               <input
                 type="range"
@@ -251,8 +251,8 @@ export default function ReplayPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-center text-xs">
                   <div className="bg-slate-900 p-2 rounded border border-slate-800">
                     <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">Spot Change</span>
-                    <span className="text-slate-300 text-[11px] sm:text-xs">
-                      ${s.spotBefore.toLocaleString()} → <strong className="text-rose-400">${Math.round(spotAfter).toLocaleString()}</strong>
+                    <span className="text-slate-300 text-[11px] sm:text-xs" suppressHydrationWarning>
+                      ${s.spotBefore.toLocaleString("en-US")} → <strong className="text-rose-400">${Math.round(spotAfter).toLocaleString("en-US")}</strong>
                     </span>
                   </div>
                   <div className="bg-slate-900 p-2 rounded border border-slate-800">

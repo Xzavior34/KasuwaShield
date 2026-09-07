@@ -78,7 +78,7 @@ export default function RiskPage() {
 
           <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 text-center">
             <span className="text-[10px] text-slate-400 uppercase tracking-widest block">Value at Risk (VaR 95%)</span>
-            <div className="text-2xl font-extrabold text-amber-400 my-2">${valueAtRisk95.toLocaleString()}</div>
+            <div className="text-2xl font-extrabold text-amber-400 my-2">${valueAtRisk95.toLocaleString("en-US")}</div>
             <span className="text-[11px] text-slate-500">5% probability of exceeding, from realized volatility</span>
           </div>
 
@@ -106,7 +106,7 @@ export default function RiskPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">ΔP (Realized Price Change)</span>
-                <span className="text-white">${realizedPriceChangeUSD.toLocaleString()}</span>
+                <span className="text-white">${realizedPriceChangeUSD.toLocaleString("en-US")}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">θ (Tolerance Threshold)</span>
@@ -114,16 +114,16 @@ export default function RiskPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">E (Total Portfolio Exposure)</span>
-                <span className="text-white">${portfolioExposureUSD.toLocaleString()}</span>
+                <span className="text-white">${portfolioExposureUSD.toLocaleString("en-US")}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">θ × E (Threshold Dollar Limit)</span>
-                <span className="text-white">${thresholdDollarLimit.toLocaleString()}</span>
+                <span className="text-white">${thresholdDollarLimit.toLocaleString("en-US")}</span>
               </div>
               <div className="border-t border-slate-800 pt-2 flex justify-between font-bold">
                 <span className="text-white">Calculated Risk Delta:</span>
                 <span className={riskDeltaUSD <= 0 ? "text-emerald-400" : "text-rose-400"}>
-                  {riskDeltaUSD >= 0 ? "+" : "−"}${Math.abs(riskDeltaUSD).toLocaleString()} ({riskDeltaUSD <= 0 ? "SAFE" : "BREACH"})
+                  {riskDeltaUSD >= 0 ? "+" : "−"}${Math.abs(riskDeltaUSD).toLocaleString("en-US")} ({riskDeltaUSD <= 0 ? "SAFE" : "BREACH"})
                 </span>
               </div>
             </div>

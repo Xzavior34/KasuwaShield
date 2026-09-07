@@ -143,15 +143,15 @@ export default function TerminalDashboard() {
                   {activeAsset} Spot Price vs Strike Threshold Evaluation
                 </p>
               </div>
-              <div className="flex items-center space-x-3 text-xs">
+              <div className="flex items-center space-x-3 text-xs" suppressHydrationWarning>
                 <span>
                   Spot:{" "}
                   <strong className={isBreached ? "text-rose-400" : "text-emerald-400"}>
-                    ${curConfig.spot < 10 ? currentSpot.toFixed(2) : Math.round(currentSpot).toLocaleString()}
+                    ${curConfig.spot < 10 ? currentSpot.toFixed(2) : Math.round(currentSpot).toLocaleString("en-US")}
                   </strong>
                 </span>
                 <span>
-                  Strike: <strong className="text-rose-400">${curConfig.strike.toLocaleString()}</strong>
+                  Strike: <strong className="text-rose-400">${curConfig.strike.toLocaleString("en-US")}</strong>
                 </span>
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function TerminalDashboard() {
                   fontSize="9"
                   opacity="0.8"
                 >
-                  STRIKE ${curConfig.strike.toLocaleString()}
+                  STRIKE ${curConfig.strike.toLocaleString("en-US")}
                 </text>
 
                 {/* Fill Area */}
@@ -279,9 +279,9 @@ export default function TerminalDashboard() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <div className="flex justify-between mb-1">
+                <div className="flex justify-between mb-1" suppressHydrationWarning>
                   <span className="text-slate-400">Asset Exposure:</span>
-                  <strong className="text-white">${exposure.toLocaleString()}</strong>
+                  <strong className="text-white">${exposure.toLocaleString("en-US")}</strong>
                 </div>
                 <input
                   type="range"
@@ -311,9 +311,9 @@ export default function TerminalDashboard() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-1">
-                <div className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800">
+                <div className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800" suppressHydrationWarning>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">Required Contracts</span>
-                  <strong className="text-xs sm:text-sm text-cyan-300">{contractsRequired.toLocaleString()} PUTs</strong>
+                  <strong className="text-xs sm:text-sm text-cyan-300">{contractsRequired.toLocaleString("en-US")} PUTs</strong>
                 </div>
                 <div className="bg-slate-900 p-2 sm:p-2.5 rounded border border-slate-800">
                   <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">Est. Cost / 15m Roll</span>

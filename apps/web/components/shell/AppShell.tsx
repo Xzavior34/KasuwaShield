@@ -300,16 +300,16 @@ export function AppShell({
         </div>
 
         {/* High-Density Status Strip (Mobile 4x2 / Desktop 8x1) */}
-        <div className="border-t border-slate-800/60 bg-[#080c16] py-1.5 px-3 sm:px-6 lg:px-8">
+        <div className="border-t border-slate-800/60 bg-[#080c16] py-1.5 px-3 sm:px-6 lg:px-8" suppressHydrationWarning>
           <div className="max-w-[96rem] mx-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2.5 text-xs font-mono">
             <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
               <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Portfolio</span>
-              <span className="text-xs sm:text-sm font-bold text-white">${portfolioValue.toLocaleString()}</span>
+              <span className="text-xs sm:text-sm font-bold text-white">${portfolioValue.toLocaleString("en-US")}</span>
             </div>
 
             <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
               <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Protected</span>
-              <span className="text-xs sm:text-sm font-bold text-emerald-400">${protectedValue.toLocaleString()}</span>
+              <span className="text-xs sm:text-sm font-bold text-emerald-400">${protectedValue.toLocaleString("en-US")}</span>
             </div>
 
             <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
