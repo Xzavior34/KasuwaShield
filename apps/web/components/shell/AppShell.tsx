@@ -207,7 +207,8 @@ export function AppShell({
         </div>
 
         {/* Mobile Horizontal Scrollable Tab Bar */}
-        <div className="lg:hidden border-t border-slate-800/60 bg-[#070b14] px-3 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+        <div className="lg:hidden relative border-t border-slate-800/60 bg-[#070b14]">
+        <div className="px-3 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-1 shrink-0 text-xs font-mono">
             <Link
               href="/"
@@ -266,6 +267,9 @@ export function AppShell({
               ))}
             </div>
           )}
+        </div>
+        {/* Fade cue: hints there is more to scroll to on narrow screens (e.g. ETH/SOL/SOMI) */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-[#070b14] to-transparent" />
         </div>
 
         {/* High-Density Status Strip (Mobile 4x2 / Desktop 8x1) */}
