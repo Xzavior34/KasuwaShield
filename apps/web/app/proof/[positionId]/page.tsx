@@ -19,7 +19,7 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
 
   const mockProofData = {
     positionId,
-    status: "ON-CHAIN VERIFIED",
+    status: "SIMULATED DEMO POSITION",
     asset: "BTC",
     exposureUSD: 25000,
     protectedUSD: 20000,
@@ -66,9 +66,17 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
             </div>
           </div>
 
-          <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold tracking-wider flex items-center space-x-1.5">
+          <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold tracking-wider flex items-center space-x-1.5">
             <CheckCircle className="w-3.5 h-3.5" />
             <span>{mockProofData.status}</span>
+          </span>
+        </div>
+
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-2.5 text-[11px] text-amber-200 flex items-center space-x-2">
+          <span>
+            This position walkthrough uses illustrative numbers (exposure, cost, block, timestamp) to show the UI shape.
+            The contract addresses linked below are the real, deployed, source-verified KasuwaShield contracts on Somnia
+            Shannon — click through to confirm on Blockscout yourself.
           </span>
         </div>
 
