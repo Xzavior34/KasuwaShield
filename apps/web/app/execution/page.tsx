@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
-import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio } from "lucide-react";
+import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio, ExternalLink } from "lucide-react";
 
 export default function ExecutionPage() {
   const {
@@ -251,6 +251,95 @@ export default function ExecutionPage() {
             <span>Total Sequential Auto-Rolls: <strong className="text-white">6</strong></span>
             <span>Budget Consumed: <strong className="text-amber-300">$50.00 / $100.00</strong></span>
             <span>User Wallet Popups: <strong className="text-emerald-400">1 (Setup only)</strong></span>
+          </div>
+        </div>
+
+        {/* Verified On-Chain Mined Rollovers */}
+        <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                Verified On-Chain Mined Rollovers (Somnia Shannon — 50312)
+              </h3>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              ● REAL ON-CHAIN PROOFS
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-400">
+            While the top button drives an interactive sandbox state machine, these four transactions were mined for real on Somnia Shannon testnet:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="bg-slate-900 p-3 rounded border border-emerald-500/30 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-bold">DreamDEX Real Order Fill</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">MINED & FILLED</span>
+              </div>
+              <span className="text-slate-400 text-[10px] block">1 share IOC BUY NO on BTC Binary Pool (0x476b...270B)</span>
+              <a
+                href="https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-mono text-[10px] pt-1"
+              >
+                <span className="truncate max-w-[200px]">0x12407c4343bcec1a...c562</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <div className="bg-slate-900 p-3 rounded border border-emerald-500/30 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-bold">Keeper Daemon Auto-Roll #1</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">BLOCK #481236242</span>
+              </div>
+              <span className="text-slate-400 text-[10px] block">Unattended EIP-7702 session key roll</span>
+              <a
+                href="https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-mono text-[10px] pt-1"
+              >
+                <span className="truncate max-w-[200px]">0x5b49c1c9f39ff994...bcae</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <div className="bg-slate-900 p-3 rounded border border-emerald-500/30 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-bold">Keeper Daemon Auto-Roll #2</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">BLOCK #481236422</span>
+              </div>
+              <span className="text-slate-400 text-[10px] block">Sequential window continuous rehedge</span>
+              <a
+                href="https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-mono text-[10px] pt-1"
+              >
+                <span className="truncate max-w-[200px]">0x3dfd81201497e715...54a3</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <div className="bg-slate-900 p-3 rounded border border-emerald-500/30 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-bold">Keeper Daemon Auto-Roll #3</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">BLOCK #481236611</span>
+              </div>
+              <span className="text-slate-400 text-[10px] block">Deterministic state machine idempotent advance</span>
+              <a
+                href="https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-mono text-[10px] pt-1"
+              >
+                <span className="truncate max-w-[200px]">0x9bad9c3023fb823f...0a7</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

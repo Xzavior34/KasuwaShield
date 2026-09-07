@@ -53,11 +53,24 @@ export function AuditLedger({ auditLedger }: AuditLedgerProps) {
                 <td className="py-3 px-3 text-slate-400">{row.contract}</td>
                 <td className="py-3 px-3 font-bold text-emerald-400">{row.riskScore}/100</td>
                 <td className="py-3 px-3 font-mono">
-                  <div className="flex items-center space-x-1">
-                    <span className="text-slate-400 truncate max-w-[100px]">{row.txHash}</span>
+                  <div className="flex items-center space-x-1.5">
+                    {row.txHash.startsWith("0x") ? (
+                      <a
+                        href={`https://shannon-explorer.somnia.network/tx/${row.txHash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 underline decoration-cyan-500/40"
+                      >
+                        <span className="truncate max-w-[90px]">{row.txHash}</span>
+                        <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+                      </a>
+                    ) : (
+                      <span className="text-slate-400 truncate max-w-[90px]">{row.txHash}</span>
+                    )}
                     <button
                       onClick={() => handleCopy(row.id, row.txHash)}
-                      className="text-slate-500 hover:text-white transition-colors"
+                      className="text-slate-500 hover:text-white transition-colors p-0.5"
+                      title="Copy transaction hash"
                     >
                       {copiedId === row.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                     </button>

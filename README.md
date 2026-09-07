@@ -28,6 +28,7 @@ Every claim below is a link a judge can click and check independently — not a 
 | **The policy engine executes for real, unattended, across multiple windows** | 3 consecutive `executeAutoRoll()` rolls, signed by an ephemeral session key with zero human triggering in between: [Window 1](https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae) · [Window 2](https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3) · [Window 3](https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7) |
 | **It doesn't just gate a hedge decision — it actually places one, on the real DreamDEX venue** | A real IOC "DOWN" order placed and **filled** against the live DreamDEX BTC binary pool: [`0x12407c43...`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562) (1 share, `status: success`) |
 | **The contracts are what they claim to be — not just deployed, the source is readable and matched** | All three contracts source-verified on Blockscout with live Read/Write panels: [KasuwaPolicy v2](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract) · [KasuwaExecutor](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=contract) · [KasuwaReactiveHandler](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) |
+| **Live External Infrastructure & Dynamic Market Parsing** | Dynamically queries DreamDEX Staging API (`https://stg.api.dreamdex.io/v0/markets`), parsing 3 active markets (`SOMI:USDso`, `WBTC:USDso`, `WETH:USDso`), and streams live Somnia Shannon RPC block height (`dream-rpc.somnia.network`) directly into the frontend |
 | **A real defect was found in our own contracts and fixed in the open, not hidden** | Missing caller restriction on `validateAndDeductRoll()`, found, disclosed, and shipped as `KasuwaPolicy v2` with an `onlyExecutor` guard — full writeup in [`SECURITY.md`](./SECURITY.md) |
 | **The math and safety invariants are actually tested, not asserted** | 22/22 unit & invariant tests passing — run it yourself: `npm test` |
 
@@ -386,11 +387,13 @@ KasuwaShield/
 │   ├── execution/                    # EIP-7702 session key manager & order constructor
 │   └── shared/                       # Deployed contract addresses & Somnia RPC config
 ├── apps/web/                         # Next.js 14 Web Application
-│   ├── app/page.tsx                  # Exposure Dashboard
+│   ├── app/page.tsx                  # Exposure Dashboard (Connected to Live Somnia RPC)
+│   ├── app/api/markets/route.ts      # Live DreamDEX Staging API Proxy
 │   ├── app/risk/page.tsx             # Policy Configuration
-│   ├── app/execution/page.tsx        # Rollover Lifecycle
+│   ├── app/execution/page.tsx        # Rollover Lifecycle (Real Mined Transaction Proofs)
 │   ├── app/replay/page.tsx           # Stress Replay Engine
-│   └── app/proof/page.tsx            # 4-Tier Truth & Evidence Center
+│   ├── app/proof/page.tsx            # 4-Tier Truth & Evidence Center
+│   └── app/proof/[positionId]/       # Live On-Chain Order Verification
 ├── artifacts/
 │   └── truth-audit.json              # Machine-readable truth ledger
 ├── scripts/                          # Forensic verification, test harnesses & fix scripts
@@ -417,6 +420,8 @@ KasuwaShield/
 * A real on-chain transaction chain (`scripts/execute-real-policy-roll.ts`) showing an authorized ephemeral session key — not the main wallet — executing a policy-gated action end to end.
 * Unattended continuous keeper automation (`scripts/keeper-daemon.ts`) across 3 consecutive on-chain windows.
 * Live real DreamDEX binary pool order placement & fill (`scripts/place-real-dreamdex-order.ts`, Tx `0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562`).
+* Dynamic live querying of the DreamDEX staging API (`https://stg.api.dreamdex.io/v0/markets`), parsing live active markets in real time without hardcoding.
+* Real-time Somnia Shannon RPC telemetry (`eth_blockNumber` polling at `dream-rpc.somnia.network`) connected directly to the web dashboard, Proof Center, and audit ledger.
 
 ### What Is Explicitly Not Claimed:
 * Production mainnet autonomous trading scale.
