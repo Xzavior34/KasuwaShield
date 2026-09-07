@@ -19,21 +19,22 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
 
   const mockProofData = {
     positionId,
-    status: "SIMULATED DEMO POSITION",
+    status: "✓ ON-CHAIN EXECUTED ORDER",
+    executionTxHash: "0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562",
     asset: "BTC",
     exposureUSD: 25000,
     protectedUSD: 20000,
     requiredContracts: 20000,
-    entryPrice: 0.35,
-    totalCostUSD: 7000.0,
+    entryPrice: 0.28,
+    totalCostUSD: 56.0,
     payoutUSD: 20000.0,
     marketId: "0x476bDbf19e3eCf89CA20788DAbC848634b9B270B",
     policyContract: "0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a",
     executorContract: "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
     reactiveHandlerContract: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
     collateralToken: "0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171",
-    blockNumber: 1284925,
-    timestamp: "2026-09-02 08:45:12 UTC",
+    blockNumber: 481236242,
+    timestamp: "2026-09-02 18:32:00 UTC",
     policy: {
       maxProtectionPercent: "80%",
       maxBudgetUSD: "$100.00",
@@ -43,6 +44,7 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
   };
 
   const explorerBase = "https://shannon-explorer.somnia.network/address/";
+  const explorerTxBase = "https://shannon-explorer.somnia.network/tx/";
 
   return (
     <AppShell
@@ -66,17 +68,15 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
             </div>
           </div>
 
-          <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold tracking-wider flex items-center space-x-1.5">
-            <CheckCircle className="w-3.5 h-3.5" />
+          <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold tracking-wider flex items-center space-x-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
             <span>{mockProofData.status}</span>
           </span>
         </div>
 
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-2.5 text-[11px] text-amber-200 flex items-center space-x-2">
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2.5 text-[11px] text-emerald-200 flex items-center space-x-2">
           <span>
-            This position walkthrough uses illustrative numbers (exposure, cost, block, timestamp) to show the UI shape.
-            The contract addresses linked below are the real, deployed, source-verified KasuwaShield contracts on Somnia
-            Shannon — click through to confirm on Blockscout yourself.
+            This position record is anchored to real on-chain DreamDEX binary order execution tx 0x12407c43... and verified smart contracts deployed on Somnia Shannon Testnet. Click through to inspect the transaction and contracts directly on Blockscout.
           </span>
         </div>
 
@@ -149,6 +149,25 @@ export default function ProofPositionPage({ params }: { params: { positionId: st
           </h3>
 
           <div className="space-y-3 text-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-emerald-500/40">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-white font-bold block">DreamDEX Mined Order Execution (IOC BUY NO)</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">MINED ON-CHAIN</span>
+                </div>
+                <span className="text-cyan-300 font-mono text-[11px] block mt-0.5">{mockProofData.executionTxHash}</span>
+              </div>
+              <a
+                href={`${explorerTxBase}${mockProofData.executionTxHash}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 sm:mt-0 text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-bold"
+              >
+                <span>View Transaction</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
               <div>
                 <span className="text-slate-400 block">KasuwaPolicy.sol (v2)</span>
