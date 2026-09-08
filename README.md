@@ -14,7 +14,7 @@
 [![Somnia Reactivity](https://img.shields.io/badge/Architecture-Somnia_Reactive_Handler-ec4899?style=flat-square)](./contracts/KasuwaReactiveHandler.sol)
 [![Testnet Ready](https://img.shields.io/badge/Status-Hackathon_Testnet_Prototype-f59e0b?style=flat-square)](https://shannon-explorer.somnia.network)
 
-**Forensic Audit**: [`FINAL_FORENSIC_AUDIT.md`](./FINAL_FORENSIC_AUDIT.md) | **Wiring Proof**: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md) | **EIP-7702 Matrix**: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md) | **Security Findings**: [`SECURITY.md`](./SECURITY.md)  
+**Static Security Audit**: [`SLITHER_SECURITY_AUDIT.md`](./SLITHER_SECURITY_AUDIT.md) | **Forensic Audit**: [`FINAL_FORENSIC_AUDIT.md`](./FINAL_FORENSIC_AUDIT.md) | **Wiring Proof**: [`EXECUTOR_POLICY_WIRING_PROOF.md`](./EXECUTOR_POLICY_WIRING_PROOF.md) | **EIP-7702 Matrix**: [`EIP7702_PROOF.md`](./EIP7702_PROOF.md) | **Security Findings**: [`SECURITY.md`](./SECURITY.md)  
 **Machine-Readable Ledgers**: [`artifacts/onchain-verification.json`](./artifacts/onchain-verification.json) | [`artifacts/final-truth-report.json`](./artifacts/final-truth-report.json)
 
 ---
@@ -28,7 +28,9 @@ Every claim below is a link a judge can click and check independently — not a 
 | **The policy engine executes for real, unattended, across multiple windows** | 3 consecutive `executeAutoRoll()` rolls, signed by an ephemeral session key with zero human triggering in between: [Window 1](https://shannon-explorer.somnia.network/tx/0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae) · [Window 2](https://shannon-explorer.somnia.network/tx/0x3dfd81201497e715ce280cb6216eb44468cc853e2120b644232a8b37bf1854a3) · [Window 3](https://shannon-explorer.somnia.network/tx/0x9bad9c3023fb823fd4486b177d6303e9f905be3ef2e0c26914220400a00d90a7) |
 | **It doesn't just gate a hedge decision — it actually places one, on the real DreamDEX venue** | A real IOC "DOWN" order placed and **filled** against the live DreamDEX BTC binary pool: [`0x12407c43...`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562) (1 share, `status: success`) |
 | **The contracts are what they claim to be — not just deployed, the source is readable and matched** | All three contracts source-verified on Blockscout with live Read/Write panels: [KasuwaPolicy v2](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract) · [KasuwaExecutor](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=contract) · [KasuwaReactiveHandler](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) |
+| **Formal Static Security Analysis (Slither)** | Automated evaluation across 102 Trail of Bits vulnerability detectors on all 3 contracts: 0 Critical, 0 High, 0 Medium (`npm run audit:slither` · [`SLITHER_SECURITY_AUDIT.md`](./SLITHER_SECURITY_AUDIT.md)) |
 | **Live External Infrastructure & Dynamic Market Parsing** | Dynamically queries DreamDEX Staging API (`https://stg.api.dreamdex.io/v0/markets`), parsing 3 active markets (`SOMI:USDso`, `WBTC:USDso`, `WETH:USDso`), and streams live Somnia Shannon RPC block height (`dream-rpc.somnia.network`) directly into the frontend |
+| **Live End-to-End Integration Suite** | Automated live validation against Somnia Shannon RPC, deployed contract bytecode, storage slot wiring, DreamDEX staging proxy, and all 6 production routes: 12/12 passing (`npm run test:e2e`) |
 | **A real defect was found in our own contracts and fixed in the open, not hidden** | Missing caller restriction on `validateAndDeductRoll()`, found, disclosed, and shipped as `KasuwaPolicy v2` with an `onlyExecutor` guard — full writeup in [`SECURITY.md`](./SECURITY.md) |
 | **The math and safety invariants are actually tested, not asserted** | 22/22 unit & invariant tests passing — run it yourself: `npm test` |
 | **Live Web3 Browser-Wallet & Interactive Cryptographic Delegation** | Real browser extension connectivity (MetaMask, Rabby) with 1-click Somnia Shannon (`50312`) network switching, live `STT` balance telemetry, and real interactive EIP-712 structured session key signing on `/execution` |
@@ -334,12 +336,15 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
   KASUWASHIELD PROTOCOL VERIFICATION SUITE
 ================================================================================
   [✓] Protocol Unit & Invariant Tests: 22 / 22 PASSING (100%)
+  [✓] Live End-to-End Integration:     12 / 12 PASSING (100%)
+  [✓] Slither Static Security Audit:   0 CRITICAL, 0 HIGH, 0 MEDIUM
   [✓] 4-Tier On-Chain Truth Audit:     13 / 13 PASSING (100%)
   [✓] Automated Claim Auditor:         100% PASSING (Zero claim violations)
   [✓] Unified Type Integrity Check:    0 ERRORS (Monorepo packages + apps/web)
   [✓] Next.js Production Build:        8 / 8 ROUTES PASSING (100%)
   [✓] Deployed Route Verification:     6 / 6 PASSING (Status 200)
-  [✓] Live Testnet Wallet Query:       1.442180 STT (Head Block #482,920,626)
+  [✓] Keeper Watchdog Monitoring:      ACTIVE (artifacts/keeper-heartbeat.json)
+  [✓] Live Testnet Wallet Query:       1.442180 STT (Head Block #482,952,270)
 ================================================================================
 ```
 
@@ -353,19 +358,28 @@ git clone https://github.com/Xzavior34/KasuwaShield.git
 cd KasuwaShield
 
 # 2. Run unit and invariant test suite (22/22 passing)
-npx tsx scripts/run-tests.ts
+npm run test
 
-# 3. Run 4-tier on-chain truth audit (13/13 passing)
-npx tsx scripts/e2e-proof-test.ts
+# 3. Run live End-to-End integration suite (12/12 passing)
+npm run test:e2e
 
-# 4. Run automated claim auditor
-npx tsx scripts/audit-claims.ts
+# 4. Run Slither static analysis security audit (0 High/Critical)
+npm run audit:slither
 
-# 5. Verify all web routes
-node scripts/verify-routes.js
+# 5. Run 4-tier on-chain truth audit (13/13 passing)
+npm run test:audit
 
-# 6. Start local demo server
-node server.js
+# 6. Run automated claim auditor
+npm run audit:claims
+
+# 7. Check keeper daemon health and heartbeat status
+npm run keeper:status
+
+# 8. Verify all web routes
+npm run verify:routes
+
+# 9. Start local Next.js development server
+npm run dev
 # Access dashboard at http://localhost:3000
 ```
 

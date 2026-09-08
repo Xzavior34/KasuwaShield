@@ -188,13 +188,46 @@ async function main() {
   console.log("  KEEPER LOOP STARTING — no human will trigger the calls below");
   console.log("--------------------------------------------------------------------------------\n");
 
+  const startTime = Date.now();
+  const heartbeatPath = path.resolve(process.cwd(), "artifacts", "keeper-heartbeat.json");
+
+  const writeHeartbeat = (status: string, details: Record<string, any> = {}) => {
+    try {
+      const dir = path.dirname(heartbeatPath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const payload = {
+        service: "KasuwaShield Automated Keeper Daemon",
+        status,
+        timestamp: new Date().toISOString(),
+        pid: process.pid,
+        uptimeSeconds: Math.floor((Date.now() - startTime) / 1000),
+        policyId,
+        sessionKey: sessionAccount.address,
+        rollsExecuted: rollsDone,
+        maxRolls,
+        windowSeconds,
+        ...details,
+      };
+      fs.writeFileSync(heartbeatPath, JSON.stringify(payload, null, 2));
+    } catch {
+      // Non-blocking telemetry
+    }
+  };
+
+  writeHeartbeat("STARTING");
+
   let stopped = false;
-  process.on("SIGINT", () => { stopped = true; console.log("\nSIGINT received — stopping after current roll."); });
+  process.on("SIGINT", () => {
+    stopped = true;
+    console.log("\nSIGINT received — stopping after current roll.");
+    writeHeartbeat("STOPPING", { reason: "SIGINT" });
+  });
 
   const txHashes: string[] = [createHash, authHash, fundHash];
   let rollsDone = 0;
 
   for (let i = 1; i <= maxRolls && !stopped; i++) {
+    writeHeartbeat("WAITING_WINDOW", { currentWindow: i, rollsDone });
     console.log(`[window ${i}/${maxRolls}] waiting ${windowSeconds}s for the window to open...`);
     await sleep(windowSeconds * 1000);
     if (stopped) break;
@@ -204,14 +237,17 @@ async function main() {
     });
     if (!before[11] /* isActive */) {
       console.log("  policy no longer active (budget exhausted or expired) — stopping.");
+      writeHeartbeat("STOPPED", { currentWindow: i, reason: "POLICY_INACTIVE_OR_EXPIRED" });
       break;
     }
     if (before[6] /* remainingBudgetUSD */ < quantityContracts * pricePerContractUSD) {
       console.log("  remaining budget too low for another roll — stopping cleanly (fail-closed).");
+      writeHeartbeat("STOPPED", { currentWindow: i, reason: "BUDGET_EXHAUSTED_FAIL_CLOSED" });
       break;
     }
 
     console.log(`[window ${i}/${maxRolls}] KasuwaExecutor.executeAutoRoll(...) — signed by session key, unattended`);
+    writeHeartbeat("EXECUTING_ROLL", { currentWindow: i, rollsDone });
     const rollHash = await sessionWallet.writeContract({
       address: EXECUTOR_ADDRESS, abi: EXECUTOR_ABI, functionName: "executeAutoRoll",
       args: [deployer.address, policyId, dreamdexPool, quantityContracts, pricePerContractUSD],
@@ -219,11 +255,19 @@ async function main() {
     const receipt = await publicClient.waitForTransactionReceipt({ hash: rollHash });
     txHashes.push(rollHash);
     rollsDone++;
+    writeHeartbeat("ROLL_CONFIRMED", { currentWindow: i, rollsDone, latestTx: rollHash, blockNumber: Number(receipt.blockNumber) });
     console.log(`  tx: ${rollHash}  status: ${receipt.status}  block: #${receipt.blockNumber}\n`);
   }
 
   const after = await publicClient.readContract({
     address: POLICY_ADDRESS, abi: POLICY_ABI, functionName: "policies", args: [policyId],
+  });
+
+  writeHeartbeat("COMPLETED", {
+    rollsDone,
+    onChainRollsExecuted: Number(after[10]),
+    remainingBudgetUSD: Number(after[6]),
+    policyActive: Boolean(after[11]),
   });
 
   const explorer = SOMNIA_SHANNON_CONFIG.explorerUrl;
@@ -247,5 +291,14 @@ async function main() {
 
 main().catch((err) => {
   console.error("\n✗ Script error:", err);
+  try {
+    const heartbeatPath = path.resolve(process.cwd(), "artifacts", "keeper-heartbeat.json");
+    fs.writeFileSync(heartbeatPath, JSON.stringify({
+      service: "KasuwaShield Automated Keeper Daemon",
+      status: "FAILED",
+      timestamp: new Date().toISOString(),
+      error: err.message,
+    }, null, 2));
+  } catch {}
   process.exit(1);
 });
