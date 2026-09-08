@@ -25,7 +25,8 @@
     "smoke": "tsx scripts/testnet-smoke.ts",
     "place-order": "tsx scripts/place-real-dreamdex-order.ts",
     "keeper": "tsx scripts/keeper-daemon.ts",
-    "keeper:status": "tsx scripts/keeper-watchdog.ts"
+    "keeper:status": "tsx scripts/keeper-watchdog.ts",
+    "reactive:rollover": "tsx scripts/trigger-reactive-rollover.ts"
   },
   "devDependencies": {
     "typescript": "^5.5.4",

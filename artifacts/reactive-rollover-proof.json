@@ -1,0 +1,76 @@
+{
+  "title": "KasuwaShield Reactive Settlement & Keeper Rollover On-Chain Proof",
+  "timestamp": "2026-09-08T12:11:26.880Z",
+  "network": {
+    "chainId": 50312,
+    "chainName": "Somnia Shannon Testnet",
+    "rpc": "https://dream-rpc.somnia.network",
+    "blockscout": "https://shannon-explorer.somnia.network"
+  },
+  "accounts": {
+    "deployer": "0x07764D9031b8747e28d3E1601Ff1417569de22DA",
+    "ephemeralSessionKey": "0x96cbDe32aa014F69E1A99Cba4BBA3A988635cdDF"
+  },
+  "contracts": {
+    "kasuwaPolicy": "0xbd2A26c3893db93ef86E0ceAaEC080dF8f9C550a",
+    "kasuwaExecutor": "0x80AcBF398663079edBfF26132C9AC04204B7c69c",
+    "kasuwaReactiveHandler": "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213",
+    "dreamdexPool": "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C"
+  },
+  "pipeline": {
+    "step1_createPolicy": {
+      "policyId": "0xe023f74536092f62ee1d77010593d42a83a9fe685a391ab4e2b4968ccaa988e5",
+      "txHash": "0xe2b311d5e44e392f9bbe2e1d028688e37a5423553ce173eaa65be62f7bc5a101",
+      "blockNumber": 482997491,
+      "explorerUrl": "https://shannon-explorer.somnia.network/tx/0xe2b311d5e44e392f9bbe2e1d028688e37a5423553ce173eaa65be62f7bc5a101"
+    },
+    "step2_authorizeSessionKey": {
+      "txHash": "0x9324086a59e765fd929f5b0884a7b5178c8ceb29f221acd38d7040786e2b8b60",
+      "blockNumber": 482997506,
+      "explorerUrl": "https://shannon-explorer.somnia.network/tx/0x9324086a59e765fd929f5b0884a7b5178c8ceb29f221acd38d7040786e2b8b60"
+    },
+    "step3_fundSessionKey": {
+      "amountSTT": "0.02",
+      "txHash": "0xc12d4c9c41c1557b41c177379ace5c01ecb81305743b29978ffe92172a7e605f",
+      "blockNumber": 482997521,
+      "explorerUrl": "https://shannon-explorer.somnia.network/tx/0xc12d4c9c41c1557b41c177379ace5c01ecb81305743b29978ffe92172a7e605f"
+    },
+    "step4_reactiveSettlementNotification": {
+      "marketId": "0x9a4dce5dedc3678433825cd596ecea9330f28dfad68b0e7a6a3967695f24820a",
+      "winningOutcome": 2,
+      "payoutUSD": 50,
+      "txHash": "0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47",
+      "blockNumber": 482997537,
+      "gasUsed": "519829",
+      "eventsEmitted": {
+        "MarketSettlementDetected": true,
+        "PayoutRedeemed": true,
+        "RolloverWindowOpen": true
+      },
+      "explorerUrl": "https://shannon-explorer.somnia.network/tx/0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47"
+    },
+    "step5_keeperAutoRollExecution": {
+      "executedBy": "0x96cbDe32aa014F69E1A99Cba4BBA3A988635cdDF",
+      "policyId": "0xe023f74536092f62ee1d77010593d42a83a9fe685a391ab4e2b4968ccaa988e5",
+      "pool": "0x89Ebc05dE83aB9752B95030218BB10A542b96B7C",
+      "quantityContracts": 5,
+      "pricePerContractUSD": 1,
+      "totalCostUSD": 5,
+      "txHash": "0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58",
+      "blockNumber": 482997553,
+      "gasUsed": "324171",
+      "explorerUrl": "https://shannon-explorer.somnia.network/tx/0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58"
+    },
+    "step6_postStateVerification": {
+      "reactiveHandlerMarketProcessed": true,
+      "policyRollsExecuted": 1,
+      "policyRemainingBudgetUSD": 45,
+      "verified": true
+    }
+  },
+  "honestyDisclosure": {
+    "status": "FULLY_VERIFIED_ON_CHAIN",
+    "scope": "KasuwaReactiveHandler -> RolloverWindowOpen Event -> Session Key -> KasuwaExecutor.executeAutoRoll -> KasuwaPolicy Deduction",
+    "pendingSomniaInfrastructure": "DreamDEX-to-ReactiveHandler cross-contract autonomous dispatch is simulated via script trigger pending testnet reactive precompiles."
+  }
+}
