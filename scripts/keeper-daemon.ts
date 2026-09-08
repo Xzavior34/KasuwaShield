@@ -179,8 +179,8 @@ async function main() {
   await publicClient.waitForTransactionReceipt({ hash: authHash });
   console.log(`  confirmed: ${authHash}\n`);
 
-  console.log("Setup 3/3 — Funding session key with 0.2 STT for gas (covers many rolls)");
-  const fundHash = await deployerWallet.sendTransaction({ to: sessionAccount.address, value: parseEther("0.2") });
+  console.log("Setup 3/3 — Funding session key with 0.02 STT for gas (covers rolls)");
+  const fundHash = await deployerWallet.sendTransaction({ to: sessionAccount.address, value: parseEther("0.02") });
   await publicClient.waitForTransactionReceipt({ hash: fundHash });
   console.log(`  confirmed: ${fundHash}\n`);
 
