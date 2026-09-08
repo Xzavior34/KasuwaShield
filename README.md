@@ -422,10 +422,11 @@ KasuwaShield/
 * Live real DreamDEX binary pool order placement & fill (`scripts/place-real-dreamdex-order.ts`, Tx `0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562`).
 * Dynamic live querying of the DreamDEX staging API (`https://stg.api.dreamdex.io/v0/markets`), parsing live active markets in real time without hardcoding.
 * Real-time Somnia Shannon RPC telemetry (`eth_blockNumber` polling at `dream-rpc.somnia.network`) connected directly to the web dashboard, Proof Center, and audit ledger.
+* Live Web3 browser-wallet integration (MetaMask / Rabby / injected provider) with automated Somnia Shannon network switching, live STT balance fetching, and interactive cryptographic session key delegation signing in the browser.
 
 ### What Is Explicitly Not Claimed:
 * Production mainnet autonomous trading scale.
-* Live browser-wallet EIP-7702 interactive designation.
+* Direct raw EVM transaction type `0x04` SetCode broadcast from consumer browser extensions (consumer extensions do not yet support raw type 4 payload broadcast in client JS; session key authorizations are cryptographically signed via EIP-712/typed data in the wallet and executed through the verified on-chain executor and keeper layer).
 * Live external reactive callback dispatch (testnet trigger pending).
 * Direct on-chain CLOB interaction inside the Solidity executor contract itself — `KasuwaExecutor.sol` enforces non-custodial policy bounds, session key permissions, and roll accounting on-chain, while the taker order execution against DreamDEX binary pools runs via the SDK/keeper layer.
 * Guaranteed financial returns.

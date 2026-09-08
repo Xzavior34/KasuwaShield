@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
+import { useWallet } from "../../hooks/useWallet";
 import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio, ExternalLink } from "lucide-react";
 
 export default function ExecutionPage() {
@@ -15,6 +16,15 @@ export default function ExecutionPage() {
     protectionGapPct,
   } = useRiskEngineState();
 
+  const {
+    address,
+    isConnected,
+    isCorrectNetwork,
+    connectWallet,
+    switchToSomnia,
+    signSessionAuthorization,
+  } = useWallet();
+
   const generateEphemeralAddress = () =>
     "0x" + Array.from({ length: 20 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0")).join("");
 
@@ -26,16 +36,43 @@ export default function ExecutionPage() {
   const [sessionKeyAddress, setSessionKeyAddress] = useState<string>(() => generateEphemeralAddress());
   const [isRevoked, setIsRevoked] = useState(false);
   const [broadcastState, setBroadcastState] = useState<"IDLE" | "SIGNING" | "TRANSMITTED" | "CONFIRMED">("IDLE");
+  const [walletSignature, setWalletSignature] = useState<string | null>(null);
+  const [signingStatus, setSigningStatus] = useState<"IDLE" | "PROMPTING" | "SIGNED" | "ERROR">("IDLE");
+  const [signingError, setSigningError] = useState<string | null>(null);
 
   const generateNewKey = () => {
     setSessionKeyAddress(generateEphemeralAddress());
     setIsRevoked(false);
     setBroadcastState("IDLE");
+    setWalletSignature(null);
+    setSigningStatus("IDLE");
+    setSigningError(null);
   };
 
   const triggerKillSwitch = () => {
     setIsRevoked(true);
     setBroadcastState("IDLE");
+  };
+
+  const handleWalletSign = async () => {
+    if (!isConnected) {
+      connectWallet();
+      return;
+    }
+    if (!isCorrectNetwork) {
+      await switchToSomnia();
+      return;
+    }
+    setSigningStatus("PROMPTING");
+    setSigningError(null);
+    try {
+      const sig = await signSessionAuthorization(sessionKeyAddress, "$100.00", 86400);
+      setWalletSignature(sig);
+      setSigningStatus("SIGNED");
+    } catch (err: any) {
+      setSigningStatus("ERROR");
+      setSigningError(err?.message || "Signature request rejected by user");
+    }
   };
 
   const triggerLiveBroadcast = () => {
@@ -153,6 +190,71 @@ export default function ExecutionPage() {
                   <AlertOctagon className="w-3.5 h-3.5" />
                   <span>{isRevoked ? "KILL-SWITCH ENGAGED" : "ENGAGE KILL-SWITCH"}</span>
                 </button>
+              </div>
+
+              {/* Real MetaMask / Web3 Delegation Authorization Box */}
+              <div className="bg-[#060911] border border-cyan-500/30 p-3 rounded-lg space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-cyan-400 font-bold uppercase flex items-center space-x-1">
+                    <Wallet className="w-3 h-3 text-cyan-400" />
+                    <span>Live Web3 EIP-7702 Delegation Authorization</span>
+                  </span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${isConnected ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40" : "bg-slate-800 text-slate-400 border-slate-700"}`}>
+                    {isConnected ? "WALLET CONNECTED" : "READ-ONLY / DEMO MODE"}
+                  </span>
+                </div>
+
+                {isConnected ? (
+                  <div className="space-y-2">
+                    <div className="text-[11px] text-slate-300 flex justify-between font-mono bg-slate-900/80 p-2 rounded border border-slate-800">
+                      <span className="text-slate-400">Delegator EOA:</span>
+                      <span className="text-cyan-300 font-bold">{address?.slice(0, 8)}...{address?.slice(-6)}</span>
+                    </div>
+
+                    {walletSignature ? (
+                      <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] space-y-1">
+                        <div className="flex items-center space-x-1 font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>CRYPTOGRAPHICALLY SIGNED BY YOUR WALLET</span>
+                        </div>
+                        <div className="font-mono text-[10px] text-slate-400 truncate">
+                          Sig: {walletSignature}
+                        </div>
+                        <span className="text-[9px] text-emerald-400/80 block">
+                          Scope: executeAutoRoll · Nonce: 0 · Chain ID: 50312 (Somnia) · 24h Expiry
+                        </span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleWalletSign}
+                        disabled={signingStatus === "PROMPTING"}
+                        className="w-full px-3 py-2 rounded bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold text-xs hover:bg-cyan-500/30 transition-all flex items-center justify-center space-x-1.5"
+                      >
+                        <Key className="w-3.5 h-3.5" />
+                        <span>{signingStatus === "PROMPTING" ? "POPUP OPEN IN METAMASK..." : "SIGN SESSION KEY DELEGATION (METAMASK POPUP)"}</span>
+                      </button>
+                    )}
+
+                    {signingError && (
+                      <p className="text-[10px] text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/20">
+                        {signingError}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] text-slate-400">
+                      Connect your MetaMask/Rabby wallet to pop open a real cryptographic signature prompt for this session key on Somnia Shannon (50312).
+                    </p>
+                    <button
+                      onClick={connectWallet}
+                      className="w-full px-3 py-2 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all"
+                    >
+                      <Wallet className="w-3.5 h-3.5" />
+                      <span>CONNECT METAMASK TO SIGN FOR REAL</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Live Testnet Order Action */}
