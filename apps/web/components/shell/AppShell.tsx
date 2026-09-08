@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield, Activity, Cpu, Database, RotateCcw, AlertTriangle, Layers, BookOpen, Download, X, Wallet, ExternalLink } from "lucide-react";
+import { CryptoIcon } from "../common/CryptoIcon";
 import { SystemState } from "../../hooks/useRiskEngineState";
 import { useWallet } from "../../hooks/useWallet";
 
@@ -119,191 +120,275 @@ export function AppShell({
     <div className="min-h-screen bg-[#060911] text-slate-100 flex flex-col font-mono selection:bg-emerald-500/30">
       {/* Terminal Header */}
       <header className="border-b border-slate-800/80 bg-[#060911]/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-[96rem] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2">
-          {/* Brand */}
-          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group shrink-0">
-            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-base sm:text-lg shadow-sm shadow-emerald-500/10 group-hover:border-emerald-500/60 transition-all">
-              🛡️
-            </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm sm:text-base tracking-wider uppercase text-white font-mono">
-                  KASUWA<span className="text-emerald-400">SHIELD</span>
-                </span>
-                <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                  QUANT
-                </span>
+        <div className="max-w-[96rem] mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+          <div className="flex items-center justify-between gap-2">
+            {/* Brand */}
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group shrink-0">
+              <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold shadow-sm shadow-emerald-500/10 group-hover:border-emerald-500/60 transition-all">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
               </div>
-              <p className="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">
-                AUTONOMOUS PORTFOLIO RISK AGENT
-              </p>
+              <div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="font-extrabold text-sm sm:text-base tracking-wider uppercase text-white font-mono">
+                    KASUWA<span className="text-emerald-400">SHIELD</span>
+                  </span>
+                  <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    QUANT
+                  </span>
+                </div>
+                <p className="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">
+                  AUTONOMOUS PORTFOLIO RISK AGENT
+                </p>
+              </div>
+            </Link>
+
+            {/* Desktop Navigation View Tabs */}
+            <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+              <Link
+                href="/"
+                className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                  pathname === "/"
+                    ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>OVERVIEW</span>
+              </Link>
+
+              <Link
+                href="/risk"
+                className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                  pathname === "/risk"
+                    ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                <span>QUANT RISK</span>
+              </Link>
+
+              <Link
+                href="/execution"
+                className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                  pathname === "/execution"
+                    ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-950/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <Cpu className="w-3.5 h-3.5" />
+                <span>EIP-7702</span>
+              </Link>
+
+              <Link
+                href="/proof"
+                className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                  pathname?.startsWith("/proof")
+                    ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <Database className="w-3.5 h-3.5" />
+                <span>PROOF</span>
+              </Link>
+
+              <Link
+                href="/replay"
+                className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
+                  pathname === "/replay"
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-950/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>REPLAY</span>
+              </Link>
+            </nav>
+
+            {/* Desktop Actions & Buttons (>= sm) */}
+            <div className="hidden sm:flex items-center space-x-2 shrink-0">
+              {onSelectAsset && (
+                <div className="hidden md:flex bg-slate-900 p-0.5 rounded-md border border-slate-800 text-xs">
+                  {["BTC", "ETH", "SOL", "SOMI"].map((sym) => (
+                    <button
+                      key={sym}
+                      onClick={() => onSelectAsset(sym)}
+                      className={`px-2 py-1 rounded text-[10px] font-bold transition-all flex items-center space-x-1.5 ${
+                        activeAsset === sym
+                          ? "bg-emerald-500 text-slate-950 shadow-sm"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <CryptoIcon symbol={sym} size={13} />
+                      <span>{sym}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Live Web3 Wallet Connect Widget */}
+              {isConnected ? (
+                !isCorrectNetwork ? (
+                  <button
+                    onClick={switchToSomnia}
+                    className="px-2 sm:px-2.5 py-1.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-[11px] sm:text-xs flex items-center space-x-1.5 animate-pulse"
+                    title="Click to switch wallet network to Somnia Shannon (50312)"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span className="hidden sm:inline">SWITCH SOMNIA</span>
+                    <span className="sm:hidden">SWITCH</span>
+                  </button>
+                ) : (
+                  <div className="flex items-center space-x-1.5 bg-slate-900 border border-emerald-500/40 px-2 sm:px-2.5 py-1 rounded-md text-[11px] sm:text-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span className="text-white font-mono font-bold">
+                      {address?.slice(0, 6)}...{address?.slice(-4)}
+                    </span>
+                    {balanceSTT && (
+                      <span className="text-emerald-400 text-[10px] hidden md:inline font-mono font-bold">
+                        {balanceSTT} STT
+                      </span>
+                    )}
+                    <button
+                      onClick={disconnectWallet}
+                      title="Disconnect Wallet"
+                      className="text-slate-500 hover:text-rose-400 text-xs ml-1"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )
+              ) : (
+                <button
+                  onClick={() => {
+                    if (!hasInjectedProvider) {
+                      setShowNoWalletModal(true);
+                    } else {
+                      connectWallet();
+                    }
+                  }}
+                  disabled={isConnecting}
+                  className="px-2 sm:px-2.5 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 font-bold text-[11px] sm:text-xs flex items-center space-x-1.5 transition-all"
+                >
+                  <Wallet className="w-3.5 h-3.5 shrink-0" />
+                  <span>{isConnecting ? "CONNECTING..." : "CONNECT WALLET"}</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => setShowJudgeModal(true)}
+                className="px-2 sm:px-2.5 py-1.5 rounded-md bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[11px] sm:text-xs hover:bg-cyan-500/20 transition-all flex items-center space-x-1"
+              >
+                <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                <span>JUDGE BRIEF</span>
+              </button>
+
+              <button
+                onClick={onTriggerStressTest}
+                disabled={isSimulationRunning}
+                className={`px-2.5 sm:px-3 py-1.5 rounded-md font-bold text-[11px] sm:text-xs flex items-center space-x-1 transition-all shadow-lg border ${
+                  isSimulationRunning
+                    ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
+                    : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-rose-900/30 animate-pulse"
+                }`}
+              >
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>{isSimulationRunning ? "SIMULATING..." : "STRESS TEST"}</span>
+              </button>
             </div>
-          </Link>
 
-          {/* Desktop Navigation View Tabs */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs font-mono">
-            <Link
-              href="/"
-              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                pathname === "/"
-                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>OVERVIEW</span>
-            </Link>
+            {/* Mobile Wallet Connect (< sm) */}
+            <div className="flex sm:hidden items-center space-x-1.5 shrink-0">
+              {isConnected ? (
+                !isCorrectNetwork ? (
+                  <button
+                    onClick={switchToSomnia}
+                    className="px-2 py-1 rounded bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-[10px] flex items-center space-x-1 animate-pulse"
+                  >
+                    <AlertTriangle className="w-3 h-3" />
+                    <span>SWITCH</span>
+                  </button>
+                ) : (
+                  <div className="flex items-center space-x-1 bg-slate-900 border border-emerald-500/40 px-2 py-0.5 rounded text-[10px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span className="text-white font-mono font-bold">
+                      {address?.slice(0, 4)}...{address?.slice(-2)}
+                    </span>
+                  </div>
+                )
+              ) : (
+                <button
+                  onClick={() => {
+                    if (!hasInjectedProvider) setShowNoWalletModal(true);
+                    else connectWallet();
+                  }}
+                  disabled={isConnecting}
+                  className="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] flex items-center space-x-1"
+                >
+                  <Wallet className="w-3 h-3 shrink-0" />
+                  <span>{isConnecting ? "..." : "CONNECT"}</span>
+                </button>
+              )}
+            </div>
+          </div>
 
-            <Link
-              href="/risk"
-              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                pathname === "/risk"
-                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-              }`}
-            >
-              <Activity className="w-3.5 h-3.5" />
-              <span>QUANT RISK</span>
-            </Link>
-
-            <Link
-              href="/execution"
-              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                pathname === "/execution"
-                  ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-950/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-              }`}
-            >
-              <Cpu className="w-3.5 h-3.5" />
-              <span>EIP-7702</span>
-            </Link>
-
-            <Link
-              href="/proof"
-              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                pathname?.startsWith("/proof")
-                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-              }`}
-            >
-              <Database className="w-3.5 h-3.5" />
-              <span>PROOF</span>
-            </Link>
-
-            <Link
-              href="/replay"
-              className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                pathname === "/replay"
-                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-950/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-              }`}
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>REPLAY</span>
-            </Link>
-          </nav>
-
-          {/* Actions & Buttons */}
-          <div className="flex items-center space-x-2 shrink-0">
+          {/* Mobile Reflow Action Sub-Bar (< sm: renders asset switcher, brief, and stress test cleanly without clipping) */}
+          <div className="sm:hidden pt-2 mt-1.5 border-t border-slate-800/60 flex items-center justify-between gap-1.5">
             {onSelectAsset && (
-              <div className="hidden md:flex bg-slate-900 p-0.5 rounded-md border border-slate-800 text-xs">
+              <div className="flex bg-slate-900 p-0.5 rounded border border-slate-800 text-[10px] shrink-0">
                 {["BTC", "ETH", "SOL", "SOMI"].map((sym) => (
                   <button
                     key={sym}
                     onClick={() => onSelectAsset(sym)}
-                    className={`px-2 py-1 rounded text-[10px] font-bold transition-all ${
+                    className={`px-1.5 py-0.5 rounded font-bold flex items-center space-x-1 transition-all ${
                       activeAsset === sym
-                        ? "bg-emerald-500 text-slate-950"
+                        ? "bg-emerald-500 text-slate-950 shadow-sm"
                         : "text-slate-400 hover:text-white"
                     }`}
                   >
-                    {sym}
+                    <CryptoIcon symbol={sym} size={11} />
+                    <span>{sym}</span>
                   </button>
                 ))}
               </div>
             )}
-
-            {/* Live Web3 Wallet Connect Widget */}
-            {isConnected ? (
-              !isCorrectNetwork ? (
-                <button
-                  onClick={switchToSomnia}
-                  className="px-2 sm:px-2.5 py-1.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-[11px] sm:text-xs flex items-center space-x-1.5 animate-pulse"
-                  title="Click to switch wallet network to Somnia Shannon (50312)"
-                >
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline">SWITCH SOMNIA</span>
-                  <span className="sm:hidden">SWITCH</span>
-                </button>
-              ) : (
-                <div className="flex items-center space-x-1.5 bg-slate-900 border border-emerald-500/40 px-2 sm:px-2.5 py-1 rounded-md text-[11px] sm:text-xs">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span className="text-white font-mono font-bold">
-                    {address?.slice(0, 6)}...{address?.slice(-4)}
-                  </span>
-                  {balanceSTT && (
-                    <span className="text-emerald-400 text-[10px] hidden md:inline font-mono font-bold">
-                      {balanceSTT} STT
-                    </span>
-                  )}
-                  <button
-                    onClick={disconnectWallet}
-                    title="Disconnect Wallet"
-                    className="text-slate-500 hover:text-rose-400 text-xs ml-1"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              )
-            ) : (
+            <div className="flex items-center space-x-1 shrink-0 ml-auto">
               <button
-                onClick={() => {
-                  if (!hasInjectedProvider) {
-                    setShowNoWalletModal(true);
-                  } else {
-                    connectWallet();
-                  }
-                }}
-                disabled={isConnecting}
-                className="px-2 sm:px-2.5 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 font-bold text-[11px] sm:text-xs flex items-center space-x-1.5 transition-all"
+                onClick={() => setShowJudgeModal(true)}
+                className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[10px] flex items-center space-x-1"
               >
-                <Wallet className="w-3.5 h-3.5 shrink-0" />
-                <span>{isConnecting ? "CONNECTING..." : "CONNECT WALLET"}</span>
+                <BookOpen className="w-3 h-3 shrink-0" />
+                <span>BRIEF</span>
               </button>
-            )}
-
-            <button
-              onClick={() => setShowJudgeModal(true)}
-              className="px-2 sm:px-2.5 py-1.5 rounded-md bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[11px] sm:text-xs hover:bg-cyan-500/20 transition-all flex items-center space-x-1"
-            >
-              <BookOpen className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline">JUDGE BRIEF</span>
-              <span className="sm:hidden">BRIEF</span>
-            </button>
-
-            <button
-              onClick={onTriggerStressTest}
-              disabled={isSimulationRunning}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-md font-bold text-[11px] sm:text-xs flex items-center space-x-1 transition-all shadow-lg border ${
-                isSimulationRunning
-                  ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
-                  : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-rose-900/30 animate-pulse"
-              }`}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              <span>{isSimulationRunning ? "SIMULATING..." : "STRESS TEST"}</span>
-            </button>
+              <button
+                onClick={onTriggerStressTest}
+                disabled={isSimulationRunning}
+                className={`px-2 py-1 rounded font-bold text-[10px] flex items-center space-x-1 border ${
+                  isSimulationRunning
+                    ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
+                    : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-sm shadow-rose-950/40 animate-pulse"
+                }`}
+              >
+                <AlertTriangle className="w-3 h-3 shrink-0" />
+                <span>{isSimulationRunning ? "SIM..." : "STRESS TEST"}</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Horizontal Scrollable Tab Bar */}
+        {/* Mobile Horizontal Scrollable Tab Bar with Edge Fade Mask */}
         <div className="lg:hidden relative border-t border-slate-800/60 bg-[#070b14]">
-        <div className="px-3 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-          <div className="flex items-center space-x-1 shrink-0 text-xs font-mono">
+          <div 
+            className="px-3 py-1.5 flex items-center space-x-1.5 overflow-x-auto no-scrollbar"
+            style={{
+              maskImage: "linear-gradient(to right, black calc(100% - 24px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent 100%)",
+            }}
+          >
             <Link
               href="/"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname === "/" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
+                pathname === "/" ? "bg-emerald-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
               OVERVIEW
@@ -311,15 +396,15 @@ export function AppShell({
             <Link
               href="/risk"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname === "/risk" ? "bg-emerald-500 text-slate-950" : "text-slate-400"
+                pathname === "/risk" ? "bg-emerald-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
-              RISK
+              QUANT RISK
             </Link>
             <Link
               href="/execution"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname === "/execution" ? "bg-cyan-500 text-slate-950" : "text-slate-400"
+                pathname === "/execution" ? "bg-cyan-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
               EIP-7702
@@ -327,7 +412,7 @@ export function AppShell({
             <Link
               href="/proof"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname?.startsWith("/proof") ? "bg-emerald-500 text-slate-950" : "text-slate-400"
+                pathname?.startsWith("/proof") ? "bg-emerald-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
               PROOF
@@ -335,81 +420,101 @@ export function AppShell({
             <Link
               href="/replay"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname === "/replay" ? "bg-amber-500 text-slate-950" : "text-slate-400"
+                pathname === "/replay" ? "bg-amber-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
               REPLAY
             </Link>
           </div>
-
-          {onSelectAsset && (
-            <div className="flex sm:hidden bg-slate-900 p-0.5 rounded border border-slate-800 text-[10px] shrink-0">
-              {["BTC", "ETH", "SOL", "SOMI"].map((sym) => (
-                <button
-                  key={sym}
-                  onClick={() => onSelectAsset(sym)}
-                  className={`px-1.5 py-0.5 rounded font-bold ${
-                    activeAsset === sym ? "bg-emerald-500 text-slate-950" : "text-slate-400"
-                  }`}
-                >
-                  {sym}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        {/* Fade cue: hints there is more to scroll to on narrow screens (e.g. ETH/SOL/SOMI) */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-[#070b14] to-transparent" />
+          {/* Edge fade cue */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-[#070b14] to-transparent" />
         </div>
 
-        {/* High-Density Status Strip (Mobile 4x2 / Desktop 8x1) */}
-        <div className="border-t border-slate-800/60 bg-[#080c16] py-1.5 px-3 sm:px-6 lg:px-8" suppressHydrationWarning>
-          <div className="max-w-[96rem] mx-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2.5 text-xs font-mono">
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Portfolio</span>
-              <span className="text-xs sm:text-sm font-bold text-white">${portfolioValue.toLocaleString("en-US")}</span>
+        {/* High-Density Status Strip (Prioritized Visual Hierarchy) */}
+        <div className="border-t border-slate-800/60 bg-[#080c16] py-2 px-3 sm:px-6 lg:px-8" suppressHydrationWarning>
+          <div className="max-w-[96rem] mx-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-12 gap-2 text-xs font-mono">
+            
+            {/* HERO CARD 1: PROTECTED VALUE & STATUS (Visual Priority 1) */}
+            <div className="col-span-2 sm:col-span-2 lg:col-span-4 bg-emerald-950/20 border border-emerald-500/50 rounded-lg p-2 sm:p-2.5 shadow-sm shadow-emerald-950/40 flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-1 border-b border-emerald-500/20">
+                <span className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase flex items-center space-x-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>PROTECTED POSITION</span>
+                </span>
+                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${status.color}`}>
+                  ● {status.label}
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between pt-1.5">
+                <span className="text-base sm:text-lg font-extrabold text-emerald-400 font-mono tracking-tight">
+                  ${protectedValue.toLocaleString("en-US")}
+                </span>
+                <span className="text-[10px] text-emerald-500/80 font-mono font-bold">
+                  {((protectedValue / (portfolioValue || 1)) * 100).toFixed(0)}% Hedged
+                </span>
+              </div>
             </div>
 
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Protected</span>
-              <span className="text-xs sm:text-sm font-bold text-emerald-400">${protectedValue.toLocaleString("en-US")}</span>
+            {/* HERO CARD 2: COVERAGE RATIO & GAP (Visual Priority 2) */}
+            <div className="col-span-2 sm:col-span-2 lg:col-span-3 bg-cyan-950/20 border border-cyan-500/40 rounded-lg p-2 sm:p-2.5 shadow-sm shadow-cyan-950/30 flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-1 border-b border-cyan-500/20">
+                <span className="text-[10px] font-bold text-cyan-300 tracking-wider uppercase">
+                  HEDGE COVERAGE
+                </span>
+                <span className={`text-[10px] font-bold ${protectionGapPct > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                  {protectionGapPct > 0 ? `Gap: ${protectionGapPct.toFixed(1)}%` : "0% Gap"}
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between pt-1.5">
+                <span className="text-base sm:text-lg font-extrabold text-cyan-300 font-mono tracking-tight">
+                  {coveragePct.toFixed(1)}%
+                </span>
+                <span className="text-[10px] text-cyan-400/80 font-mono">
+                  {coveragePct >= 70 ? "● OPTIMAL" : "● PARTIAL"}
+                </span>
+              </div>
             </div>
 
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Coverage</span>
-              <span className="text-xs sm:text-sm font-bold text-emerald-300">{coveragePct.toFixed(1)}%</span>
+            {/* SECONDARY CARD: PORTFOLIO & RISK SCORE */}
+            <div className="col-span-1 sm:col-span-2 lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-lg p-2 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block truncate">
+                  PORTFOLIO
+                </span>
+                <span className={`text-[10px] font-bold ${riskScore > 60 ? "text-rose-400" : "text-emerald-400"}`}>
+                  Risk: {riskScore}
+                </span>
+              </div>
+              <div className="pt-1">
+                <span className="text-xs sm:text-sm font-bold text-white font-mono">
+                  ${portfolioValue.toLocaleString("en-US")}
+                </span>
+              </div>
             </div>
 
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Gap</span>
-              <span className={`text-xs sm:text-sm font-bold ${protectionGapPct > 0 ? "text-rose-400" : "text-emerald-400"}`}>
-                {protectionGapPct.toFixed(1)}%
+            {/* RECESSED TELEMETRY: ZERO INTERVENTIONS */}
+            <div className="col-span-1 sm:col-span-1 lg:col-span-1 bg-slate-950/70 border border-slate-800/50 rounded-lg p-2 flex flex-col justify-between text-slate-400">
+              <span className="text-[9px] uppercase tracking-wider block truncate text-slate-500">
+                POPUPS
+              </span>
+              <span className="text-[11px] font-bold text-emerald-400/90 font-mono">
+                0 REQUIRED
               </span>
             </div>
 
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Risk Score</span>
-              <span className={`text-xs sm:text-sm font-bold ${riskScore > 60 ? "text-rose-400" : "text-emerald-400"}`}>
-                {riskScore} / 100
+            {/* RECESSED TELEMETRY: REACTION LATENCY */}
+            <div className="col-span-2 sm:col-span-1 lg:col-span-2 bg-slate-950/70 border border-slate-800/50 rounded-lg p-2 flex flex-col justify-between text-slate-400">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500">
+                  REACTION
+                </span>
+                <span className="text-[8px] text-amber-500/80 font-mono">DEMO</span>
+              </div>
+              <span className="text-[11px] font-bold text-slate-300 font-mono">
+                133ms
               </span>
             </div>
 
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Status</span>
-              <span className={`inline-block px-1 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border ${status.color}`}>
-                ● {status.label}
-              </span>
-            </div>
-
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Interventions</span>
-              <span className="text-xs sm:text-sm font-bold text-emerald-400">0 POPUPS</span>
-            </div>
-
-            <div className="bg-slate-900/80 p-1.5 sm:p-2 rounded border border-slate-800">
-              <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase block truncate">Reaction</span>
-              <span className="text-[11px] sm:text-xs font-bold text-slate-300">133ms <span className="text-[8px] text-amber-400">(DEMO)</span></span>
-            </div>
           </div>
         </div>
       </header>
@@ -441,7 +546,9 @@ export function AppShell({
           >
             <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div className="flex items-center space-x-2">
-                <span className="text-xl">🛡️</span>
+                <div className="p-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-emerald-400" />
+                </div>
                 <div>
                   <h3 className="font-bold text-xs sm:text-sm text-white">KasuwaShield — Executive Brief</h3>
                   <span className="text-[9px] sm:text-[10px] text-slate-400">Somnia × DreamDEX Event Contracts Hackathon 2026</span>

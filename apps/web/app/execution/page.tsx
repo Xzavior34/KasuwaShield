@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
 import { useWallet } from "../../hooks/useWallet";
-import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio, ExternalLink } from "lucide-react";
+import { Cpu, Shield, Key, RefreshCw, AlertOctagon, CheckCircle2, XCircle, Send, Check, Wallet, Radio, ExternalLink, User, Activity, TrendingDown, Database } from "lucide-react";
+import { CryptoIcon } from "../../components/common/CryptoIcon";
 
 export default function ExecutionPage() {
   const {
@@ -87,12 +88,12 @@ export default function ExecutionPage() {
   };
 
   const stages = [
-    { icon: "👤", label: "USER EOA", sub: "Signs ONCE", color: "border-indigo-500/40 text-indigo-400" },
-    { icon: "🔑", label: "EIP-7702 AUTH", sub: "Delegated scope", color: "border-cyan-500/40 text-cyan-400" },
-    { icon: "⚙️", label: "SESSION KEY", sub: "1.0 STT Gas", color: "border-emerald-500/40 text-emerald-400" },
-    { icon: "📊", label: "RISK ENGINE", sub: "Deterministic ΔR", color: "border-amber-500/40 text-amber-400" },
-    { icon: "📈", label: "DreamDEX CLOB", sub: "0x3605...326C", color: "border-pink-500/40 text-pink-400" },
-    { icon: "🔗", label: "ON-CHAIN PROOF", sub: "Shannon 50312", color: "border-emerald-500/40 text-emerald-400" },
+    { icon: User, label: "USER EOA", sub: "Signs ONCE", color: "border-indigo-500/40 text-indigo-400" },
+    { icon: Key, label: "EIP-7702 AUTH", sub: "Delegated scope", color: "border-cyan-500/40 text-cyan-400" },
+    { icon: Cpu, label: "SESSION KEY", sub: "1.0 STT Gas", color: "border-emerald-500/40 text-emerald-400" },
+    { icon: Activity, label: "RISK ENGINE", sub: "Deterministic ΔR", color: "border-amber-500/40 text-amber-400" },
+    { icon: TrendingDown, label: "DreamDEX CLOB", sub: "0x3605...326C", color: "border-pink-500/40 text-pink-400" },
+    { icon: Database, label: "ON-CHAIN PROOF", sub: "Shannon 50312", color: "border-emerald-500/40 text-emerald-400" },
   ];
 
   return (
@@ -126,16 +127,21 @@ export default function ExecutionPage() {
         <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-3">
           <h3 className="text-xs font-bold text-white uppercase tracking-wider">System Architecture Flow</h3>
           <div className="flex items-center justify-between gap-2 overflow-x-auto py-2">
-            {stages.map((st, i) => (
-              <React.Fragment key={st.label}>
-                <div className={`bg-slate-900/80 border ${st.color} p-3 rounded-lg text-center min-w-[110px] space-y-1`}>
-                  <div className="text-xl">{st.icon}</div>
-                  <strong className="text-[11px] block text-white">{st.label}</strong>
-                  <span className="text-[9px] text-slate-400 block">{st.sub}</span>
-                </div>
-                {i < stages.length - 1 && <span className="text-slate-600 text-xs hidden sm:inline">→</span>}
-              </React.Fragment>
-            ))}
+            {stages.map((st, i) => {
+              const StageIcon = st.icon;
+              return (
+                <React.Fragment key={st.label}>
+                  <div className={`bg-slate-900/80 border ${st.color} p-3 rounded-lg text-center min-w-[110px] space-y-1.5`}>
+                    <div className="flex items-center justify-center h-6">
+                      <StageIcon className="w-5 h-5" />
+                    </div>
+                    <strong className="text-[11px] block text-white">{st.label}</strong>
+                    <span className="text-[9px] text-slate-400 block">{st.sub}</span>
+                  </div>
+                  {i < stages.length - 1 && <span className="text-slate-600 text-xs hidden sm:inline">→</span>}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
@@ -167,7 +173,10 @@ export default function ExecutionPage() {
 
               <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
                 <span className="text-[10px] text-slate-400 block uppercase">Target DreamDEX Contract</span>
-                <span className="text-cyan-300 font-mono text-[11px] block truncate">WBTC:USDso Market (0x3605f28a...39326C)</span>
+                <span className="text-cyan-300 font-mono text-[11px] flex items-center space-x-1.5 mt-0.5 truncate">
+                  <CryptoIcon symbol="WBTC" size={14} />
+                  <span>WBTC:USDso Market (0x3605f28a...39326C)</span>
+                </span>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 pt-1">

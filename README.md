@@ -19,7 +19,7 @@
 
 ---
 
-## ✅ Proof, Not Promises
+## Proof, Not Promises
 
 Every claim below is a link a judge can click and check independently — not a screenshot, not a self-reported number. This is the actual, current, on-chain state of KasuwaShield on Somnia Shannon testnet as of this submission:
 
@@ -29,7 +29,7 @@ Every claim below is a link a judge can click and check independently — not a 
 | **Reactive Settlement Notification & Keeper Auto-Roll Execution** | Full on-chain settlement notification, 3 events emitted (`MarketSettlementDetected`, `PayoutRedeemed`, `RolloverWindowOpen`), and immediate session-key auto-roll executed: [Settlement Tx](https://shannon-explorer.somnia.network/tx/0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47) · [Keeper Roll Tx](https://shannon-explorer.somnia.network/tx/0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58) (`npm run reactive:rollover` · [`artifacts/reactive-rollover-proof.json`](./artifacts/reactive-rollover-proof.json)) |
 | **It doesn't just gate a hedge decision — it actually places one, on the real DreamDEX venue** | A real IOC "DOWN" order placed and **filled** against the live DreamDEX BTC binary pool: [`0x12407c43...`](https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562) (1 share, `status: success`) |
 | **The contracts are what they claim to be — not just deployed, the source is readable and matched** | All three contracts source-verified on Blockscout with live Read/Write panels: [KasuwaPolicy v2](https://shannon-explorer.somnia.network/address/0xbd2a26c3893db93ef86e0ceaaec080df8f9c550a?tab=contract) · [KasuwaExecutor](https://shannon-explorer.somnia.network/address/0x80AcBF398663079edBfF26132C9AC04204B7c69c?tab=contract) · [KasuwaReactiveHandler](https://shannon-explorer.somnia.network/address/0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213?tab=contract) |
-| **Formal Static Security Analysis (Slither)** | Automated evaluation across 102 Trail of Bits vulnerability detectors on all 3 contracts: 0 Critical, 0 High, 0 Medium (`npm run audit:slither` · [`SLITHER_SECURITY_AUDIT.md`](./SLITHER_SECURITY_AUDIT.md)) |
+| **Formal Static Security Analysis (Slither)** | Automated evaluation across Slither's complete Trail of Bits vulnerability detector suite on all 3 contracts: 0 Critical, 0 High, 0 Medium (`npm run audit:slither` · [`SLITHER_SECURITY_AUDIT.md`](./SLITHER_SECURITY_AUDIT.md)) |
 | **Live External Infrastructure & Dynamic Market Parsing** | Dynamically queries DreamDEX Staging API (`https://stg.api.dreamdex.io/v0/markets`), parsing 3 active markets (`SOMI:USDso`, `WBTC:USDso`, `WETH:USDso`), and streams live Somnia Shannon RPC block height (`dream-rpc.somnia.network`) directly into the frontend |
 | **Live End-to-End Integration Suite** | Automated live validation against Somnia Shannon RPC, deployed contract bytecode, storage slot wiring, DreamDEX staging proxy, and all 6 production routes: 12/12 passing (`npm run test:e2e`) |
 | **A real defect was found in our own contracts and fixed in the open, not hidden** | Missing caller restriction on `validateAndDeductRoll()`, found, disclosed, and shipped as `KasuwaPolicy v2` with an `onlyExecutor` guard — full writeup in [`SECURITY.md`](./SECURITY.md) |
@@ -40,7 +40,7 @@ We'd rather hand a judge four things they can verify in ninety seconds than one 
 
 ---
 
-## ⚡ 1. One-Sentence Explanation
+## 1. One-Sentence Explanation
 
 > **KasuwaShield monitors portfolio risk, calculates a bounded hedge, enforces execution policy, places the real hedge order on DreamDEX, and prepares the next Event Contract hedge before the current protection window expires — unattended.**
 
@@ -48,7 +48,7 @@ We'd rather hand a judge four things they can verify in ninety seconds than one 
 
 ---
 
-## 🛑 2. The Problem
+## 2. The Problem
 
 DreamDEX Event Contracts are short-duration instruments (typically 15-minute or 1-hour expiry windows). While they provide efficient, capped-risk binary derivatives, protecting a continuous spot portfolio exposure creates severe operational friction:
 
@@ -60,7 +60,7 @@ DreamDEX Event Contracts are short-duration instruments (typically 15-minute or 
 
 ---
 
-## 💡 3. The Solution
+## 3. The Solution
 
 KasuwaShield introduces **continuous, stateful portfolio protection**:
 
@@ -94,7 +94,7 @@ Next Hedge
 
 ---
 
-## ⚖️ 4. Why This Is Different
+## 4. Why This Is Different
 
 | Dimension | Traditional Event Contract Trading | Prediction Bot | Manual Portfolio Hedge | KasuwaShield |
 |---|---|---|---|---|
@@ -110,7 +110,7 @@ Next Hedge
 
 ---
 
-## 🏗️ 5. Architecture
+## 5. Architecture
 
 ```mermaid
 flowchart TD
@@ -140,7 +140,7 @@ flowchart TD
 
 ---
 
-## 📐 6. Quantitative Risk Engine
+## 6. Quantitative Risk Engine
 
 Financial sizing is calculated via deterministic closed-form formulations without speculative AI heuristics:
 
@@ -166,7 +166,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 ---
 
-## 🔄 7. Continuous Rollover — The Hero Feature
+## 7. Continuous Rollover — The Hero Feature
 
 ### Protection Doesn't End When the Contract Does
 
@@ -212,7 +212,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 ---
 
-## 🔒 8. Security Model
+## 8. Security Model
 
 * **Non-Custodial Design**: Session keys possess **zero withdrawal permissions** and cannot transfer user collateral.
 * **Strict Policy Bounds**: Every transaction must pass `validateOrder()` against on-chain limits.
@@ -220,7 +220,7 @@ $$f^* = \frac{p \cdot b - q}{b}$$
 
 ---
 
-## 📜 9. Smart Contracts & Deployment Evidence
+## 9. Smart Contracts & Deployment Evidence
 
 ### Verified On-Chain Contracts (Somnia Shannon — Chain ID: `50312`)
 
@@ -271,7 +271,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🔌 10. DreamDEX Integration
+## 10. DreamDEX Integration
 
 * **Dynamic Discovery**: Markets are keyed by unique **32-byte `marketId`** (e.g. `0x679795a0...` for BTC 15m downside) to avoid static pool address collision across recurring windows.
 * **Order Construction**: Builds bounded limit orders against the DreamDEX CLOB orderbook with price ceiling and max slippage validation.
@@ -279,7 +279,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## ⚡ 11. Somnia Integration
+## 11. Somnia Integration
 
 * **High-Frequency Suitability**: Sub-second block times enable rapid risk evaluation and window-to-window transitions without coverage gaps.
 * **Low-Cost Execution**: Sub-cent gas fees allow frequent 15-minute rollovers without eroding protection budgets.
@@ -287,7 +287,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🔑 12. EIP-7702 & Session Key Architecture
+## 12. EIP-7702 & Session Key Architecture
 
 > **EIP-7702 provides the scoped authorization model KasuwaShield is designed around: an EOA user authorizes bounded execution logic without turning the system into a custodial trading account.**
 
@@ -308,7 +308,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🔍 13. Evidence & Truth Model (Proof Center: `/proof`)
+## 13. Evidence & Truth Model (Proof Center: `/proof`)
 
 | Tier | Category | Status | Details & Verification Artifacts |
 |---|---|:---:|---|
@@ -319,7 +319,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🎬 14. 2-Minute Judge Demo Flow
+## 14. 2-Minute Judge Demo Flow
 
 1. **Connect Wallet (`/`)**: Click **[CONNECT WALLET]** to connect MetaMask, Rabby, or injected wallet. Click **[SWITCH SOMNIA]** for 1-click auto-switching to Somnia Shannon (`50312`). Inspect live `STT` balance telemetry and spot exposure ($25,000 BTC).
 2. **Policy Configuration (`/risk`)**: Adjust protection percentage, budget limit ($100), and max slippage ceiling.
@@ -330,7 +330,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🧪 15. Verification & Automated Test Results
+## 15. Verification & Automated Test Results
 
 ```text
 ================================================================================
@@ -351,7 +351,7 @@ Interacts directly with DreamDEX binary pool `0x476bDbf19e3eCf89CA20788DAbC84863
 
 ---
 
-## 🛠️ 16. Reproducibility & Local Setup
+## 16. Reproducibility & Local Setup
 
 ```bash
 # 1. Clone repository
@@ -398,7 +398,7 @@ npx tsx scripts/execute-real-policy-roll.ts
 
 ---
 
-## 📂 17. Repository Map
+## 17. Repository Map
 
 ```text
 KasuwaShield/
@@ -433,7 +433,7 @@ KasuwaShield/
 
 ---
 
-## ⚠️ 18. Limitations & Truth Disclosure
+## 18. Limitations & Truth Disclosure
 
 ### What This Prototype Proves:
 * Deterministic quantitative risk sizing without speculative AI hallucinations.
@@ -458,7 +458,7 @@ KasuwaShield/
 
 ---
 
-## 🗺️ 19. Roadmap
+## 19. Roadmap
 
 - [ ] Mainnet deployment on Somnia Mainnet with production DreamDEX CLOB liquidity.
 - [ ] Integration with native Somnia on-chain reactivity precompiles for sub-second reactive execution.
@@ -467,7 +467,7 @@ KasuwaShield/
 
 ---
 
-## 🚀 20. Final Takeaway
+## 20. Final Takeaway
 
 > **KasuwaShield turns expiring DreamDEX Event Contracts from isolated bets into a continuously renewed, policy-controlled portfolio protection layer.**
 

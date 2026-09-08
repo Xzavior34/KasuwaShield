@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AppShell } from "../components/shell/AppShell";
 import { useRiskEngineState } from "../hooks/useRiskEngineState";
 import { Activity, Cpu, Shield, AlertTriangle, ArrowRight, ExternalLink, Download, Radio, CheckCircle2 } from "lucide-react";
+import { CryptoIcon } from "../components/common/CryptoIcon";
 
 export default function TerminalDashboard() {
   const {
@@ -167,11 +168,14 @@ export default function TerminalDashboard() {
           {/* SVG Area Chart */}
           <div className="lg:col-span-8 bg-[#0b101d] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-2 gap-1">
-              <div>
-                <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Deterministic Risk Engine</h2>
-                <p className="text-[10px] sm:text-[11px] text-slate-400">
-                  {activeAsset} Spot Price vs Strike Threshold Evaluation
-                </p>
+              <div className="flex items-center space-x-2.5">
+                <CryptoIcon symbol={activeAsset} size={22} />
+                <div>
+                  <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Deterministic Risk Engine</h2>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400">
+                    {activeAsset} Spot Price vs Strike Threshold Evaluation
+                  </p>
+                </div>
               </div>
               <div className="flex items-center space-x-3 text-xs" suppressHydrationWarning>
                 <span>
@@ -240,7 +244,7 @@ export default function TerminalDashboard() {
                   <span>Spot</span>
                 </span>
                 <span>--- Strike</span>
-                <span className="text-cyan-400">⚡ 15m Auto-Roll</span>
+                <span className="text-cyan-400">15m Auto-Roll</span>
               </div>
             </div>
           </div>
@@ -488,9 +492,12 @@ export default function TerminalDashboard() {
               </div>
 
               <div className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
-                <div>
-                  <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">USDso Collateral Token</span>
-                  <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x9c32F382...bb171</span>
+                <div className="flex items-center space-x-2">
+                  <CryptoIcon symbol="USDSO" size={18} />
+                  <div>
+                    <span className="text-[9px] sm:text-[10px] text-slate-400 block uppercase">USDso Collateral Token</span>
+                    <span className="text-cyan-300 font-mono text-[10px] sm:text-[11px]">0x9c32F382...bb171</span>
+                  </div>
                 </div>
                 <a
                   href="https://shannon-explorer.somnia.network/address/0x9c32F3827A1a99f0cf9B213de8b53eC3d57bb171"
