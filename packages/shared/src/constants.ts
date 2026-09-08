@@ -17,8 +17,10 @@ export const SOMNIA_SHANNON_CONFIG = {
 export const DEFAULT_RISK_POLICY = {
   maxProtectionPercent: 50,
   maxBudgetUSD: 50.0,
+  remainingBudgetUSD: 50.0,
   maxContractPrice: 0.85,
   maxSlippagePercent: 5.0,
+  durationSeconds: 86400,
   allowedAssets: ["BTC", "ETH"],
   allowedWindowsMinutes: [5, 15, 60],
   enabled: true,

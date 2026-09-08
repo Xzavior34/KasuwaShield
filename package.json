@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node scripts/verify-routes.js",
+    "build": "next build apps/web",
     "test": "tsx scripts/run-tests.ts",
     "test:audit": "tsx scripts/e2e-proof-test.ts",
     "audit:claims": "tsx scripts/audit-claims.ts",
@@ -16,7 +16,7 @@
     "verify:routes": "node scripts/verify-routes.js",
     "live:testnet": "tsx scripts/live-testnet-runner.ts",
     "deploy:testnet": "tsx scripts/deploy-contracts.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --project apps/web/tsconfig.json --noEmit",
     "discover": "tsx scripts/discover-markets.ts",
     "inspect": "tsx scripts/inspect-market.ts",
     "preflight": "tsx scripts/demo-preflight.ts",

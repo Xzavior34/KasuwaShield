@@ -5,21 +5,41 @@ export interface ProtectionParams {
   maxBudgetUSD: number;
   maxSlippagePercent: number;
   durationHours?: number;
+  windowMinutes?: number;
 }
 
 export interface RiskPolicy {
   policyId?: string;
   maxProtectionPercent: number;
   maxBudgetUSD: number;
-  remainingBudgetUSD: number;
+  remainingBudgetUSD?: number;
   maxContractPrice: number;
   maxSlippagePercent: number;
-  durationSeconds: number;
+  durationSeconds?: number;
   allowedAssets?: string[];
+  allowedWindowsMinutes?: number[];
   allowedContractType?: "DOWN" | "PUT" | "BOTH";
   minLiquidityUSD?: number;
   emergencyStop?: boolean;
   enabled: boolean;
+}
+
+export interface PositionRecord {
+  positionId: string;
+  asset: string;
+  marketId: string;
+  portfolioExposureUSD: number;
+  targetProtectionUSD: number;
+  contractsBought: number;
+  costUSD: number;
+  maxPayoutUSD: number;
+  contractPrice: number;
+  maxSlippagePercent: number;
+  openTimestamp: number;
+  marketExpiry: number;
+  status: "OPEN" | "SETTLED_PROFIT" | "SETTLED_LOSS" | "EXPIRED" | "CANCELLED";
+  txHash: string;
+  policyId?: string;
 }
 
 export type HedgeLifecycleState =
