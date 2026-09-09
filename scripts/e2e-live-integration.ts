@@ -18,15 +18,22 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 const DEPLOYED_BASE_URL = process.env.TARGET_URL || "https://kasuwa-shield-web-ousu.vercel.app";
 const RPC_URL = SOMNIA_SHANNON_CONFIG.rpcUrl;
 
-async function rpcCall(method: string, params: any[] = []) {
-  const res = await fetch(RPC_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  const json = await res.json();
-  if (json.error) throw new Error(json.error.message || "RPC Error");
-  return json.result;
+async function rpcCall(method: string, params: any[] = [], retries = 2): Promise<any> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(RPC_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      });
+      const json = await res.json();
+      if (json.error) throw new Error(json.error.message || "RPC Error");
+      return json.result;
+    } catch (err: any) {
+      if (attempt === retries) throw err;
+      await new Promise((r) => setTimeout(r, 800));
+    }
+  }
 }
 
 async function runE2EIntegration() {

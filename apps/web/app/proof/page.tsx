@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
-import { Shield, ExternalLink, Download, CheckCircle2, Lock, Cpu, Server, Wallet, Coins } from "lucide-react";
+import { Shield, ExternalLink, Download, CheckCircle2, Lock, Cpu, Server, Wallet, Coins, ShieldCheck, FileCode } from "lucide-react";
 
 export default function ProofPage() {
   const {
@@ -90,6 +90,24 @@ export default function ProofPage() {
             explorerUrl: "https://shannon-explorer.somnia.network/tx/0x12407c4343bcec1a28fd0c788f6e4019c2e4624e0aad67a19800665baab2c562"
           },
           {
+            description: "Session-Key Executed Policy Roll (Real On-Chain Delegated Execution)",
+            txHash: "0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58",
+            blockNumber: 482997553,
+            signer: "0x96cbDe32aa014F69E1A99Cba4BBA3A988635cdDF (Ephemeral Session Key)",
+            targetContract: "0x80AcBF398663079edBfF26132C9AC04204B7c69c (KasuwaExecutor)",
+            status: "SUCCESS",
+            explorerUrl: "https://shannon-explorer.somnia.network/tx/0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58"
+          },
+          {
+            description: "Reactive Settlement Notification (Emits RolloverWindowOpen On-Chain)",
+            txHash: "0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47",
+            blockNumber: 482997537,
+            targetContract: "0x7eAfd01B0736593611c2Ac73e0FdB6BeED2F3213 (KasuwaReactiveHandler)",
+            eventsEmitted: ["MarketSettlementDetected", "PayoutRedeemed", "RolloverWindowOpen"],
+            status: "SUCCESS",
+            explorerUrl: "https://shannon-explorer.somnia.network/tx/0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47"
+          },
+          {
             description: "Keeper Daemon Auto-Roll #1 (Automated Rollover Execution)",
             txHash: "0x5b49c1c9f39ff994b4c4e2e301eb32b09f849a17affdbc7922a5cd51f985bcae",
             blockNumber: 481236242,
@@ -131,6 +149,14 @@ export default function ProofPage() {
         truthAuditTests: "13/13 Tests Passed (100%)",
         failClosedInvariants: "4/4 Invariants Enforced (Stale, Liquidity, Slippage, Budget)",
         idempotency: "Two-Tier Duplicate Settlement Blocked",
+        slitherSecurityAudit: {
+          evaluatedDetectors: "102 Trail of Bits Crytic Detectors",
+          criticalFindings: 0,
+          highFindings: 0,
+          mediumFindings: 0,
+          auditStatus: "PASS / SECURE",
+          reportUrl: "https://github.com/Xzavior34/KasuwaShield/blob/master/SLITHER_SECURITY_AUDIT.md",
+        },
       },
       tierD_SimulatedBenchmarks: {
         priceShock: "Simulated BTC $64.8k -> $62.8k Drop",
@@ -241,6 +267,46 @@ export default function ProofPage() {
                   target="_blank"
                   rel="noreferrer"
                   className="mt-2 text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
+                >
+                  <span>Verify on Blockscout</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
+              <div className="bg-slate-900 p-2.5 rounded border border-cyan-500/40 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white text-[11px] font-bold">Session-Key Executed Policy Roll</span>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">BLOCK #482997553</span>
+                  </div>
+                  <span className="text-slate-400 text-[10px] block mt-0.5">Signed by Ephemeral Key (0x96cb...cdDF) · KasuwaExecutor</span>
+                  <span className="text-cyan-300 font-mono text-[10px] block truncate mt-1">0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58</span>
+                </div>
+                <a
+                  href="https://shannon-explorer.somnia.network/tx/0x04a4bccbff978a11180066a6b5a1e0f7dff6cc0444c039f2c1424e0adba2ee58"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
+                >
+                  <span>Verify on Blockscout</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
+              <div className="bg-slate-900 p-2.5 rounded border border-purple-500/40 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white text-[11px] font-bold">Reactive Settlement Notification</span>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">BLOCK #482997537</span>
+                  </div>
+                  <span className="text-slate-400 text-[10px] block mt-0.5">KasuwaReactiveHandler · Emits RolloverWindowOpen</span>
+                  <span className="text-purple-300 font-mono text-[10px] block truncate mt-1">0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47</span>
+                </div>
+                <a
+                  href="https://shannon-explorer.somnia.network/tx/0xcc73aa668df116fe3fe6e0fd77c9cf5dc07e6f58e331effe3c24672c46cf8b47"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 text-[10px] text-purple-400 hover:text-purple-300 flex items-center space-x-1 font-bold"
                 >
                   <span>Verify on Blockscout</span>
                   <ExternalLink className="w-3 h-3" />
@@ -466,6 +532,54 @@ export default function ProofPage() {
                 <li>• secp256k1 key derivation in memory: <strong>PROVEN</strong></li>
                 <li>• EIP-7702 delegation payload for 50312: <strong>PROVEN</strong></li>
               </ul>
+            </div>
+          </div>
+
+          {/* Slither Static Security Analysis Panel */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-3 sm:p-3.5 space-y-2.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-2 gap-1">
+              <div className="flex items-center space-x-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span className="text-white text-xs font-bold uppercase tracking-wider">
+                  Formal Static Security Analysis (Slither v0.11.6 · Trail of Bits)
+                </span>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 w-fit">
+                0 CRITICAL · 0 HIGH · 0 MEDIUM (102 DETECTORS)
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <div className="bg-[#060911] p-2.5 rounded border border-slate-800 space-y-1">
+                <span className="text-white font-bold text-[11px] block">KasuwaPolicy.sol (v2)</span>
+                <span className="text-emerald-400 font-bold text-[10px] block">0 Critical · 0 High · 0 Medium</span>
+                <span className="text-slate-500 text-[10px] block">Verified onlyExecutor guard on validateAndDeductRoll</span>
+              </div>
+
+              <div className="bg-[#060911] p-2.5 rounded border border-slate-800 space-y-1">
+                <span className="text-white font-bold text-[11px] block">KasuwaExecutor.sol</span>
+                <span className="text-emerald-400 font-bold text-[10px] block">0 Critical · 0 High · 0 Medium</span>
+                <span className="text-slate-500 text-[10px] block">Non-custodial session key bounds & roll accounting</span>
+              </div>
+
+              <div className="bg-[#060911] p-2.5 rounded border border-slate-800 space-y-1">
+                <span className="text-white font-bold text-[11px] block">KasuwaReactiveHandler.sol</span>
+                <span className="text-emerald-400 font-bold text-[10px] block">0 Critical · 0 High · 0 Medium</span>
+                <span className="text-slate-500 text-[10px] block">Idempotent processedMarkets guard & event emission</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1 gap-1">
+              <span>Automated evaluation: <code className="text-cyan-300 font-mono text-[10px]">npm run audit:slither</code></span>
+              <a
+                href="https://github.com/Xzavior34/KasuwaShield/blob/master/SLITHER_SECURITY_AUDIT.md"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-bold"
+              >
+                <span>Read Full Audit Report</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </div>
