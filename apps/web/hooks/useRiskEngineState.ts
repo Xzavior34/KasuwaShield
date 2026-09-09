@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 export type SystemState =
   | "IDLE"
@@ -59,15 +59,15 @@ export interface ProtectionLadderItem {
 }
 
 const INITIAL_PRICE_POINTS: PricePoint[] = [
-  { timestamp: "14:45", btcPrice: 65200, ethPrice: 3480, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 25000 },
-  { timestamp: "14:46", btcPrice: 65150, ethPrice: 3475, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24980 },
-  { timestamp: "14:47", btcPrice: 65100, ethPrice: 3470, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24950 },
-  { timestamp: "14:48", btcPrice: 65050, ethPrice: 3465, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24920 },
-  { timestamp: "14:49", btcPrice: 65000, ethPrice: 3460, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24900 },
-  { timestamp: "14:50", btcPrice: 64950, ethPrice: 3455, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24870 },
-  { timestamp: "14:51", btcPrice: 64900, ethPrice: 3450, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24850 },
-  { timestamp: "14:52", btcPrice: 64850, ethPrice: 3445, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24820 },
-  { timestamp: "14:53", btcPrice: 64800, ethPrice: 3440, thresholdPrice: 64000, hedgePrice: 65000, portfolioValue: 24800 },
+  { timestamp: "14:45", btcPrice: 79800, ethPrice: 2540, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 25000 },
+  { timestamp: "14:46", btcPrice: 79780, ethPrice: 2538, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24980 },
+  { timestamp: "14:47", btcPrice: 79750, ethPrice: 2535, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24950 },
+  { timestamp: "14:48", btcPrice: 79720, ethPrice: 2530, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24920 },
+  { timestamp: "14:49", btcPrice: 79700, ethPrice: 2528, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24900 },
+  { timestamp: "14:50", btcPrice: 79680, ethPrice: 2525, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24870 },
+  { timestamp: "14:51", btcPrice: 79670, ethPrice: 2523, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24850 },
+  { timestamp: "14:52", btcPrice: 79660, ethPrice: 2521, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24820 },
+  { timestamp: "14:53", btcPrice: 79650, ethPrice: 2520, thresholdPrice: 78500, hedgePrice: 79500, portfolioValue: 24800 },
 ];
 
 export function useRiskEngineState() {
@@ -90,8 +90,27 @@ export function useRiskEngineState() {
 
   // Dynamic price data for Recharts
   const [priceHistory, setPriceHistory] = useState<PricePoint[]>(INITIAL_PRICE_POINTS);
-  const [currentBtcPrice, setCurrentBtcPrice] = useState<number>(64800);
-  const [currentEthPrice, setCurrentEthPrice] = useState<number>(3440);
+  const [currentBtcPrice, setCurrentBtcPrice] = useState<number>(79650);
+  const [currentEthPrice, setCurrentEthPrice] = useState<number>(2520);
+
+  // Attempt live price sync with /api/prices
+  useEffect(() => {
+    let cancelled = false;
+    async function syncPrices() {
+      try {
+        const res = await fetch("/api/prices");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data?.prices) {
+          if (data.prices.BTC && !isSimulationRunning) setCurrentBtcPrice(data.prices.BTC);
+          if (data.prices.ETH && !isSimulationRunning) setCurrentEthPrice(data.prices.ETH);
+        }
+      } catch (err) {
+        // Fallback gracefully
+      }
+    }
+    syncPrices();
+  }, [isSimulationRunning]);
 
   // Latencies (explicitly labeled DEMO LATENCY)
   const latencyMetrics = {
@@ -223,7 +242,8 @@ export function useRiskEngineState() {
 
   // Derived Risk Math
   // Risk Delta Formula: ΔP - (Threshold % * Exposure)
-  const priceDropPct = Number(((65200 - currentBtcPrice) / 65200 * 100).toFixed(2));
+  const baselineBtcPrice = 79800;
+  const priceDropPct = Number(((baselineBtcPrice - currentBtcPrice) / baselineBtcPrice * 100).toFixed(2));
   const thresholdDollarLimit = (portfolioExposureUSD * downsideThresholdPct) / 100; // $2,000
   const actualDollarLoss = (portfolioExposureUSD * (priceDropPct / 100));
   const riskDeltaUSD = Number((actualDollarLoss - thresholdDollarLimit).toFixed(2));
@@ -256,8 +276,8 @@ export function useRiskEngineState() {
     // Step 1: VOLATILITY_RISING (Risk 34 -> 61, Coverage 71%, Gap 9%)
     setSystemState("VOLATILITY_RISING");
     setSimulationProgress(15);
-    setCurrentBtcPrice(63900); // Below threshold strike 64,000!
-    setCurrentEthPrice(3380);
+    setCurrentBtcPrice(78400); // Below threshold strike 78,500!
+    setCurrentEthPrice(2460);
     setRiskScore(61);
     setCurrentHedgeCoveragePct(71.0);
 
@@ -265,10 +285,10 @@ export function useRiskEngineState() {
       ...prev,
       {
         timestamp: "14:54",
-        btcPrice: 63900,
-        ethPrice: 3380,
-        thresholdPrice: 64000,
-        hedgePrice: 65000,
+        btcPrice: 78400,
+        ethPrice: 2460,
+        thresholdPrice: 78500,
+        hedgePrice: 79500,
         portfolioValue: 24200,
       },
     ]);
@@ -291,18 +311,18 @@ export function useRiskEngineState() {
       setSystemState("THRESHOLD_BREACHED");
       setSimulationProgress(40);
       setRiskScore(98);
-      setCurrentBtcPrice(62800);
-      setCurrentEthPrice(3290);
+      setCurrentBtcPrice(76800);
+      setCurrentEthPrice(2380);
       setCurrentHedgeCoveragePct(58.0);
 
       setPriceHistory((prev) => [
         ...prev,
         {
           timestamp: "14:55",
-          btcPrice: 62800,
-          ethPrice: 3290,
-          thresholdPrice: 64000,
-          hedgePrice: 65000,
+          btcPrice: 76800,
+          ethPrice: 2380,
+          thresholdPrice: 78500,
+          hedgePrice: 79500,
           portfolioValue: 23600,
         },
       ]);
