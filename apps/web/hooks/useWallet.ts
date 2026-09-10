@@ -34,12 +34,16 @@ export function useWallet() {
   const [hasInjectedProvider, setHasInjectedProvider] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if window.ethereum exists
+  // Check if window.ethereum exists with resilient polling for delayed extension injection
   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).ethereum) {
-      setHasInjectedProvider(true);
+    let cleanup: (() => void) | undefined;
 
+    const initProvider = () => {
+      if (typeof window === "undefined") return false;
       const eth = (window as any).ethereum;
+      if (!eth) return false;
+
+      setHasInjectedProvider(true);
 
       // Check already connected accounts
       eth
@@ -60,7 +64,6 @@ export function useWallet() {
         })
         .catch(() => {});
 
-      // Handlers for provider events
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts && accounts.length > 0) {
           setAddress(accounts[0]);
@@ -73,17 +76,50 @@ export function useWallet() {
 
       const handleChainChanged = (newChainId: string) => {
         setChainId(newChainId?.toLowerCase() || null);
-        if (address) fetchBalance(address);
+        eth
+          .request({ method: "eth_accounts" })
+          .then((accs: string[]) => {
+            if (accs && accs.length > 0) fetchBalance(accs[0]);
+          })
+          .catch(() => {});
       };
 
       eth.on?.("accountsChanged", handleAccountsChanged);
       eth.on?.("chainChanged", handleChainChanged);
 
-      return () => {
+      cleanup = () => {
         eth.removeListener?.("accountsChanged", handleAccountsChanged);
         eth.removeListener?.("chainChanged", handleChainChanged);
       };
+
+      return true;
+    };
+
+    if (!initProvider()) {
+      const handleInitialized = () => {
+        initProvider();
+      };
+      window.addEventListener("ethereum#initialized", handleInitialized, { once: true });
+
+      const interval = setInterval(() => {
+        if (initProvider()) {
+          clearInterval(interval);
+        }
+      }, 200);
+
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+      }, 3000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+        window.removeEventListener("ethereum#initialized", handleInitialized);
+        cleanup?.();
+      };
     }
+
+    return () => cleanup?.();
   }, []);
 
   const fetchBalance = async (addr: string) => {
@@ -111,6 +147,8 @@ export function useWallet() {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: SOMNIA_CHAIN_ID_HEX }],
       });
+      const cid = await eth.request({ method: "eth_chainId" });
+      setChainId(cid?.toLowerCase() || null);
     } catch (switchErr: any) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchErr.code === 4902 || switchErr.message?.includes("4902")) {
@@ -119,6 +157,8 @@ export function useWallet() {
             method: "wallet_addEthereumChain",
             params: [SOMNIA_PARAMS],
           });
+          const cid = await eth.request({ method: "eth_chainId" });
+          setChainId(cid?.toLowerCase() || null);
         } catch (addErr: any) {
           setError(addErr.message || "Failed to add Somnia network to wallet");
         }
@@ -129,8 +169,10 @@ export function useWallet() {
   };
 
   const connectWallet = useCallback(async () => {
-    if (typeof window === "undefined" || !(window as any).ethereum) {
-      setError("No Web3 browser wallet detected (e.g. MetaMask, Rabby). Install a wallet extension or use Testnet Signer mode.");
+    if (typeof window === "undefined") return;
+    const eth = (window as any).ethereum;
+    if (!eth) {
+      setError("No Web3 browser wallet detected (e.g. MetaMask, Rabby). Install a wallet extension or use Guest Mode.");
       return;
     }
 
@@ -138,21 +180,28 @@ export function useWallet() {
     setError(null);
 
     try {
-      const eth = (window as any).ethereum;
       const accounts = await eth.request({ method: "eth_requestAccounts" });
       if (accounts && accounts.length > 0) {
         setAddress(accounts[0]);
         await fetchBalance(accounts[0]);
 
-        const cid = await eth.request({ method: "eth_chainId" });
-        setChainId(cid?.toLowerCase() || null);
+        try {
+          const cid = await eth.request({ method: "eth_chainId" });
+          setChainId(cid?.toLowerCase() || null);
 
-        if (cid?.toLowerCase() !== SOMNIA_CHAIN_ID_HEX) {
-          await switchToSomnia();
+          if (cid?.toLowerCase() !== SOMNIA_CHAIN_ID_HEX) {
+            await switchToSomnia();
+          }
+        } catch (netErr: any) {
+          console.warn("Network switch deferred:", netErr);
         }
       }
     } catch (err: any) {
-      setError(err.message || "User rejected wallet connection");
+      if (err?.code === 4001 || err?.message?.includes("rejected")) {
+        setError("Connection request rejected in wallet.");
+      } else {
+        setError(err.message || "Failed to connect wallet.");
+      }
     } finally {
       setIsConnecting(false);
     }
