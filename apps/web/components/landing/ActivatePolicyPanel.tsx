@@ -23,7 +23,7 @@ const STAGE_LABEL: Record<string, string> = {
 };
 
 export function ActivatePolicyPanel({ wallet, exposure, coverageTarget }: ActivatePolicyPanelProps) {
-  const { stage, error, result, activatePolicy, reset, explorerTxUrl } = usePolicyActions(wallet.address);
+  const { stage, error, result, onChainState, activatePolicy, reset, explorerTxUrl } = usePolicyActions(wallet.address);
   const isBusy = stage !== "IDLE" && stage !== "CONFIRMED" && stage !== "ERROR";
   const isClamped = coverageTarget > MAX_PROTECTION_PERCENT;
   const clampedCoverage = Math.min(coverageTarget, MAX_PROTECTION_PERCENT);
@@ -148,6 +148,32 @@ export function ActivatePolicyPanel({ wallet, exposure, coverageTarget }: Activa
               <ExternalLink className="w-3 h-3" />
             </span>
           </a>
+
+          {onChainState && (
+            <div className="bg-[#060911] border border-emerald-500/30 rounded-lg p-3 space-y-2 text-xs mt-2">
+              <div className="flex items-center justify-between text-[11px] border-b border-slate-800 pb-1.5">
+                <span className="text-slate-400 font-bold uppercase tracking-wider">Live On-Chain Policy State</span>
+                <span className="text-emerald-400 font-bold flex items-center space-x-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>ACTIVE ON SOMNIA SHANNON</span>
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[11px]">
+                <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
+                  <span className="text-slate-500 block text-[9px] uppercase">Remaining Budget</span>
+                  <span className="text-white font-bold">${onChainState.remainingBudgetUSD} USD</span>
+                </div>
+                <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
+                  <span className="text-slate-500 block text-[9px] uppercase">Rolls Executed</span>
+                  <span className="text-cyan-300 font-bold">{onChainState.rollsExecuted}</span>
+                </div>
+                <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
+                  <span className="text-slate-500 block text-[9px] uppercase">Protection Capped</span>
+                  <span className="text-emerald-400 font-bold">{onChainState.protectionPercent}%</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -2,7 +2,13 @@
 // Used by hooks/usePolicyActions.ts to let a CONNECTED VISITOR create and
 // authorize their own live KasuwaShield policy, not a simulation.
 
-import { encodeFunctionData, keccak256, toHex, type Hex } from "viem";
+import {
+  decodeFunctionResult,
+  encodeFunctionData,
+  keccak256,
+  toHex,
+  type Hex,
+} from "viem";
 
 export const SOMNIA_CHAIN_ID = 50312;
 export const SOMNIA_CHAIN_ID_HEX = "0xc488";
@@ -48,6 +54,44 @@ const AUTHORIZE_SESSION_KEY_ABI = [
   },
 ] as const;
 
+export const POLICY_VIEW_ABI = [
+  {
+    type: "function",
+    name: "policies",
+    stateMutability: "view",
+    inputs: [{ name: "policyId", type: "bytes32" }],
+    outputs: [
+      { name: "policyId", type: "bytes32" },
+      { name: "user", type: "address" },
+      { name: "sessionKey", type: "address" },
+      { name: "exposureUSD", type: "uint256" },
+      { name: "protectionPercent", type: "uint256" },
+      { name: "totalBudgetUSD", type: "uint256" },
+      { name: "remainingBudgetUSD", type: "uint256" },
+      { name: "maxContractPrice", type: "uint256" },
+      { name: "startTime", type: "uint256" },
+      { name: "durationSeconds", type: "uint256" },
+      { name: "rollsExecuted", type: "uint256" },
+      { name: "isActive", type: "bool" },
+    ],
+  },
+] as const;
+
+export interface OnChainPolicyState {
+  policyId: string;
+  user: string;
+  sessionKey: string;
+  exposureUSD: number;
+  protectionPercent: number;
+  totalBudgetUSD: number;
+  remainingBudgetUSD: number;
+  maxContractPrice: number;
+  startTime: number;
+  durationSeconds: number;
+  rollsExecuted: number;
+  isActive: boolean;
+}
+
 /** Deterministic, unique-enough policyId derived from the caller + time. Real bytes32, not decorative. */
 export function derivePolicyId(userAddress: string): Hex {
   return keccak256(toHex(`kasuwashield:${userAddress.toLowerCase()}:${Date.now()}`));
@@ -86,6 +130,69 @@ export function buildAuthorizeSessionKeyTx(params: { sessionKey: string; policyI
     args: [params.sessionKey as Hex, params.policyId],
   });
   return { to: KASUWA_EXECUTOR_ADDRESS, data };
+}
+
+export async function fetchPolicyState(policyId: Hex): Promise<OnChainPolicyState | null> {
+  try {
+    const callData = encodeFunctionData({
+      abi: POLICY_VIEW_ABI,
+      functionName: "policies",
+      args: [policyId],
+    });
+
+    const res = await fetch(SOMNIA_RPC, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_call",
+        params: [{ to: KASUWA_POLICY_ADDRESS, data: callData }, "latest"],
+      }),
+    });
+
+    const json = await res.json();
+    if (!json?.result || json.result === "0x") return null;
+
+    const decoded = decodeFunctionResult({
+      abi: POLICY_VIEW_ABI,
+      functionName: "policies",
+      data: json.result as Hex,
+    });
+
+    const [
+      retPolicyId,
+      user,
+      sessionKey,
+      exposureUSD,
+      protectionPercent,
+      totalBudgetUSD,
+      remainingBudgetUSD,
+      maxContractPrice,
+      startTime,
+      durationSeconds,
+      rollsExecuted,
+      isActive,
+    ] = decoded;
+
+    return {
+      policyId: retPolicyId,
+      user,
+      sessionKey,
+      exposureUSD: Number(exposureUSD),
+      protectionPercent: Number(protectionPercent),
+      totalBudgetUSD: Number(totalBudgetUSD),
+      remainingBudgetUSD: Number(remainingBudgetUSD),
+      maxContractPrice: Number(maxContractPrice),
+      startTime: Number(startTime),
+      durationSeconds: Number(durationSeconds),
+      rollsExecuted: Number(rollsExecuted),
+      isActive,
+    };
+  } catch (err) {
+    console.error("Failed to read on-chain policy state:", err);
+    return null;
+  }
 }
 
 export function explorerTxUrl(hash: string) {

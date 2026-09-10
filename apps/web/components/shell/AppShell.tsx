@@ -123,7 +123,7 @@ export function AppShell({
         <div className="max-w-[96rem] mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
           <div className="flex items-center justify-between gap-2">
             {/* Brand */}
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group shrink-0">
+            <Link href="/app" className="flex items-center space-x-2 sm:space-x-3 group shrink-0">
               <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold shadow-sm shadow-emerald-500/10 group-hover:border-emerald-500/60 transition-all">
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
               </div>
@@ -145,9 +145,9 @@ export function AppShell({
             {/* Desktop Navigation View Tabs */}
             <nav className="hidden lg:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs font-mono">
               <Link
-                href="/"
+                href="/app"
                 className={`px-3 py-1.5 rounded transition-all font-bold flex items-center space-x-1.5 ${
-                  pathname === "/"
+                  pathname === "/app"
                     ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950/50"
                     : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
@@ -386,9 +386,9 @@ export function AppShell({
             }}
           >
             <Link
-              href="/"
+              href="/app"
               className={`px-2.5 py-1 rounded font-bold text-[11px] shrink-0 ${
-                pathname === "/" ? "bg-emerald-500 text-slate-950 shadow-sm" : "text-slate-400"
+                pathname === "/app" ? "bg-emerald-500 text-slate-950 shadow-sm" : "text-slate-400"
               }`}
             >
               OVERVIEW

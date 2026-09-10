@@ -7,6 +7,8 @@ import {
   buildCreatePolicyTx,
   derivePolicyId,
   explorerTxUrl,
+  fetchPolicyState,
+  type OnChainPolicyState,
 } from "../lib/contracts";
 
 export type ActivationStage =
@@ -35,11 +37,13 @@ export function usePolicyActions(userAddress: string | null) {
   const [stage, setStage] = useState<ActivationStage>("IDLE");
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ActivationResult | null>(null);
+  const [onChainState, setOnChainState] = useState<OnChainPolicyState | null>(null);
 
   const reset = useCallback(() => {
     setStage("IDLE");
     setError(null);
     setResult(null);
+    setOnChainState(null);
   }, []);
 
   const activatePolicy = useCallback(
@@ -107,6 +111,11 @@ export function usePolicyActions(userAddress: string | null) {
 
         setResult({ policyId, createPolicyTxHash, authorizeTxHash });
         setStage("CONFIRMED");
+
+        // Query the live, on-chain state to confirm stored values immediately
+        fetchPolicyState(policyId as any).then((state) => {
+          if (state) setOnChainState(state);
+        });
       } catch (err: any) {
         if (err?.code === 4001 || err?.message?.includes("User rejected")) {
           setError("Transaction was cancelled in your wallet.");
@@ -119,7 +128,7 @@ export function usePolicyActions(userAddress: string | null) {
     [userAddress]
   );
 
-  return { stage, error, result, activatePolicy, reset, explorerTxUrl };
+  return { stage, error, result, onChainState, activatePolicy, reset, explorerTxUrl };
 }
 
 async function waitForReceipt(eth: any, txHash: string, timeoutMs = 60000, intervalMs = 1500) {
