@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "next dev apps/web",
     "build": "next build apps/web",
     "test": "tsx scripts/run-tests.ts",
     "test:e2e": "tsx scripts/e2e-live-integration.ts",
@@ -15,6 +16,7 @@
     "audit:claims": "tsx scripts/audit-claims.ts",
     "audit:slither": "python scripts/run-slither-audit.py",
     "verify:testnet-wallet": "tsx scripts/verify-testnet-wallet.ts",
+    "verify:self-serve": "tsx scripts/verify-self-serve-flow.ts",
     "verify:routes": "node scripts/verify-routes.js",
     "live:testnet": "tsx scripts/live-testnet-runner.ts",
     "deploy:testnet": "tsx scripts/deploy-contracts.ts",

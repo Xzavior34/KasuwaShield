@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AppShell } from "../components/shell/AppShell";
 import { useRiskEngineState } from "../hooks/useRiskEngineState";
+import { useWallet } from "../hooks/useWallet";
 import { Activity, Cpu, Shield, AlertTriangle, ArrowRight, ExternalLink, Download, Radio, CheckCircle2 } from "lucide-react";
 import { CryptoIcon } from "../components/common/CryptoIcon";
+import { Hero } from "../components/landing/Hero";
+import { ActivatePolicyPanel } from "../components/landing/ActivatePolicyPanel";
 
 export default function TerminalDashboard() {
   const {
@@ -15,6 +18,12 @@ export default function TerminalDashboard() {
     currentHedgeCoveragePct,
     protectionGapPct,
   } = useRiskEngineState();
+
+  const wallet = useWallet();
+  const dashboardRef = useRef<HTMLDivElement | null>(null);
+  const scrollToDashboard = () => {
+    dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   // Multi-asset state
   const [activeAsset, setActiveAsset] = useState("BTC");
@@ -226,7 +235,15 @@ export default function TerminalDashboard() {
       activeAsset={activeAsset}
       onSelectAsset={setActiveAsset}
     >
-      <div className="space-y-4 sm:space-y-5 font-mono">
+      <Hero
+        isConnected={wallet.isConnected}
+        isConnecting={wallet.isConnecting}
+        hasInjectedProvider={wallet.hasInjectedProvider}
+        address={wallet.address}
+        onConnect={wallet.connectWallet}
+        onScrollToApp={scrollToDashboard}
+      />
+      <div ref={dashboardRef} className="space-y-4 sm:space-y-5 font-mono px-1 pt-4 sm:pt-5">
         {/* Top Bento Row: Animated SVG Chart & SVG Dial */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* SVG Area Chart */}
@@ -428,6 +445,8 @@ export default function TerminalDashboard() {
                 </div>
               </div>
             </div>
+
+            <ActivatePolicyPanel wallet={wallet} exposure={exposure} coverageTarget={coverageTarget} />
           </div>
 
           {/* DreamDEX CLOB Orderbook Depth */}

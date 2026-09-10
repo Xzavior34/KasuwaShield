@@ -15,7 +15,8 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.4.0",
     "recharts": "^2.12.7",
-    "framer-motion": "^11.3.19"
+    "framer-motion": "^11.3.19",
+    "viem": "^2.56.3"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
