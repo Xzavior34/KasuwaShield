@@ -39,6 +39,7 @@ export function ActivatePolicyPanel({ wallet, exposure, coverageTarget }: Activa
     }
     if (stage === "CONFIRMED" || stage === "ERROR") reset();
     await activatePolicy({ exposureUSD: exposure, protectionPercent: coverageTarget });
+    wallet.refreshBalance?.();
   };
 
   return (
@@ -61,6 +62,39 @@ export function ActivatePolicyPanel({ wallet, exposure, coverageTarget }: Activa
         {isClamped ? `, will be sent as ${clampedCoverage}%` : ""}).
         You'll need a small amount of testnet STT for gas.
       </p>
+
+      {wallet.isConnected && (
+        <div className="bg-[#060911] border border-slate-800 rounded-lg p-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] gap-2">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span className="text-slate-400">Connected:</span>
+            <span className="font-mono text-white font-bold">
+              {wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-slate-400">Testnet Balance:</span>
+            <span
+              className={`font-mono font-bold ${
+                wallet.balanceSTT && Number(wallet.balanceSTT) > 0 ? "text-emerald-400" : "text-amber-400"
+              }`}
+            >
+              {wallet.balanceSTT ? `${wallet.balanceSTT} STT` : "Fetching..."}
+            </span>
+            {wallet.balanceSTT === "0.0000" && (
+              <a
+                href="https://testnet.somnia.network/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[10px] text-cyan-400 hover:underline font-bold ml-1 inline-flex items-center space-x-0.5"
+              >
+                <span>[CLAIM STT]</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {isClamped && (
         <div className="flex items-start space-x-2 bg-amber-500/10 border border-amber-500/30 rounded-lg p-2.5 text-[11px] text-amber-300">

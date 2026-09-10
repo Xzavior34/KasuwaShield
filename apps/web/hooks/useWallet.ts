@@ -122,22 +122,59 @@ export function useWallet() {
     return () => cleanup?.();
   }, []);
 
-  const fetchBalance = async (addr: string) => {
+  const fetchBalance = useCallback(async (addr?: string) => {
+    const target = addr || address;
+    if (!target) return;
+
     try {
-      if (typeof window === "undefined" || !(window as any).ethereum) return;
-      const res = await (window as any).ethereum.request({
-        method: "eth_getBalance",
-        params: [addr, "latest"],
+      // Direct query to Somnia Shannon testnet RPC guarantees real STT balance on chain 50312
+      const res = await fetch("https://dream-rpc.somnia.network", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_getBalance",
+          params: [target, "latest"],
+        }),
       });
-      if (res) {
-        const valWei = BigInt(res);
+      const json = await res.json();
+      if (json?.result) {
+        const valWei = BigInt(json.result);
         const valSTT = (Number(valWei) / 1e18).toFixed(4);
         setBalanceSTT(valSTT);
+        return;
+      }
+    } catch {
+      // Fallback to window.ethereum below
+    }
+
+    try {
+      if (typeof window !== "undefined" && (window as any).ethereum) {
+        const res = await (window as any).ethereum.request({
+          method: "eth_getBalance",
+          params: [target, "latest"],
+        });
+        if (res) {
+          const valWei = BigInt(res);
+          const valSTT = (Number(valWei) / 1e18).toFixed(4);
+          setBalanceSTT(valSTT);
+        }
       }
     } catch {
       // Fallback
     }
-  };
+  }, [address]);
+
+  // Periodic balance auto-refresh while wallet is connected
+  useEffect(() => {
+    if (!address) return;
+    fetchBalance(address);
+    const interval = setInterval(() => {
+      fetchBalance(address);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [address, fetchBalance]);
 
   const switchToSomnia = async () => {
     if (typeof window === "undefined" || !(window as any).ethereum) return;
@@ -291,5 +328,6 @@ export function useWallet() {
     disconnectWallet,
     switchToSomnia,
     signSessionAuthorization,
+    refreshBalance: () => fetchBalance(address || undefined),
   };
 }

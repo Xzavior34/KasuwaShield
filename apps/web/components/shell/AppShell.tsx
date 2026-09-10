@@ -245,14 +245,14 @@ export function AppShell({
                       {address?.slice(0, 6)}...{address?.slice(-4)}
                     </span>
                     {balanceSTT && (
-                      <span className="text-emerald-400 text-[10px] hidden md:inline font-mono font-bold">
+                      <span className="text-emerald-400 text-[10px] font-mono font-bold ml-1 pl-1.5 border-l border-slate-700/80">
                         {balanceSTT} STT
                       </span>
                     )}
                     <button
                       onClick={disconnectWallet}
                       title="Disconnect Wallet"
-                      className="text-slate-500 hover:text-rose-400 text-xs ml-1"
+                      className="text-slate-500 hover:text-rose-400 text-xs ml-1 p-0.5"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -275,26 +275,48 @@ export function AppShell({
                 </button>
               )}
 
-              <button
-                onClick={() => setShowJudgeModal(true)}
-                className="px-2 sm:px-2.5 py-1.5 rounded-md bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[11px] sm:text-xs hover:bg-cyan-500/20 transition-all flex items-center space-x-1"
-              >
-                <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                <span>JUDGE BRIEF</span>
-              </button>
+              {/* In Live Wallet Connected Mode: Hide Demo/Judge/Stress buttons, show Live Network & Faucet */}
+              {isConnected ? (
+                <div className="flex items-center space-x-2">
+                  <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-[11px] sm:text-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>SHANNON 50312</span>
+                  </div>
+                  <a
+                    href="https://testnet.somnia.network/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-2 sm:px-2.5 py-1.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-bold text-[11px] sm:text-xs hover:bg-cyan-500/20 transition-all flex items-center space-x-1"
+                    title="Get free Somnia testnet STT from the official faucet"
+                  >
+                    <span>FAUCET</span>
+                    <ExternalLink className="w-3 h-3 shrink-0" />
+                  </a>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowJudgeModal(true)}
+                    className="px-2 sm:px-2.5 py-1.5 rounded-md bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[11px] sm:text-xs hover:bg-cyan-500/20 transition-all flex items-center space-x-1"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                    <span>JUDGE BRIEF</span>
+                  </button>
 
-              <button
-                onClick={onTriggerStressTest}
-                disabled={isSimulationRunning}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-md font-bold text-[11px] sm:text-xs flex items-center space-x-1 transition-all shadow-lg border ${
-                  isSimulationRunning
-                    ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
-                    : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-rose-900/30 animate-pulse"
-                }`}
-              >
-                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                <span>{isSimulationRunning ? "SIMULATING..." : "STRESS TEST"}</span>
-              </button>
+                  <button
+                    onClick={onTriggerStressTest}
+                    disabled={isSimulationRunning}
+                    className={`px-2.5 sm:px-3 py-1.5 rounded-md font-bold text-[11px] sm:text-xs flex items-center space-x-1 transition-all shadow-lg border ${
+                      isSimulationRunning
+                        ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
+                        : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-rose-900/30 animate-pulse"
+                    }`}
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{isSimulationRunning ? "SIMULATING..." : "STRESS TEST"}</span>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Mobile Wallet Connect (< sm) */}
@@ -314,6 +336,11 @@ export function AppShell({
                     <span className="text-white font-mono font-bold">
                       {address?.slice(0, 4)}...{address?.slice(-2)}
                     </span>
+                    {balanceSTT && (
+                      <span className="text-emerald-400 font-mono font-bold ml-0.5">
+                        {balanceSTT}
+                      </span>
+                    )}
                   </div>
                 )
               ) : (
@@ -332,7 +359,7 @@ export function AppShell({
             </div>
           </div>
 
-          {/* Mobile Reflow Action Sub-Bar (< sm: renders asset switcher, brief, and stress test cleanly without clipping) */}
+          {/* Mobile Reflow Action Sub-Bar (< sm) */}
           <div className="sm:hidden pt-2 mt-1.5 border-t border-slate-800/60 flex items-center justify-between gap-1.5">
             {onSelectAsset && (
               <div className="flex bg-slate-900 p-0.5 rounded border border-slate-800 text-[10px] shrink-0">
@@ -352,27 +379,44 @@ export function AppShell({
                 ))}
               </div>
             )}
-            <div className="flex items-center space-x-1 shrink-0 ml-auto">
-              <button
-                onClick={() => setShowJudgeModal(true)}
-                className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[10px] flex items-center space-x-1"
-              >
-                <BookOpen className="w-3 h-3 shrink-0" />
-                <span>BRIEF</span>
-              </button>
-              <button
-                onClick={onTriggerStressTest}
-                disabled={isSimulationRunning}
-                className={`px-2 py-1 rounded font-bold text-[10px] flex items-center space-x-1 border ${
-                  isSimulationRunning
-                    ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
-                    : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-sm shadow-rose-950/40 animate-pulse"
-                }`}
-              >
-                <AlertTriangle className="w-3 h-3 shrink-0" />
-                <span>{isSimulationRunning ? "SIM..." : "STRESS TEST"}</span>
-              </button>
-            </div>
+            {isConnected ? (
+              <div className="flex items-center space-x-1 shrink-0 ml-auto text-[10px]">
+                <span className="text-emerald-400 font-bold font-mono px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/30 rounded">
+                  {balanceSTT ? `${balanceSTT} STT` : "0.0000 STT"}
+                </span>
+                <a
+                  href="https://testnet.somnia.network/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-cyan-400 px-1.5 py-0.5 bg-cyan-500/10 border border-cyan-500/30 rounded flex items-center space-x-0.5 font-bold"
+                >
+                  <span>FAUCET</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1 shrink-0 ml-auto">
+                <button
+                  onClick={() => setShowJudgeModal(true)}
+                  className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-bold text-[10px] flex items-center space-x-1"
+                >
+                  <BookOpen className="w-3 h-3 shrink-0" />
+                  <span>BRIEF</span>
+                </button>
+                <button
+                  onClick={onTriggerStressTest}
+                  disabled={isSimulationRunning}
+                  className={`px-2 py-1 rounded font-bold text-[10px] flex items-center space-x-1 border ${
+                    isSimulationRunning
+                      ? "bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed"
+                      : "bg-rose-600 hover:bg-rose-500 text-white border-rose-400 shadow-sm shadow-rose-950/40 animate-pulse"
+                  }`}
+                >
+                  <AlertTriangle className="w-3 h-3 shrink-0" />
+                  <span>{isSimulationRunning ? "SIM..." : "STRESS"}</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -534,8 +578,8 @@ export function AppShell({
         </div>
       </footer>
 
-      {/* Judge Pitch Modal */}
-      {showJudgeModal && (
+      {/* Judge Pitch Modal (Only in Guest / Evaluation mode) */}
+      {showJudgeModal && !isConnected && (
         <div 
           className="fixed inset-0 bg-black/85 z-50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
           onClick={() => setShowJudgeModal(false)}

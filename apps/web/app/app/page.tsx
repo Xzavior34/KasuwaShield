@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { AppShell } from "../../components/shell/AppShell";
 import { useRiskEngineState } from "../../hooks/useRiskEngineState";
 import { useWallet } from "../../hooks/useWallet";
-import { Activity, Cpu, Shield, AlertTriangle, ArrowRight, ExternalLink, Download, Radio, CheckCircle2 } from "lucide-react";
+import { Activity, Cpu, Shield, AlertTriangle, ArrowRight, ExternalLink, Download, Radio, CheckCircle2, Wallet } from "lucide-react";
 import { CryptoIcon } from "../../components/common/CryptoIcon";
 import { ActivatePolicyPanel } from "../../components/landing/ActivatePolicyPanel";
 
@@ -273,6 +273,70 @@ export default function AppDashboard() {
       onSelectAsset={setActiveAsset}
     >
       <div ref={dashboardRef} className="space-y-4 sm:space-y-5 font-mono px-1 pt-4 sm:pt-5">
+        {/* Live Wallet & Network State Bar */}
+        <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-3 sm:p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          {wallet.isConnected ? (
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="text-emerald-400 font-bold uppercase tracking-wider">LIVE TESTNET SESSION</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono">
+                  CHAIN 50312
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 text-slate-300">
+                <span className="text-slate-500">ACCOUNT:</span>
+                <span className="font-mono text-white font-bold">{wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-slate-500">STT BALANCE:</span>
+                <span className={`font-mono font-bold ${wallet.balanceSTT && Number(wallet.balanceSTT) > 0 ? "text-emerald-400" : "text-amber-400"}`}>
+                  {wallet.balanceSTT ? `${wallet.balanceSTT} STT` : "0.0000 STT"}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              <span className="text-cyan-300 font-bold uppercase tracking-wider">GUEST EVALUATION MODE</span>
+              <span className="text-slate-400 text-[11px]">
+                Streaming live prices, Somnia blocks, and DreamDEX order depth. Connect a Web3 wallet to execute on-chain transactions.
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center space-x-2 shrink-0 text-xs">
+            {wallet.isConnected ? (
+              <>
+                <a
+                  href="https://testnet.somnia.network/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 font-bold text-[11px] flex items-center space-x-1 transition-all"
+                >
+                  <span>CLAIM TESTNET STT</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <button
+                  onClick={wallet.disconnectWallet}
+                  className="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-slate-400 hover:text-rose-400 text-[11px] transition-all"
+                >
+                  DISCONNECT
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={wallet.connectWallet}
+                disabled={wallet.isConnecting}
+                className="px-3 py-1 rounded bg-emerald-500 text-slate-950 font-bold text-[11px] hover:bg-emerald-400 transition-all flex items-center space-x-1.5"
+              >
+                <Wallet className="w-3 h-3" />
+                <span>{wallet.isConnecting ? "CONNECTING..." : "CONNECT WALLET"}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Top Bento Row: Animated SVG Chart & SVG Dial */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* SVG Area Chart */}
