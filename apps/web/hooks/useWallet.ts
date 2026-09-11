@@ -206,10 +206,19 @@ export function useWallet() {
   };
 
   const connectWallet = useCallback(async () => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      setError("Window object not available. This feature requires a browser environment.");
+      return;
+    }
+
     const eth = (window as any).ethereum;
+    
+    // More detailed error messaging
     if (!eth) {
-      setError("No Web3 browser wallet detected (e.g. MetaMask, Rabby). Install a wallet extension or use Guest Mode.");
+      const errorMsg = "No Web3 browser wallet detected. Please install MetaMask, Rabby, or another EIP-1193 compatible wallet extension.";
+      setError(errorMsg);
+      console.warn("[useWallet] Wallet connection attempted but no ethereum provider found:", errorMsg);
+      setIsConnecting(false);
       return;
     }
 
@@ -217,27 +226,45 @@ export function useWallet() {
     setError(null);
 
     try {
+      // Explicitly guard against null ethereum
+      if (!eth.request || typeof eth.request !== "function") {
+        throw new Error("Ethereum provider does not support eth_requestAccounts method");
+      }
+
       const accounts = await eth.request({ method: "eth_requestAccounts" });
-      if (accounts && accounts.length > 0) {
-        setAddress(accounts[0]);
-        await fetchBalance(accounts[0]);
+      
+      if (!accounts || !Array.isArray(accounts) || accounts.length === 0) {
+        setError("No accounts returned from wallet. Please ensure you have an account in your wallet.");
+        setIsConnecting(false);
+        return;
+      }
 
-        try {
-          const cid = await eth.request({ method: "eth_chainId" });
-          setChainId(cid?.toLowerCase() || null);
+      setAddress(accounts[0]);
+      await fetchBalance(accounts[0]);
 
-          if (cid?.toLowerCase() !== SOMNIA_CHAIN_ID_HEX) {
-            await switchToSomnia();
-          }
-        } catch (netErr: any) {
-          console.warn("Network switch deferred:", netErr);
+      try {
+        const cid = await eth.request({ method: "eth_chainId" });
+        setChainId(cid?.toLowerCase() || null);
+
+        if (cid?.toLowerCase() !== SOMNIA_CHAIN_ID_HEX) {
+          // Automatically attempt to switch network
+          await switchToSomnia();
         }
+      } catch (netErr: any) {
+        console.warn("[useWallet] Network check/switch deferred:", netErr);
+        // Don't fail connection if network detection fails
       }
     } catch (err: any) {
+      console.error("[useWallet] Connection error:", err);
+      
       if (err?.code === 4001 || err?.message?.includes("rejected")) {
-        setError("Connection request rejected in wallet.");
+        setError("You rejected the connection request in your wallet. Please try again and approve the connection.");
+      } else if (err?.code === -32002) {
+        setError("A connection request is already pending in your wallet. Please check your wallet extension.");
+      } else if (err?.message?.includes("not injected")) {
+        setError("Wallet provider not found. Please refresh the page and ensure your wallet extension is enabled.");
       } else {
-        setError(err.message || "Failed to connect wallet.");
+        setError(err.message || "Failed to connect wallet. Please try again.");
       }
     } finally {
       setIsConnecting(false);
@@ -247,6 +274,7 @@ export function useWallet() {
   const disconnectWallet = useCallback(() => {
     setAddress(null);
     setBalanceSTT(null);
+    setError(null);
   }, []);
 
   const signSessionAuthorization = useCallback(
@@ -302,7 +330,7 @@ export function useWallet() {
         return sig;
       } catch (typedErr) {
         // Fallback to personal_sign if wallet doesn't support v4
-        const fallbackMsg = `KasuwaShield EIP-7702 Delegation Authorization\n\nDelegator: ${address}\nSession Key: ${sessionKeyAddress}\nMax Budget: ${maxBudgetUSD}\nExpires: ${new Date(expiresAt * 1000).toISOString()}\nChain ID: 50312 (Somnia Shannon)`;
+        const fallbackMsg = `KasuwaShield EIP-7702 Delegation Authorization\n\nDelegator: ${address}\nSession Key: ${sessionKeyAddress}\nMax Budget: ${maxBudgetUSD}\nExpires: ${new Date(expiresAt * 1000).toISOString()}`;
         const sig = await eth.request({
           method: "personal_sign",
           params: [fallbackMsg, address],
