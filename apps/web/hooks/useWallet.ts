@@ -34,94 +34,6 @@ export function useWallet() {
   const [hasInjectedProvider, setHasInjectedProvider] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if window.ethereum exists with resilient polling for delayed extension injection
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    const initProvider = () => {
-      if (typeof window === "undefined") return false;
-      const eth = (window as any).ethereum;
-      if (!eth) return false;
-
-      setHasInjectedProvider(true);
-
-      // Check already connected accounts
-      eth
-        .request({ method: "eth_accounts" })
-        .then((accounts: string[]) => {
-          if (accounts && accounts.length > 0) {
-            setAddress(accounts[0]);
-            fetchBalance(accounts[0]);
-          }
-        })
-        .catch(() => {});
-
-      // Check current chain ID
-      eth
-        .request({ method: "eth_chainId" })
-        .then((cid: string) => {
-          setChainId(cid?.toLowerCase() || null);
-        })
-        .catch(() => {});
-
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts && accounts.length > 0) {
-          setAddress(accounts[0]);
-          fetchBalance(accounts[0]);
-        } else {
-          setAddress(null);
-          setBalanceSTT(null);
-        }
-      };
-
-      const handleChainChanged = (newChainId: string) => {
-        setChainId(newChainId?.toLowerCase() || null);
-        eth
-          .request({ method: "eth_accounts" })
-          .then((accs: string[]) => {
-            if (accs && accs.length > 0) fetchBalance(accs[0]);
-          })
-          .catch(() => {});
-      };
-
-      eth.on?.("accountsChanged", handleAccountsChanged);
-      eth.on?.("chainChanged", handleChainChanged);
-
-      cleanup = () => {
-        eth.removeListener?.("accountsChanged", handleAccountsChanged);
-        eth.removeListener?.("chainChanged", handleChainChanged);
-      };
-
-      return true;
-    };
-
-    if (!initProvider()) {
-      const handleInitialized = () => {
-        initProvider();
-      };
-      window.addEventListener("ethereum#initialized", handleInitialized, { once: true });
-
-      const interval = setInterval(() => {
-        if (initProvider()) {
-          clearInterval(interval);
-        }
-      }, 200);
-
-      const timeout = setTimeout(() => {
-        clearInterval(interval);
-      }, 3000);
-
-      return () => {
-        clearInterval(interval);
-        clearTimeout(timeout);
-        window.removeEventListener("ethereum#initialized", handleInitialized);
-        cleanup?.();
-      };
-    }
-
-    return () => cleanup?.();
-  }, []);
-
   const fetchBalance = useCallback(async (addr?: string) => {
     const target = addr || address;
     if (!target) return;
@@ -166,6 +78,117 @@ export function useWallet() {
     }
   }, [address]);
 
+  // Check if window.ethereum exists with resilient polling for delayed extension injection
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+
+    const initProvider = () => {
+      try {
+        if (typeof window === "undefined") return false;
+        const eth = (window as any).ethereum;
+        if (!eth) {
+          console.log("[useWallet] No ethereum provider detected on page load");
+          return false;
+        }
+
+        console.log("[useWallet] Ethereum provider detected, initializing...");
+        setHasInjectedProvider(true);
+
+        // Check already connected accounts
+        eth
+          .request({ method: "eth_accounts" })
+          .then((accounts: string[]) => {
+            if (accounts && accounts.length > 0) {
+              console.log("[useWallet] Found existing connection:", accounts[0]);
+              setAddress(accounts[0]);
+              fetchBalance(accounts[0]);
+            }
+          })
+          .catch((e: any) => {
+            console.warn("[useWallet] eth_accounts error:", e);
+          });
+
+        // Check current chain ID
+        eth
+          .request({ method: "eth_chainId" })
+          .then((cid: string) => {
+            console.log("[useWallet] Current chain ID:", cid);
+            setChainId(cid?.toLowerCase() || null);
+          })
+          .catch((e: any) => {
+            console.warn("[useWallet] eth_chainId error:", e);
+          });
+
+        const handleAccountsChanged = (accounts: string[]) => {
+          console.log("[useWallet] Accounts changed:", accounts);
+          if (accounts && accounts.length > 0) {
+            setAddress(accounts[0]);
+            fetchBalance(accounts[0]);
+          } else {
+            setAddress(null);
+            setBalanceSTT(null);
+          }
+        };
+
+        const handleChainChanged = (newChainId: string) => {
+          console.log("[useWallet] Chain changed:", newChainId);
+          setChainId(newChainId?.toLowerCase() || null);
+          eth
+            .request({ method: "eth_accounts" })
+            .then((accs: string[]) => {
+              if (accs && accs.length > 0) fetchBalance(accs[0]);
+            })
+            .catch((e: any) => {
+              console.warn("[useWallet] eth_accounts error on chain change:", e);
+            });
+        };
+
+        eth.on?.("accountsChanged", handleAccountsChanged);
+        eth.on?.("chainChanged", handleChainChanged);
+
+        cleanup = () => {
+          eth.removeListener?.("accountsChanged", handleAccountsChanged);
+          eth.removeListener?.("chainChanged", handleChainChanged);
+        };
+
+        return true;
+      } catch (e) {
+        console.error("[useWallet] Provider initialization error:", e);
+        return false;
+      }
+    };
+
+    if (!initProvider()) {
+      console.log("[useWallet] Initial provider check failed, polling...");
+      const handleInitialized = () => {
+        console.log("[useWallet] ethereum#initialized event fired");
+        initProvider();
+      };
+      window.addEventListener("ethereum#initialized", handleInitialized, { once: true });
+
+      const interval = setInterval(() => {
+        if (initProvider()) {
+          console.log("[useWallet] Provider found during poll");
+          clearInterval(interval);
+        }
+      }, 200);
+
+      const timeout = setTimeout(() => {
+        console.log("[useWallet] Provider poll timeout");
+        clearInterval(interval);
+      }, 3000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+        window.removeEventListener("ethereum#initialized", handleInitialized);
+        cleanup?.();
+      };
+    }
+
+    return () => cleanup?.();
+  }, []);
+
   // Periodic balance auto-refresh while wallet is connected
   useEffect(() => {
     if (!address) return;
@@ -206,24 +229,31 @@ export function useWallet() {
   };
 
   const connectWallet = useCallback(async () => {
+    console.log("[connectWallet] Button clicked, starting connection flow");
+    
+    // Reset error state immediately
+    setError(null);
+    
     if (typeof window === "undefined") {
-      setError("Window object not available. This feature requires a browser environment.");
+      const msg = "Window object not available. This feature requires a browser environment.";
+      console.error("[connectWallet]", msg);
+      setError(msg);
+      setIsConnecting(false);
       return;
     }
 
     const eth = (window as any).ethereum;
     
-    // More detailed error messaging
     if (!eth) {
-      const errorMsg = "No Web3 browser wallet detected. Please install MetaMask, Rabby, or another EIP-1193 compatible wallet extension.";
-      setError(errorMsg);
-      console.warn("[useWallet] Wallet connection attempted but no ethereum provider found:", errorMsg);
+      const msg = "No Web3 browser wallet detected. Please install MetaMask, Rabby, or another EIP-1193 compatible wallet extension.";
+      console.warn("[connectWallet]", msg);
+      setError(msg);
       setIsConnecting(false);
       return;
     }
 
+    console.log("[connectWallet] Ethereum provider found, setting isConnecting=true");
     setIsConnecting(true);
-    setError(null);
 
     try {
       // Explicitly guard against null ethereum
@@ -231,31 +261,39 @@ export function useWallet() {
         throw new Error("Ethereum provider does not support eth_requestAccounts method");
       }
 
+      console.log("[connectWallet] Calling eth_requestAccounts...");
       const accounts = await eth.request({ method: "eth_requestAccounts" });
       
+      console.log("[connectWallet] Response from eth_requestAccounts:", accounts);
+
       if (!accounts || !Array.isArray(accounts) || accounts.length === 0) {
-        setError("No accounts returned from wallet. Please ensure you have an account in your wallet.");
+        const msg = "No accounts returned from wallet. Please ensure you have an account in your wallet.";
+        console.warn("[connectWallet]", msg);
+        setError(msg);
         setIsConnecting(false);
         return;
       }
 
+      console.log("[connectWallet] Account connected:", accounts[0]);
       setAddress(accounts[0]);
+      setError(null);
       await fetchBalance(accounts[0]);
 
       try {
         const cid = await eth.request({ method: "eth_chainId" });
+        console.log("[connectWallet] Current chain ID:", cid);
         setChainId(cid?.toLowerCase() || null);
 
         if (cid?.toLowerCase() !== SOMNIA_CHAIN_ID_HEX) {
-          // Automatically attempt to switch network
+          console.log("[connectWallet] Wrong network, attempting to switch...");
           await switchToSomnia();
         }
       } catch (netErr: any) {
-        console.warn("[useWallet] Network check/switch deferred:", netErr);
+        console.warn("[connectWallet] Network check/switch deferred:", netErr);
         // Don't fail connection if network detection fails
       }
     } catch (err: any) {
-      console.error("[useWallet] Connection error:", err);
+      console.error("[connectWallet] Connection error:", err);
       
       if (err?.code === 4001 || err?.message?.includes("rejected")) {
         setError("You rejected the connection request in your wallet. Please try again and approve the connection.");
@@ -267,11 +305,13 @@ export function useWallet() {
         setError(err.message || "Failed to connect wallet. Please try again.");
       }
     } finally {
+      console.log("[connectWallet] Connection flow complete, setting isConnecting=false");
       setIsConnecting(false);
     }
   }, []);
 
   const disconnectWallet = useCallback(() => {
+    console.log("[disconnectWallet] Disconnecting wallet");
     setAddress(null);
     setBalanceSTT(null);
     setError(null);
